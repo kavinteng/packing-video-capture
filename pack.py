@@ -42,9 +42,10 @@ def cutvdo(mydata):
     ffmpeg_extract_subclip('{}bc.mp4'.format(mydata), start, end, targetname='{}.mp4'.format(mydata))
 
 def scanQR():
-    cap = cv2.VideoCapture(1)
+    cap = cv2.VideoCapture(0)
     frame_w = int(cap.get(3))
     frame_h = int(cap.get(4))
+    fps = int(cap.get(cv2.CAP_PROP_FPS))
     i = 0
     record = 0
     array = []
@@ -70,7 +71,6 @@ def scanQR():
                     i = 0
                     if num1 == num2 == num3:
                         array.append(data)
-                        print(mydata)
                         os.chdir(qrcode)
                         word = str(mydata)+".jpg"
                         cv2.imwrite(word, roi)
@@ -78,14 +78,14 @@ def scanQR():
         elif record == 1:
             os.chdir(vdo)
             file = str(mydata)+"bc.mp4"
-            rec = cv2.VideoWriter(file, cv2.VideoWriter_fourcc(*'MP4V'),29.0, (frame_w, frame_h))
+            rec = cv2.VideoWriter(file, cv2.VideoWriter_fourcc(*'MP4V'),21, (frame_w, frame_h))
             record = 2
         elif record == 2:
             roi = frame_detect[-size-10:-10, -size-10:-10]
             roi[np.where(mask)] = 0
             roi += img
             cv2.putText(frame_detect, "ID: {}".format(str(mydata)), (10, 20), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 0, 255), 2)
-            cv2.putText(frame_detect, datetime.datetime.now().strftime("%A %d %B %Y %I:%M:%S%p"), (10, frame.shape[0] - 10), cv2.FONT_HERSHEY_SIMPLEX, 0.4, (0, 0, 255), 2)
+            cv2.putText(frame_detect, datetime.datetime.now().strftime("%D %T"), (10, frame.shape[0] - 10), cv2.FONT_HERSHEY_SIMPLEX, 0.4, (0, 0, 255), 2)
             rec.write(frame_detect)
         cv2.imshow("test", frame_detect)
         k = cv2.waitKey(1)
@@ -93,7 +93,10 @@ def scanQR():
             break
     cap.release()
     cv2.destroyAllWindows()
-    return mydata
+    try:
+        return mydata
+    except:
+        pass
 
 if __name__ == '__main__':
     base_dir = os.path.dirname(os.path.abspath(__file__))
@@ -101,8 +104,8 @@ if __name__ == '__main__':
     vdo = os.path.join(base_dir,"vdo")
     logo = os.path.join(base_dir,"logo")
     try:
-        os.mkdir(qrcode)
         os.mkdir(vdo)
+        os.mkdir(qrcode)
         os.mkdir(logo)
     except:
         os.chdir(logo)
@@ -115,7 +118,10 @@ if __name__ == '__main__':
             check = input("0 for cam, 1 for break: ")
             if check == "0":
                 nameid = scanQR()
-                cutvdo(nameid)
-                os.remove('{}bc.mp4'.format(nameid))
+                try:
+                    cutvdo(nameid)
+                    os.remove('{}bc.mp4'.format(nameid))
+                except:
+                    pass
             elif check == "1":
                 break
