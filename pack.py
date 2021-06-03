@@ -22,10 +22,7 @@ def draw_box(decoded, image):
     y = decoded.rect.top
     w = decoded.rect.width
     h = decoded.rect.height
-    image = cv2.rectangle(image, (x, y),
-                            (x+w, y+h),
-                            color=(0, 255, 0),
-                            thickness=5)
+    image = cv2.rectangle(image, (x, y),(x+w, y+h),color=(0, 255, 0),thickness=5)
     return image, x, y, w, h
 
 def cutvdo(mydata):
@@ -45,10 +42,9 @@ def scanQR():
     cap = cv2.VideoCapture(0)
     frame_w = int(cap.get(3))
     frame_h = int(cap.get(4))
-    fps = int(cap.get(cv2.CAP_PROP_FPS))
-    i = 0
     record = 0
     array = []
+
     while True:
         _, frame = cap.read()
         if frame is None:
@@ -56,25 +52,17 @@ def scanQR():
         frame_detect, data, type, x, y, w, h = decode(frame)
         roi = frame_detect[y:y+h, x:x+w]
         if type == 'QRCODE' and record == 0:
-            if data not in array and data != 0:
-                mydata = data.decode('utf-8')
-                if i == 0:
-                    num1 = mydata
-                    i += 1
-                    time.sleep(1)
-                elif i == 1:
-                    num2 = mydata
-                    i += 1
-                    time.sleep(1)
-                elif i == 2:
-                    num3 = mydata
-                    i = 0
-                    if num1 == num2 == num3:
-                        array.append(data)
-                        os.chdir(qrcode)
-                        word = str(mydata)+".jpg"
-                        cv2.imwrite(word, roi)
-                        record = 1
+            mydata = data.decode('utf-8')
+            if len(array) < 3:
+                array.append(mydata)
+                time.sleep(1)
+                continue
+            if len(set(array)) == 1:
+                os.chdir(qrcode)
+                word = str(mydata) + ".jpg"
+                cv2.imwrite(word, roi)
+                record = 1
+            array = []
         elif record == 1:
             os.chdir(vdo)
             file = str(mydata)+"bc.mp4"
