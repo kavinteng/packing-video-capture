@@ -60,19 +60,33 @@ def post_requests(mydata,url):
         else:
             print("Something went wrong!")
 
-# load background image
+# save background image
 def getback():
     cap = cv2.VideoCapture(1)
     while True:
         _, frame = cap.read()
-        cv2.imwrite("background.jpg", frame)
+        cv2.imwrite("image/background.jpg", frame)
         break
     cap.release()
     cv2.destroyAllWindows()
 
-# check motion to auto video ending
-def checkback(gray,check,fh,fw):
+# load logo image
+def checklogo(frame):
     os.chdir(logo)
+    img = cv2.imread('logo.png')
+    size = 50
+    img = cv2.resize(img, (size, size))
+    imggray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+    ret, mask = cv2.threshold(imggray, 1, 255, cv2.THRESH_BINARY)
+    roilogo = frame[-size - 10:-10, -size - 10:-10]
+    roilogo[np.where(mask)] = 0
+    roilogo += img
+
+# check motion to auto video ending
+def checkback(frame,check,fh,fw):
+    frame = cv2.resize(frame, (fh, fw))
+    gray = cv2.cvtColor(frame, cv2.COLOR_RGB2GRAY)
+    gray = cv2.GaussianBlur(gray, (21, 21), 0)
     img2 = cv2.imread("background.jpg")
     img2 = cv2.cvtColor(img2, cv2.COLOR_BGR2GRAY)
     img2 = cv2.resize(img2, (fh, fw))
@@ -83,10 +97,13 @@ def checkback(gray,check,fh,fw):
     cnts = imutils.grab_contours(cnts)
     for c in cnts:
         if cv2.contourArea(c) < 30000:
+            # print("break")
             continue
         else:
             print(cv2.contourArea(c))
             check = 1
+    cv2.imshow("delta", frameDelta)
+    cv2.imshow("thresh", thresh)
     return check
 
 def scanQR():
@@ -95,34 +112,40 @@ def scanQR():
     frame_h = int(cap.get(3))
     record = 0
     array = []
-
+    st = 0
     while True:
         check = 0
         _, frame = cap.read()
         if frame is None:
             continue
-        # process motion background
-        frame = cv2.resize(frame, (frame_h, frame_w))
-        gray = cv2.cvtColor(frame, cv2.COLOR_RGB2GRAY)
-        gray = cv2.GaussianBlur(gray, (21, 21), 0)
 
         # decode qr
         data, type, x, y, w, h = decode(frame)
         roi = frame[y:y + h, x:x + w]
-        if type == 'QRCODE' and record == 0:
-            mydata = data.decode('utf-8')
-            # check that qr code in 3 sec is same
-            if len(array) < 3:
-                array.append(mydata)
-                time.sleep(1)
-                continue
-            # save qr image
-            if len(set(array)) == 1:
-                os.chdir(qrcode)
-                word = str(mydata) + ".jpg"
-                cv2.imwrite(word, roi)
-                record = 1
-            array = []
+        if record == 0:
+            if type == 'QRCODE':
+                st = 0
+                mydata = data.decode('utf-8')
+                # check that qr code in 3 sec is same
+                if len(array) < 3:
+                    array.append(mydata)
+                    time.sleep(1)
+                    continue
+                # save qr image
+                if len(set(array)) == 1:
+                    os.chdir(qrcode)
+                    word = str(mydata) + ".jpg"
+                    cv2.imwrite(word, roi)
+                    record = 1
+                array = []
+            else:
+                # in 30 sec, if not find any qr code it will break
+                if st == 0:
+                    st = time.time()
+                else:
+                    et = time.time()
+                    if et-st > 30:
+                        break
         # create video file
         if record == 1:
             os.chdir(vdo)
@@ -132,18 +155,15 @@ def scanQR():
 
         # video recording
         if record == 2:
-            roi = frame[-size - 10:-10, -size - 10:-10]
-            roi[np.where(mask)] = 0
-            roi += img
+            checklogo(frame)
             cv2.putText(frame, "ID: {}".format(str(mydata)), (10, 20), cv2.FONT_HERSHEY_SIMPLEX, 0.5,
                         (0, 0, 255), 2)
             cv2.putText(frame, datetime.datetime.now().strftime("%D %T"), (10, frame.shape[0] - 10),
                         cv2.FONT_HERSHEY_SIMPLEX, 0.4, (0, 0, 255), 2)
             rec.write(frame)
 
-            # check motion to auto video ending
-            # if user leave frame that is a video ending
-            check = checkback(gray,check,frame_h,frame_w)
+            # check motion to auto video ending. if user leave frame that is a video ending
+            check = checkback(frame,check,frame_h,frame_w)
         cv2.imshow("test", frame)
         k = cv2.waitKey(1)
         if check != 1 and record == 2:
@@ -162,20 +182,14 @@ if __name__ == '__main__':
     base_dir = os.path.dirname(os.path.abspath(__file__))
     qrcode = os.path.join(base_dir,"qrcode")
     vdo = os.path.join(base_dir,"vdo")
-    logo = os.path.join(base_dir,"logo")
+    logo = os.path.join(base_dir,"image")
     try:
         os.mkdir(vdo)
         os.mkdir(qrcode)
         os.mkdir(logo)
     except:
         pass
-    os.chdir(logo)
-    # load logo image
-    img = cv2.imread('logo.png')
-    size = 50
-    img = cv2.resize(img, (size, size))
-    imggray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
-    ret, mask = cv2.threshold(imggray, 1, 255, cv2.THRESH_BINARY)
+    # get background image
     getback()
     while True:
         # wait input to turn on camera
