@@ -140,6 +140,9 @@ def scanQR():
             cv2.putText(frame, datetime.datetime.now().strftime("%D %T"), (10, frame.shape[0] - 10),
                         cv2.FONT_HERSHEY_SIMPLEX, 0.4, (0, 0, 255), 2)
             rec.write(frame)
+
+            # check motion to auto video ending
+            # if user leave frame that is a video ending
             check = checkback(gray,check,frame_h,frame_w)
         cv2.imshow("test", frame)
         k = cv2.waitKey(1)
@@ -176,8 +179,8 @@ if __name__ == '__main__':
     getback()
     while True:
         # wait input to turn on camera
-        check = input("0 for cam, 1 for break: ")
-        if check == "0":
+        wait_input = input("0 for cam, 1 for break: ")
+        if wait_input == "0":
             nameid = scanQR()
             try:
                 # create new and remove old
@@ -187,5 +190,5 @@ if __name__ == '__main__':
                 # post_requests(nameid, url)
             except:
                 pass
-        elif check == "1":
+        elif wait_input == "1":
             break
