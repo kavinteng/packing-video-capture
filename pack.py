@@ -162,7 +162,7 @@ def scanQR():
                         cv2.FONT_HERSHEY_SIMPLEX, 0.4, (0, 0, 255), 2)
             rec.write(frame)
 
-            # check motion to auto video ending. if user leave frame that is a video ending
+            # check motion to auto video ending. if user leave frame that is the end
             check = checkback(frame,check,frame_h,frame_w)
         cv2.imshow("test", frame)
         k = cv2.waitKey(1)
@@ -200,6 +200,7 @@ if __name__ == '__main__':
                 # create new and remove old
                 cutvdo(nameid)
                 os.remove('{}bc.mp4'.format(nameid))
+                # post to url
                 url = "https://globalapi.advice.co.th/api/upfile_json"
                 # post_requests(nameid, url)
             except:
