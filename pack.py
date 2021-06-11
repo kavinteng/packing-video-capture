@@ -101,28 +101,36 @@ def scanQR():
         _, frame = cap.read()
         if frame is None:
             continue
+        # process motion background
         frame = cv2.resize(frame, (frame_h, frame_w))
         gray = cv2.cvtColor(frame, cv2.COLOR_RGB2GRAY)
         gray = cv2.GaussianBlur(gray, (21, 21), 0)
+
+        # decode qr
         data, type, x, y, w, h = decode(frame)
         roi = frame[y:y + h, x:x + w]
         if type == 'QRCODE' and record == 0:
             mydata = data.decode('utf-8')
+            # check that qr code in 3 sec is same
             if len(array) < 3:
                 array.append(mydata)
                 time.sleep(1)
                 continue
+            # save qr image
             if len(set(array)) == 1:
                 os.chdir(qrcode)
                 word = str(mydata) + ".jpg"
                 cv2.imwrite(word, roi)
                 record = 1
             array = []
+        # create video file
         if record == 1:
             os.chdir(vdo)
             file = str(mydata)+"bc.mp4"
             rec = cv2.VideoWriter(file, cv2.VideoWriter_fourcc(*'MP4V'),21, (frame_h, frame_w))
             record = 2
+
+        # video recording
         if record == 2:
             roi = frame[-size - 10:-10, -size - 10:-10]
             roi[np.where(mask)] = 0
@@ -147,6 +155,7 @@ def scanQR():
         pass
 
 if __name__ == '__main__':
+    # create path dir
     base_dir = os.path.dirname(os.path.abspath(__file__))
     qrcode = os.path.join(base_dir,"qrcode")
     vdo = os.path.join(base_dir,"vdo")
@@ -158,6 +167,7 @@ if __name__ == '__main__':
     except:
         pass
     os.chdir(logo)
+    # load logo image
     img = cv2.imread('logo.png')
     size = 50
     img = cv2.resize(img, (size, size))
@@ -165,10 +175,12 @@ if __name__ == '__main__':
     ret, mask = cv2.threshold(imggray, 1, 255, cv2.THRESH_BINARY)
     getback()
     while True:
+        # wait input to turn on camera
         check = input("0 for cam, 1 for break: ")
         if check == "0":
             nameid = scanQR()
             try:
+                # create new and remove old
                 cutvdo(nameid)
                 os.remove('{}bc.mp4'.format(nameid))
                 url = "https://globalapi.advice.co.th/api/upfile_json"
