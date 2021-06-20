@@ -225,6 +225,7 @@ def scanQR(record,font,st,nameid,orderid,login):
         cv2.imshow("vdo", vdoframe)
         k = cv2.waitKey(1)
         if check != 1 and record == 2:
+            record = 0
             break
         if record == 3:
             record = 0
@@ -263,7 +264,8 @@ if __name__ == '__main__':
 
     while True:
         # wait input to turn on camera
-        wait_input = input("0 for cam, 1 for break: ")
+        if login == False:
+            wait_input = input("0 for cam, 1 for break: ")
         if wait_input == "0":
             record,font,st,nameid,orderid,login = scanQR(record,font,st,nameid,orderid,login)
             try:
