@@ -171,12 +171,15 @@ def scanQR(record,font,st,nameid,orderid,login):
                     if et-st > 30:
                         break
         if login:
-            cv2.rectangle(frame, (300, 0), (380, 40), (0, 0, 255), cv2.FILLED)
-            cv2.putText(frame, "Log out", (310, 25), font, 0.5, (255, 255, 255), 2)
-            cv2.rectangle(frame, (400, 0), (480, 40), (255, 0, 255), cv2.FILLED)
-            cv2.putText(frame, "Record", (410, 25), font, 0.5, (255, 255, 255), 2)
-            cv2.rectangle(frame, (500, 0), (580, 40), (0, 0, 255), 2)
-            cv2.putText(frame, "STOP", (520, 25), font, 0.5, (0, 0, 255), 2)
+            if record == 0:
+                cv2.rectangle(frame, (300, 0), (380, 40), (0, 0, 255), cv2.FILLED)
+                cv2.putText(frame, "Log out", (310, 25), font, 0.5, (255, 255, 255), 2)
+            if orderid != "-" and record != 2:
+                cv2.rectangle(frame, (400, 0), (480, 40), (255, 0, 255), cv2.FILLED)
+                cv2.putText(frame, "Record", (410, 25), font, 0.5, (255, 255, 255), 2)
+            if record == 2:
+                cv2.rectangle(frame, (500, 0), (580, 40), (0, 0, 255), 2)
+                cv2.putText(frame, "STOP", (520, 25), font, 0.5, (0, 0, 255), 2)
             cv2.putText(frame, f"Order ID : {str(orderid)}", (10, 50), font, 0.5, (0, 0, 255), 2)
             if len(lmList) != 0:
                 # print(lmList)
