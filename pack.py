@@ -63,7 +63,7 @@ def post_requests(nameid,orderid,url):
 
 # save background image
 def getback():
-    cap = cv2.VideoCapture(1)
+    cap = cv2.VideoCapture(0)
     while True:
         _, frame = cap.read()
         cv2.imwrite("image/background.jpg", frame)
@@ -93,6 +93,7 @@ def checkback(frame,check,fh,fw):
     img2 = cv2.cvtColor(img2, cv2.COLOR_BGR2GRAY)
     img2 = cv2.resize(img2, (fh, fw))
     frameDelta = cv2.absdiff(img2, gray)
+    print(img2.shape,gray.shape)
     thresh = cv2.threshold(frameDelta, 25, 255, cv2.THRESH_BINARY)[1]
     thresh = cv2.dilate(thresh, None, iterations=2)
     cnts = cv2.findContours(thresh.copy(), cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
@@ -109,7 +110,7 @@ def checkback(frame,check,fh,fw):
     return check
 
 def scanQR(record,font,st,nameid,orderid,login):
-    cap = cv2.VideoCapture(1)
+    cap = cv2.VideoCapture(0)
     frame_w = int(cap.get(4))
     frame_h = int(cap.get(3))
     orderid = "-"
@@ -125,8 +126,10 @@ def scanQR(record,font,st,nameid,orderid,login):
             continue
 
         frame = cv2.resize(frame, (640, 480))
+        # frame = cv2.resize(frame, (320, 240))
         frame = cv2.flip(frame, 1)
         vdoframe = frame.copy()
+        absframe = frame.copy()
         frame = detector.findHands(frame)
         lmList = detector.findPosition(frame, draw=False)
 
@@ -174,12 +177,18 @@ def scanQR(record,font,st,nameid,orderid,login):
             if record == 0:
                 cv2.rectangle(frame, (300, 0), (380, 40), (0, 0, 255), cv2.FILLED)
                 cv2.putText(frame, "Log out", (310, 25), font, 0.5, (255, 255, 255), 2)
+                # cv2.rectangle(frame, (150, 0), (190, 40), (0, 0, 255), cv2.FILLED)
+                # cv2.putText(frame, "Log out", (160, 25), font, 0.5, (255, 255, 255), 2)
             if orderid != "-" and record != 2:
                 cv2.rectangle(frame, (400, 0), (480, 40), (255, 0, 255), cv2.FILLED)
                 cv2.putText(frame, "Record", (410, 25), font, 0.5, (255, 255, 255), 2)
+                # cv2.rectangle(frame, (200, 0), (240, 40), (255, 0, 255), cv2.FILLED)
+                # cv2.putText(frame, "Record", (210, 25), font, 0.5, (255, 255, 255), 2)
             if record == 2:
                 cv2.rectangle(frame, (500, 0), (580, 40), (0, 0, 255), 2)
                 cv2.putText(frame, "STOP", (520, 25), font, 0.5, (0, 0, 255), 2)
+                # cv2.rectangle(frame, (250, 0), (290, 40), (0, 0, 255), 2)
+                # cv2.putText(frame, "STOP", (260, 25), font, 0.5, (0, 0, 255), 2)
             cv2.putText(frame, f"Order ID : {str(orderid)}", (10, 50), font, 0.5, (0, 0, 255), 2)
             if len(lmList) != 0:
                 # print(lmList)
@@ -222,7 +231,7 @@ def scanQR(record,font,st,nameid,orderid,login):
             rec.write(vdoframe)
 
             # check motion to auto video ending. if user leave frame that is the end
-            check = checkback(frame,check,frame_h,frame_w)
+            check = checkback(absframe,check,frame_h,frame_w)
         cv2.putText(frame, f"Log in as : {str(nameid)}", (10, 20), font, 0.5, (255, 0, 0), 2)
         cv2.imshow("test", frame)
         cv2.imshow("vdo", vdoframe)
@@ -234,6 +243,7 @@ def scanQR(record,font,st,nameid,orderid,login):
             record = 0
             break
         if k == ord('q'):
+            record = 0
             break
     cap.release()
     cv2.destroyAllWindows()
