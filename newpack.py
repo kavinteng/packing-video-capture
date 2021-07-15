@@ -118,7 +118,7 @@ def main(record,font,nameid,login,array,img_aruco):
     # Load Object Detector
     detector = HomogeneousBgDetector()
 
-    cap = cv2.VideoCapture(1)
+    cap = cv2.VideoCapture(0)
     cap.set(3, 640)
     cap.set(4, 480)
     frame_w = int(cap.get(4))
