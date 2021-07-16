@@ -8,6 +8,7 @@ import numpy as np
 import requests
 import base64
 from object_detector import *
+from imutils.video import WebcamVideoStream
 
 # decode QR code
 def decode(image):
@@ -118,19 +119,19 @@ def main(record,font,nameid,login,array,img_aruco):
     # Load Object Detector
     detector = HomogeneousBgDetector()
 
-    cap = cv2.VideoCapture(0)
-    cap.set(3, 640)
-    cap.set(4, 480)
-    frame_w = int(cap.get(4))
-    frame_h = int(cap.get(3))
-    print(frame_w,frame_h)
+    cap = WebcamVideoStream(src=0).start()
+    # cap.set(3, 640)
+    # cap.set(4, 480)
+    # frame_w = int(cap.get(4))
+    # frame_h = int(cap.get(3))
+    # print(frame_w,frame_h)
     orderid = "-"
     st = 0
     array2 = []
     out = 0
 
     while True:
-        _, frame = cap.read()
+        frame = cap.read()
         if frame is None:
             continue
 
@@ -212,7 +213,9 @@ def main(record,font,nameid,login,array,img_aruco):
         if record == 1:
             os.chdir(vdo)
             file = str(orderid)+"bc.mp4"
-            rec = cv2.VideoWriter(file, cv2.VideoWriter_fourcc(*'MP4V'),21, (frame_h, frame_w))
+            video_size=(640,480)
+            fourcc=cv2.VideoWriter_fourcc('m','p','4','v')
+            rec = cv2.VideoWriter(file, fourcc,21, video_size)
             record = 2
 
         # video recording
@@ -234,7 +237,7 @@ def main(record,font,nameid,login,array,img_aruco):
         if k == ord('q'):
             record = 0
             break
-    cap.release()
+    cap.stop()
     cv2.destroyAllWindows()
     try:
         return record,font,st,nameid,orderid,login
