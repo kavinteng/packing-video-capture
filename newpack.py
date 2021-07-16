@@ -135,8 +135,9 @@ def main(record,font,nameid,login,array,img_aruco):
         if frame is None:
             continue
 
-        frame = cv2.resize(frame, (640, 480))
+        frame = cv2.resize(frame, (320, 240))
         vdoframe = frame.copy()
+        vdoframe = cv2.resize(vdoframe,(1080,720))
 
         # decode qr
         data, type, x, y, w, h = decode(frame)
@@ -213,7 +214,7 @@ def main(record,font,nameid,login,array,img_aruco):
         if record == 1:
             os.chdir(vdo)
             file = str(orderid)+"bc.mp4"
-            video_size=(640,480)
+            video_size=(1080,720)
             fourcc=cv2.VideoWriter_fourcc('m','p','4','v')
             rec = cv2.VideoWriter(file, fourcc,21, video_size)
             record = 2
