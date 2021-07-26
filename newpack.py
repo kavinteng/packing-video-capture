@@ -50,9 +50,10 @@ def post_requests(nameid,orderid,url):
     os.chdir(vdo)
     file_name = "{}.mp4".format(orderid)
     name, extension = os.path.splitext(file_name)
+    customer, invoice = name.split(' ')
     with open(file_name, "rb") as file:
         text = base64.b64encode(file.read()).decode('utf-8')
-        data = {"data": text, "Username": nameid, "Order ID": name, "file_type": extension}
+        data = {"data": text, "Username": nameid, "Customer ID": customer, "invoice": invoice, "file_type": extension}
         response = requests.post(url, json=data)
 
         if response.ok:
@@ -136,6 +137,7 @@ def main(record,font,nameid,login,array,img_aruco):
             continue
 
         frame = cv2.resize(frame, (320, 240))
+#         frame = cv2.resize(frame, (1080, 720))
         vdoframe = frame.copy()
         vdoframe = cv2.resize(vdoframe,(1080,720))
 
@@ -157,7 +159,7 @@ def main(record,font,nameid,login,array,img_aruco):
                     if end == orderid:
                         array.append(end)
                         if out == 0:
-                            cv2.putText(frame, f"check:{str(len(array))}", (500, 100), font, 0.5, (0, 255, 0), 2)
+                            cv2.putText(frame, f"check:{str(len(array))}", (100, 70), font, 0.5, (0, 255, 0), 2)
                         # config frame to check stop
                         if len(array) > 30:
                             out = 1
@@ -177,7 +179,7 @@ def main(record,font,nameid,login,array,img_aruco):
 
         # config delay stop time
         if out == 1:
-            cv2.putText(frame, "STOP", (400, 50), font, 2, (0, 0, 255), 4)
+            cv2.putText(frame, "STOP", (10, 90), font, 1, (0, 0, 255), 4)
             if st == 0:
                 st = time.time()
             else:
@@ -191,9 +193,9 @@ def main(record,font,nameid,login,array,img_aruco):
 
         # config delay start time
         if login:
-            cv2.putText(frame, f"Order ID : {str(orderid)}", (10, 50), font, 0.7, (0, 0, 255), 2)
+            cv2.putText(frame, f"Order ID : {str(orderid)}", (10, 50), font, 0.5, (0, 0, 255), 2)
             if orderid != "-" and record != 2:
-                cv2.putText(frame, "RECORDING", (400, 50), font, 1, (0, 0, 255), 2)
+                cv2.putText(frame, "RECORDING", (10, 70), font, 0.5, (0, 0, 255), 2)
                 if st == 0:
                     st = time.time()
                 else:
@@ -202,7 +204,7 @@ def main(record,font,nameid,login,array,img_aruco):
                         record = 1
             # config time to logout
             elif orderid == "-":
-                measure_object(img_aruco,aruco_dict,parameters,detector,frame)
+                measure_object(frame,aruco_dict,parameters,detector,frame)
                 if st == 0:
                     st = time.time()
                 else:
@@ -216,24 +218,24 @@ def main(record,font,nameid,login,array,img_aruco):
             file = str(orderid)+"bc.mp4"
             video_size=(1080,720)
             fourcc=cv2.VideoWriter_fourcc('m','p','4','v')
-            rec = cv2.VideoWriter(file, fourcc,21, video_size)
+            rec = cv2.VideoWriter(file, fourcc,15, video_size)
             record = 2
 
         # video recording
         if record == 2:
             if out != 1:
-                cv2.putText(frame, "RECORDING", (400, 50), font, 1, (0, 0, 255), 2)
+                cv2.putText(frame, "RECORDING", (10, 70), font, 0.5, (0, 0, 255), 2)
             checklogo(vdoframe)
             cv2.putText(vdoframe, "Order ID: {}".format(str(orderid)), (10, 20), cv2.FONT_HERSHEY_SIMPLEX, 0.7,
                         (0, 0, 255), 2)
-            cv2.putText(vdoframe, datetime.datetime.now().strftime("%d/%m/%Y %T"), (10, frame.shape[0] - 10),
+            cv2.putText(vdoframe, datetime.datetime.now().strftime("%d/%m/%Y %T"), (10, vdoframe.shape[0] - 10),
                         font, 0.4, (0, 0, 255), 1)
             rec.write(vdoframe)
         cv2.putText(frame, f"Log in as : {str(nameid)}", (10, 20), font, 0.7, (255, 0, 0), 2)
         cv2.imshow("test", frame)
-        cv2.imshow("vdo", vdoframe)
+#         cv2.imshow("vdo", vdoframe)
         cv2.moveWindow("test", 640, 0)
-        cv2.moveWindow("vdo", 0, 0)
+#         cv2.moveWindow("vdo", 0, 0)
         k = cv2.waitKey(1)
         if k == ord('q'):
             record = 0
@@ -279,7 +281,7 @@ if __name__ == '__main__':
                 os.remove('{}bc.mp4'.format(orderid))
                 # post to url
                 url = "https://globalapi.advice.co.th/api/upfile_json"
-                # post_requests(nameid,orderid, url)
+                post_requests(nameid,orderid, url)
             except:
                 pass
         # elif wait_input == "1":
