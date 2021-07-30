@@ -1,5 +1,8 @@
 import os
 import cv2
+import subprocess
+import config
+import ffmpeg
 from pyzbar import pyzbar
 from moviepy.video.io.ffmpeg_tools import ffmpeg_extract_subclip
 import time
@@ -50,10 +53,9 @@ def post_requests(nameid,orderid,url):
     os.chdir(vdo)
     file_name = "{}.mp4".format(orderid)
     name, extension = os.path.splitext(file_name)
-    customer, invoice = name.split(' ')
     with open(file_name, "rb") as file:
         text = base64.b64encode(file.read()).decode('utf-8')
-        data = {"data": text, "Username": nameid, "Customer ID": customer, "invoice": invoice, "file_type": extension}
+        data = {"data": text, "Username": nameid, "Order ID": name, "file_type": extension}
         response = requests.post(url, json=data)
 
         if response.ok:
@@ -136,8 +138,7 @@ def main(record,font,nameid,login,array,img_aruco):
         if frame is None:
             continue
 
-        frame = cv2.resize(frame, (320, 240))
-#         frame = cv2.resize(frame, (1080, 720))
+        frame = cv2.resize(frame, (640, 480))
         vdoframe = frame.copy()
         vdoframe = cv2.resize(vdoframe,(1080,720))
 
@@ -159,7 +160,7 @@ def main(record,font,nameid,login,array,img_aruco):
                     if end == orderid:
                         array.append(end)
                         if out == 0:
-                            cv2.putText(frame, f"check:{str(len(array))}", (100, 70), font, 0.5, (0, 255, 0), 2)
+                            cv2.putText(frame, f"check:{str(len(array))}", (500, 100), font, 0.5, (0, 255, 0), 2)
                         # config frame to check stop
                         if len(array) > 30:
                             out = 1
@@ -179,7 +180,7 @@ def main(record,font,nameid,login,array,img_aruco):
 
         # config delay stop time
         if out == 1:
-            cv2.putText(frame, "STOP", (10, 90), font, 1, (0, 0, 255), 4)
+            cv2.putText(frame, "STOP", (400, 50), font, 2, (0, 0, 255), 4)
             if st == 0:
                 st = time.time()
             else:
@@ -193,9 +194,9 @@ def main(record,font,nameid,login,array,img_aruco):
 
         # config delay start time
         if login:
-            cv2.putText(frame, f"Order ID : {str(orderid)}", (10, 50), font, 0.5, (0, 0, 255), 2)
+            cv2.putText(frame, f"Order ID : {str(orderid)}", (10, 50), font, 0.7, (0, 0, 255), 2)
             if orderid != "-" and record != 2:
-                cv2.putText(frame, "RECORDING", (10, 70), font, 0.5, (0, 0, 255), 2)
+                cv2.putText(frame, "RECORDING", (400, 50), font, 1, (0, 0, 255), 2)
                 if st == 0:
                     st = time.time()
                 else:
@@ -215,16 +216,16 @@ def main(record,font,nameid,login,array,img_aruco):
         # create video file
         if record == 1:
             os.chdir(vdo)
-            file = str(orderid)+"bc.mp4"
-            video_size=(1080,720)
-            fourcc=cv2.VideoWriter_fourcc('m','p','4','v')
-            rec = cv2.VideoWriter(file, fourcc,15, video_size)
+            file = str(orderid)+"be.mp4"
+            video_size = (1080,720)
+            fourcc = cv2.VideoWriter_fourcc('m', 'p', '4', 'v')
+            rec = cv2.VideoWriter(file, fourcc,20, video_size)
             record = 2
 
         # video recording
         if record == 2:
             if out != 1:
-                cv2.putText(frame, "RECORDING", (10, 70), font, 0.5, (0, 0, 255), 2)
+                cv2.putText(frame, "RECORDING", (400, 50), font, 1, (0, 0, 255), 2)
             checklogo(vdoframe)
             cv2.putText(vdoframe, "Order ID: {}".format(str(orderid)), (10, 20), cv2.FONT_HERSHEY_SIMPLEX, 0.7,
                         (0, 0, 255), 2)
@@ -233,9 +234,9 @@ def main(record,font,nameid,login,array,img_aruco):
             rec.write(vdoframe)
         cv2.putText(frame, f"Log in as : {str(nameid)}", (10, 20), font, 0.7, (255, 0, 0), 2)
         cv2.imshow("test", frame)
-#         cv2.imshow("vdo", vdoframe)
+        # cv2.imshow("vdo", vdoframe)
         cv2.moveWindow("test", 640, 0)
-#         cv2.moveWindow("vdo", 0, 0)
+        # cv2.moveWindow("vdo", 0, 0)
         k = cv2.waitKey(1)
         if k == ord('q'):
             record = 0
@@ -277,12 +278,19 @@ if __name__ == '__main__':
             record, font, st, nameid, orderid, login = main(record, font, nameid, login,array,img_aruco)
             try:
                 # create new and remove old
+                sourcefilepath = '{}be.mp4'.format(orderid)
+                destfile = '{}bc.mp4'.format(orderid)
+                a = os.path.join(vdo,sourcefilepath)
+                b = os.path.join(vdo,destfile)
+                os.system("ffmpeg -i {} -vcodec libx265 -crf 28 {}".format(a,b))
                 cutvdo(orderid)
-                os.remove('{}bc.mp4'.format(orderid))
+                os.remove(destfile)
+                os.remove(sourcefilepath)
+                print('finish')
                 # post to url
                 url = "https://globalapi.advice.co.th/api/upfile_json"
-                post_requests(nameid,orderid, url)
-            except:
-                pass
+                # post_requests(nameid,orderid, url)
+            except Exception as e:
+                print(e)
         # elif wait_input == "1":
         #     break
