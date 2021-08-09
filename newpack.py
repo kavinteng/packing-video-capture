@@ -10,6 +10,7 @@ import base64
 from object_detector import *
 from imutils.video import WebcamVideoStream
 
+
 # decode QR code
 def decode(image):
     num = 0
@@ -22,14 +23,16 @@ def decode(image):
         type = obj.type
     return num, type, x, y, w, h
 
+
 # bounding box QR code
 def draw_box(decoded, image):
     x = decoded.rect.left
     y = decoded.rect.top
     w = decoded.rect.width
     h = decoded.rect.height
-    image = cv2.rectangle(image, (x, y),(x+w, y+h),color=(0, 255, 0),thickness=5)
+    image = cv2.rectangle(image, (x, y), (x + w, y + h), color=(0, 255, 0), thickness=5)
     return image, x, y, w, h
+
 
 # edit video
 def cutvdo(mydata):
@@ -40,20 +43,20 @@ def cutvdo(mydata):
 
     end = int(frames / fps)
     if end >= 180:
-        start = end-180
+        start = end - 180
     else:
         start = 0
     ffmpeg_extract_subclip('{}bc.mp4'.format(mydata), start, end, targetname='{}.mp4'.format(mydata))
 
+
 # post by requests to url
-def post_requests(nameid,orderid,url):
+def post_requests(nameid,customid, order, tel, url):
     os.chdir(vdo)
-    file_name = "{}.mp4".format(orderid)
+    file_name = "{}.mp4".format(order)
     name, extension = os.path.splitext(file_name)
-    customer, invoice = name.split(' ')
     with open(file_name, "rb") as file:
         text = base64.b64encode(file.read()).decode('utf-8')
-        data = {"data": text, "Username": nameid, "Customer ID": customer, "invoice": invoice, "file_type": extension}
+        data = {"data": text, "Username": nameid, "Customer ID": customid, "Order ID": order, "Tel": tel, "file_type": extension}
         response = requests.post(url, json=data)
 
         if response.ok:
@@ -61,6 +64,7 @@ def post_requests(nameid,orderid,url):
             # print(response.json())
         else:
             print("Something went wrong!")
+
 
 # load logo image
 def checklogo(frame):
@@ -74,8 +78,9 @@ def checklogo(frame):
     roilogo[np.where(mask)] = 0
     roilogo += img
 
+
 # measure object
-def measure_object(img_aruco,aruco_dict,parameters,detector,img):
+def measure_object(img_aruco, aruco_dict, parameters, detector, img):
     corners, _, _ = cv2.aruco.detectMarkers(img_aruco, aruco_dict, parameters=parameters)
     if corners:
 
@@ -112,7 +117,8 @@ def measure_object(img_aruco,aruco_dict,parameters,detector,img):
             cv2.putText(img, "Height {} cm".format(round(object_height, 1)), (int(x - 100), int(y + 15)),
                         cv2.FONT_HERSHEY_PLAIN, 2, (100, 200, 0), 2)
 
-def main(record,font,nameid,login,array,img_aruco):
+
+def main(record, font, nameid, login, array, img_aruco):
     # Load Aruco detector
     parameters = cv2.aruco.DetectorParameters_create()
     aruco_dict = cv2.aruco.Dictionary_get(cv2.aruco.DICT_5X5_50)
@@ -120,7 +126,7 @@ def main(record,font,nameid,login,array,img_aruco):
     # Load Object Detector
     detector = HomogeneousBgDetector()
 
-    cap = cv2.VideoCapture(0)
+    cap = cv2.VideoCapture(1)
     # cap.set(3, 640)
     # cap.set(4, 480)
     # frame_w = int(cap.get(4))
@@ -132,14 +138,14 @@ def main(record,font,nameid,login,array,img_aruco):
     out = 0
 
     while True:
-        _,frame = cap.read()
+        _, frame = cap.read()
         if frame is None:
             continue
 
         frame = cv2.resize(frame, (320, 240))
-#         frame = cv2.resize(frame, (1080, 720))
+        #         frame = cv2.resize(frame, (1080, 720))
         vdoframe = frame.copy()
-        vdoframe = cv2.resize(vdoframe,(1080,720))
+        vdoframe = cv2.resize(vdoframe, (1080, 720))
 
         # decode qr
         data, type, x, y, w, h = decode(frame)
@@ -184,7 +190,7 @@ def main(record,font,nameid,login,array,img_aruco):
                 st = time.time()
             else:
                 et = time.time()
-                if et-st >3:
+                if et - st > 3:
                     record = 0
                     break
 
@@ -200,11 +206,11 @@ def main(record,font,nameid,login,array,img_aruco):
                     st = time.time()
                 else:
                     et = time.time()
-                    if et-st > 3:
+                    if et - st > 3:
                         record = 1
             # config time to logout
             elif orderid == "-":
-                measure_object(frame,aruco_dict,parameters,detector,frame)
+                measure_object(frame, aruco_dict, parameters, detector, frame)
                 if st == 0:
                     st = time.time()
                 else:
@@ -215,10 +221,13 @@ def main(record,font,nameid,login,array,img_aruco):
         # create video file
         if record == 1:
             os.chdir(vdo)
-            file = str(orderid)+"bc.mp4"
-            video_size=(1080,720)
-            fourcc=cv2.VideoWriter_fourcc(*'H264')
-            rec = cv2.VideoWriter(file, fourcc,15, video_size)
+            test1, test2 = orderid.split('C')
+            customid, test4 = test2.split('O')
+            order, tel = test4.split('T')
+            file = str(order) + "bc.mp4"
+            video_size = (1080, 720)
+            fourcc = cv2.VideoWriter_fourcc(*'H264')
+            rec = cv2.VideoWriter(file, fourcc, 15, video_size)
             record = 2
 
         # video recording
@@ -226,16 +235,16 @@ def main(record,font,nameid,login,array,img_aruco):
             if out != 1:
                 cv2.putText(frame, "RECORDING", (10, 70), font, 0.5, (0, 0, 255), 2)
             checklogo(vdoframe)
-            cv2.putText(vdoframe, "Order ID: {}".format(str(orderid)), (10, 20), cv2.FONT_HERSHEY_SIMPLEX, 0.7,
+            cv2.putText(vdoframe, "Order ID: {}".format(str(order)), (10, 20), cv2.FONT_HERSHEY_SIMPLEX, 0.7,
                         (0, 0, 255), 2)
             cv2.putText(vdoframe, datetime.datetime.now().strftime("%d/%m/%Y %T"), (10, vdoframe.shape[0] - 10),
                         font, 0.4, (0, 0, 255), 1)
             rec.write(vdoframe)
         cv2.putText(frame, f"Log in as : {str(nameid)}", (10, 20), font, 0.7, (255, 0, 0), 2)
         cv2.imshow("test", frame)
-#         cv2.imshow("vdo", vdoframe)
+        cv2.imshow("vdo", vdoframe)
         cv2.moveWindow("test", 640, 0)
-#         cv2.moveWindow("vdo", 0, 0)
+        cv2.moveWindow("vdo", 0, 0)
         k = cv2.waitKey(1)
         if k == ord('q'):
             record = 0
@@ -243,9 +252,10 @@ def main(record,font,nameid,login,array,img_aruco):
     cap.release()
     cv2.destroyAllWindows()
     try:
-        return record,font,st,nameid,orderid,login
+        return record, font, st, nameid, customid, order, tel, login
     except:
         pass
+
 
 if __name__ == '__main__':
     # create path dir
@@ -274,16 +284,16 @@ if __name__ == '__main__':
         # if login == False:
         #     wait_input = input("0 for cam, 1 for break: ")
         # if wait_input == "0":
-            record, font, st, nameid, orderid, login = main(record, font, nameid, login,array,img_aruco)
-            
-            # create new and remove old
-            try:
-                cutvdo(orderid)
-                os.remove('{}bc.mp4'.format(orderid))
-                # post to url
-                url = "https://globalapi.advice.co.th/api/upfile_json"
-#                 post_requests(nameid,orderid, url)
-            except:
-                pass
-        # elif wait_input == "1":
-        #     break
+        record, font, st, nameid, customid, order, tel, login = main(record, font, nameid, login, array, img_aruco)
+
+        # create new and remove old
+        try:
+            cutvdo(order)
+            os.remove('{}bc.mp4'.format(order))
+            # post to url
+            url = "https://globalapi.advice.co.th/api/upfile_json"
+            # post_requests(nameid,customid, order, tel, url)
+        except:
+            pass
+    # elif wait_input == "1":
+    #     break
