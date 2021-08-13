@@ -126,7 +126,7 @@ def main(record, font, nameid, login, array, img_aruco):
     # Load Object Detector
     detector = HomogeneousBgDetector()
 
-    cap = cv2.VideoCapture(1)
+    cap = cv2.VideoCapture(0)
     # cap.set(3, 640)
     # cap.set(4, 480)
     # frame_w = int(cap.get(4))
@@ -221,9 +221,15 @@ def main(record, font, nameid, login, array, img_aruco):
         # create video file
         if record == 1:
             os.chdir(vdo)
-            test1, test2 = orderid.split('C')
-            customid, test4 = test2.split('O')
-            order, tel = test4.split('T')
+            try:
+                test1, test2 = orderid.split('C')
+                customid, test4 = test2.split('O')
+                order, tel = test4.split('T')
+            except Exception as e:
+                print(e)
+                orderid = "-"
+                record = 0
+                continue
             file = str(order) + "bc.mp4"
             video_size = (1080, 720)
             fourcc = cv2.VideoWriter_fourcc(*'H264')
@@ -242,9 +248,9 @@ def main(record, font, nameid, login, array, img_aruco):
             rec.write(vdoframe)
         cv2.putText(frame, f"Log in as : {str(nameid)}", (10, 20), font, 0.7, (255, 0, 0), 2)
         cv2.imshow("test", frame)
-        cv2.imshow("vdo", vdoframe)
+#         cv2.imshow("vdo", vdoframe)
         cv2.moveWindow("test", 640, 0)
-        cv2.moveWindow("vdo", 0, 0)
+#         cv2.moveWindow("vdo", 0, 0)
         k = cv2.waitKey(1)
         if k == ord('q'):
             record = 0
@@ -292,7 +298,7 @@ if __name__ == '__main__':
             os.remove('{}bc.mp4'.format(order))
             # post to url
             url = "https://globalapi.advice.co.th/api/upfile_json"
-            # post_requests(nameid,customid, order, tel, url)
+#             post_requests(nameid,customid, order, tel, url)
         except:
             pass
     # elif wait_input == "1":
