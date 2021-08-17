@@ -8,8 +8,14 @@ import numpy as np
 import requests
 import base64
 from object_detector import *
-from imutils.video import WebcamVideoStream
+import urllib.request
 
+def connect(host='http://google.com'):
+    try:
+        urllib.request.urlopen(host)
+        return True
+    except:
+        return False
 
 # decode QR code
 def decode(image):
@@ -264,42 +270,45 @@ def main(record, font, nameid, login, array, img_aruco):
 
 
 if __name__ == '__main__':
-    # create path dir
-    base_dir = os.path.dirname(os.path.abspath(__file__))
-    qrcode = os.path.join(base_dir, "qrcode")
-    vdo = os.path.join(base_dir, "vdo")
-    logo = os.path.join(base_dir, "image")
-    try:
-        os.mkdir(vdo)
-        os.mkdir(qrcode)
-        os.mkdir(logo)
-    except:
-        pass
-
-    record = 0
-    array = []
-    font = cv2.FONT_HERSHEY_SIMPLEX
-    st = 0
-    nameid = "-"
-    orderid = "-"
-    login = False
-    img_aruco = cv2.imread("phone_aruco_marker.jpg")
-
-    while True:
-        # wait input to turn on camera
-        # if login == False:
-        #     wait_input = input("0 for cam, 1 for break: ")
-        # if wait_input == "0":
-        record, font, st, nameid, customid, order, tel, login = main(record, font, nameid, login, array, img_aruco)
-
-        # create new and remove old
+    if connect():
+        # create path dir
+        base_dir = os.path.dirname(os.path.abspath(__file__))
+        qrcode = os.path.join(base_dir, "qrcode")
+        vdo = os.path.join(base_dir, "vdo")
+        logo = os.path.join(base_dir, "image")
         try:
-            cutvdo(order)
-            os.remove('{}bc.mp4'.format(order))
-            # post to url
-            url = "https://globalapi.advice.co.th/api/upfile_json"
-#             post_requests(nameid,customid, order, tel, url)
+            os.mkdir(vdo)
+            os.mkdir(qrcode)
+            os.mkdir(logo)
         except:
             pass
-    # elif wait_input == "1":
-    #     break
+
+        record = 0
+        array = []
+        font = cv2.FONT_HERSHEY_SIMPLEX
+        st = 0
+        nameid = "-"
+        orderid = "-"
+        login = False
+        img_aruco = cv2.imread("phone_aruco_marker.jpg")
+
+        while True:
+            # wait input to turn on camera
+            # if login == False:
+            #     wait_input = input("0 for cam, 1 for break: ")
+            # if wait_input == "0":
+            record, font, st, nameid, customid, order, tel, login = main(record, font, nameid, login, array, img_aruco)
+
+            # create new and remove old
+            try:
+                cutvdo(order)
+                os.remove('{}bc.mp4'.format(order))
+                # post to url
+                url = "https://globalapi.advice.co.th/api/upfile_json"
+    #             post_requests(nameid,customid, order, tel, url)
+            except:
+                pass
+        # elif wait_input == "1":
+        #     break
+    else:
+        print('No Internet connection!')
