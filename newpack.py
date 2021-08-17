@@ -292,25 +292,3 @@ if __name__ == '__main__':
     img_aruco = cv2.imread("phone_aruco_marker.jpg")
 
     while True:
-        if connect() == False:
-            print('No Internet connection!')
-            continue
-        else:
-            print('Internet connected')
-        # wait input to turn on camera
-        # if login == False:
-        #     wait_input = input("0 for cam, 1 for break: ")
-        # if wait_input == "0":
-
-        # create new and remove old
-        try:
-            record, font, st, nameid, customid, order, tel, login = main(record, font, nameid, login, array, img_aruco)
-            cutvdo(order)
-            os.remove('{}bc.mp4'.format(order))
-            # post to url
-            url = "https://globalapi.advice.co.th/api/upfile_json"
-            post_requests(nameid,customid, order, tel, url)
-        except Exception as e:
-            print(e)
-    # elif wait_input == "1":
-    #     break
