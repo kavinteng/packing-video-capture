@@ -8,6 +8,7 @@ import numpy as np
 import requests
 import base64
 from object_detector import *
+from tk2 import confirm
 import urllib.request
 
 def connect(host='http://google.com'):
@@ -41,7 +42,7 @@ def draw_box(decoded, image):
 
 
 # edit video
-def cutvdo(mydata):
+def cutvdo(mydata,vdo):
     os.chdir(vdo)
     data = cv2.VideoCapture('{}bc.mp4'.format(mydata))
     frames = data.get(cv2.CAP_PROP_FRAME_COUNT)
@@ -56,7 +57,7 @@ def cutvdo(mydata):
 
 
 # post by requests to url
-def post_requests(nameid,customid, order, tel, url):
+def post_requests(vdo,nameid,customid, order, tel, url):
     os.chdir(vdo)
     file_name = "{}.mp4".format(order)
     name, extension = os.path.splitext(file_name)
@@ -73,7 +74,7 @@ def post_requests(nameid,customid, order, tel, url):
 
 
 # load logo image
-def checklogo(frame):
+def checklogo(frame,logo):
     os.chdir(logo)
     img = cv2.imread('logo4.png')
     size = 100
@@ -124,7 +125,7 @@ def measure_object(img_aruco, aruco_dict, parameters, detector, img):
                         cv2.FONT_HERSHEY_PLAIN, 2, (100, 200, 0), 2)
 
 
-def main(record, font, nameid, login, array, img_aruco):
+def main(ip,port,vdo,logo,camID,positionx,positiony,record, font, nameid, login, array, img_aruco):
     # Load Aruco detector
     parameters = cv2.aruco.DetectorParameters_create()
     aruco_dict = cv2.aruco.Dictionary_get(cv2.aruco.DICT_5X5_50)
@@ -132,7 +133,7 @@ def main(record, font, nameid, login, array, img_aruco):
     # Load Object Detector
     detector = HomogeneousBgDetector()
 
-    cap = cv2.VideoCapture(0)
+    cap = cv2.VideoCapture(camID)
     # cap.set(3, 640)
     # cap.set(4, 480)
     # frame_w = int(cap.get(4))
@@ -173,15 +174,18 @@ def main(record, font, nameid, login, array, img_aruco):
                         if out == 0:
                             cv2.putText(frame, f"check:{str(len(array))}", (100, 70), font, 0.5, (0, 255, 0), 2)
                         # config frame to check stop
-                        if len(array) > 30:
+                        if len(array) > 10:
                             out = 1
 
             elif mydata.isnumeric() == True and record == 0:
                 if mydata == "":
                     nameid = "username cannot empty"
                     continue
-                nameid = mydata
-                login = True
+                elif len(mydata)==6 and nameid!=mydata:
+                    nameid = mydata
+                    confirm(ip,port)
+                    login = True
+                    continue
 
         if type == 0 and out == 0:
             array2.append(type)
@@ -198,6 +202,7 @@ def main(record, font, nameid, login, array, img_aruco):
                 et = time.time()
                 if et - st > 3:
                     record = 0
+                    confirm(ip,port)
                     break
 
         if login == False:
@@ -205,8 +210,9 @@ def main(record, font, nameid, login, array, img_aruco):
 
         # config delay start time
         if login:
+            rec_color = (0,255,0)
             cv2.putText(frame, f"Order ID : {str(orderid)}", (10, 50), font, 0.5, (0, 0, 255), 2)
-            if orderid != "-" and record != 2:
+            if orderid != "-" and record == 0:
                 cv2.putText(frame, "RECORDING", (10, 70), font, 0.5, (0, 0, 255), 2)
                 if st == 0:
                     st = time.time()
@@ -214,6 +220,9 @@ def main(record, font, nameid, login, array, img_aruco):
                     et = time.time()
                     if et - st > 3:
                         record = 1
+                        time.sleep(1)
+                    elif et - st <1:
+                        confirm(ip,port)
             # config time to logout
             elif orderid == "-":
                 measure_object(frame, aruco_dict, parameters, detector, frame)
@@ -239,78 +248,80 @@ def main(record, font, nameid, login, array, img_aruco):
             file = str(order) + "bc.mp4"
             video_size = (1080, 720)
             fourcc = cv2.VideoWriter_fourcc(*'H264')
-            rec = cv2.VideoWriter(file, fourcc, 15, video_size)
+            rec = cv2.VideoWriter(file, fourcc, 10, video_size)
             record = 2
 
         # video recording
         if record == 2:
             if out != 1:
+                rec_color = (255, 0, 0)
                 cv2.putText(frame, "RECORDING", (10, 70), font, 0.5, (0, 0, 255), 2)
-            checklogo(vdoframe)
+            elif out == 1:
+                rec_color = (0, 0, 255)
+            checklogo(vdoframe,logo)
             cv2.putText(vdoframe, "Order ID: {}".format(str(order)), (10, 20), cv2.FONT_HERSHEY_SIMPLEX, 0.7,
                         (0, 0, 255), 2)
             cv2.putText(vdoframe, datetime.datetime.now().strftime("%d/%m/%Y %T"), (10, vdoframe.shape[0] - 10),
                         font, 0.4, (0, 0, 255), 1)
             rec.write(vdoframe)
-        cv2.putText(frame, f"Log in as : {str(nameid)}", (10, 20), font, 0.7, (255, 0, 0), 2)
-        cv2.imshow("test", frame)
+        cv2.putText(frame, f"Log in as : {str(nameid)}", (10, 25), font, 0.7, (255, 0, 0), 2)
+        if login == True:
+            cv2.rectangle(frame, (0, 0), (320, 240), rec_color, 10)
+        cv2.imshow("{}".format(camID), frame)
 #         cv2.imshow("vdo", vdoframe)
-        cv2.moveWindow("test", 640, 0)
+        cv2.moveWindow("{}".format(camID), positionx, positiony)
 #         cv2.moveWindow("vdo", 0, 0)
         k = cv2.waitKey(1)
         if k == ord('q'):
-            record = 0
-            break
-    cap.release()
-    cv2.destroyAllWindows()
+            exit()
     try:
         return record, font, st, nameid, customid, order, tel, login
     except:
         pass
 
 
-if __name__ == '__main__':
-    # create path dir
-    base_dir = os.path.dirname(os.path.abspath(__file__))
-    qrcode = os.path.join(base_dir, "qrcode")
-    vdo = os.path.join(base_dir, "vdo")
-    logo = os.path.join(base_dir, "image")
-    try:
-        os.mkdir(vdo)
-        os.mkdir(qrcode)
-        os.mkdir(logo)
-    except:
-        pass
-
-    record = 0
-    array = []
-    font = cv2.FONT_HERSHEY_SIMPLEX
-    st = 0
-    nameid = "-"
-    orderid = "-"
-    login = False
-    img_aruco = cv2.imread("phone_aruco_marker.jpg")
-
-    while True:
-        if connect() == False:
-            print('No Internet connection!')
-            continue
-        else:
-            print('Internet connected')
-        # wait input to turn on camera
-        # if login == False:
-        #     wait_input = input("0 for cam, 1 for break: ")
-        # if wait_input == "0":
-
-        # create new and remove old
-        try:
-            record, font, st, nameid, customid, order, tel, login = main(record, font, nameid, login, array, img_aruco)
-            cutvdo(order)
-            os.remove('{}bc.mp4'.format(order))
-            # post to url
-            url = "https://globalapi.advice.co.th/api/upfile_json"
-            post_requests(nameid,customid, order, tel, url)
-        except Exception as e:
-            print(e)
-    # elif wait_input == "1":
-    #     break
+# if __name__ == '__main__':
+    # # create path dir
+    # base_dir = os.path.dirname(os.path.abspath(__file__))
+    # qrcode = os.path.join(base_dir, "qrcode")
+    # vdo = os.path.join(base_dir, "vdo")
+    # logo = os.path.join(base_dir, "image")
+    # try:
+    #     os.mkdir(vdo)
+    #     os.mkdir(qrcode)
+    #     os.mkdir(logo)
+    # except:
+    #     pass
+    #
+    # record = 0
+    # array = []
+    # font = cv2.FONT_HERSHEY_SIMPLEX
+    # st = 0
+    # nameid = "-"
+    # orderid = "-"
+    # login = False
+    # img_aruco = cv2.imread("phone_aruco_marker.jpg")
+    #
+    # while True:
+    #     if connect() == False:
+    #         print('No Internet connection!')
+    #         continue
+    #     else:
+    #         print('Internet connected')
+    #     # wait input to turn on camera
+    #     # if login == False:
+    #     #     wait_input = input("0 for cam, 1 for break: ")
+    #     # if wait_input == "0":
+    #
+    #     # create new and remove old
+    #     try:
+    #         record, font, st, nameid, customid, order, tel, login = main(record, font, nameid, login, array, img_aruco)
+    #         cutvdo(order)
+    #         os.remove('{}bc.mp4'.format(order))
+    #         # post to url
+    #         url = "https://globalapi.advice.co.th/api/upfile_json"
+    #         # post_requests(nameid,customid, order, tel, url)
+    #     except Exception as e:
+    #         print(e)
+    # # elif wait_input == "1":
+    # #     break
