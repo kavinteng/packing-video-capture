@@ -127,8 +127,8 @@ def checklogo(frame,logo):
 
 def main(ip,port,vdo,logo,camID,positionx,positiony,record, font, nameid, login, array, img_aruco):
     # Load Aruco detector
-    parameters = cv2.aruco.DetectorParameters_create()
-    aruco_dict = cv2.aruco.Dictionary_get(cv2.aruco.DICT_5X5_50)
+    # parameters = cv2.aruco.DetectorParameters_create()
+    # aruco_dict = cv2.aruco.Dictionary_get(cv2.aruco.DICT_5X5_50)
 
     # Load Object Detector
     detector = HomogeneousBgDetector()
