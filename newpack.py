@@ -174,7 +174,7 @@ def main(ip,port,vdo,logo,camID,positionx,positiony,record, font, nameid, login,
                         if out == 0:
                             cv2.putText(frame, f"check:{str(len(array))}", (100, 70), font, 0.5, (0, 255, 0), 2)
                         # config frame to check stop
-                        if len(array) > 10:
+                        if len(array) > 2:
                             out = 1
 
             elif mydata.isnumeric() == True and record == 0:
