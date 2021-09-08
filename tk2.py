@@ -17,31 +17,56 @@ class GUI(Tk):
         self.Val1Lbl.grid(row=0, column=0, sticky='E', padx=5, pady=2)
         self.Val1Txt = Entry(stepOne)
         self.Val1Txt.grid(row=0, column=1, columnspan=3, pady=2, sticky='WE')
+        self.Val7Lbl = Label(stepOne, text="PORT1")
+        self.Val7Lbl.grid(row=0, column=5, sticky='E', padx=5, pady=2)
+        self.Val7Txt = Entry(stepOne)
+        self.Val7Txt.grid(row=0, column=6, columnspan=1, pady=2, sticky='WE')
+        self.Val7Txt.insert(0, '81')
         self.Val2Lbl = Label(stepOne,text="IP cam2")
         self.Val2Lbl.grid(row=1, column=0, sticky='E', padx=5, pady=2)
         self.Val2Txt = Entry(stepOne)
         self.Val2Txt.grid(row=1, column=1, columnspan=3, pady=2, sticky='WE')
+        self.Val8Lbl = Label(stepOne, text="PORT2")
+        self.Val8Lbl.grid(row=1, column=5, sticky='E', padx=5, pady=2)
+        self.Val8Txt = Entry(stepOne)
+        self.Val8Txt.grid(row=1, column=6, columnspan=1, pady=2, sticky='WE')
+        self.Val8Txt.insert(0, '81')
         self.Val3Lbl = Label(stepOne, text="IP cam3")
         self.Val3Lbl.grid(row=2, column=0, sticky='E', padx=5, pady=2)
         self.Val3Txt = Entry(stepOne)
         self.Val3Txt.grid(row=2, column=1, columnspan=3, pady=2, sticky='WE')
+        self.Val9Lbl = Label(stepOne, text="PORT3")
+        self.Val9Lbl.grid(row=2, column=5, sticky='E', padx=5, pady=2)
+        self.Val9Txt = Entry(stepOne)
+        self.Val9Txt.grid(row=2, column=6, columnspan=1, pady=2, sticky='WE')
+        self.Val9Txt.insert(0, '81')
         self.Val4Lbl = Label(stepOne, text="IP cam4")
         self.Val4Lbl.grid(row=3, column=0, sticky='E', padx=5, pady=2)
         self.Val4Txt = Entry(stepOne)
         self.Val4Txt.grid(row=3, column=1, columnspan=3, pady=2, sticky='WE')
+        self.Val10Lbl = Label(stepOne, text="PORT4")
+        self.Val10Lbl.grid(row=3, column=5, sticky='E', padx=5, pady=2)
+        self.Val10Txt = Entry(stepOne)
+        self.Val10Txt.grid(row=3, column=6, columnspan=1, pady=2, sticky='WE')
+        self.Val10Txt.insert(0, '49416')
         self.Val5Lbl = Label(stepOne, text="IP cam5")
         self.Val5Lbl.grid(row=4, column=0, sticky='E', padx=5, pady=2)
         self.Val5Txt = Entry(stepOne)
         self.Val5Txt.grid(row=4, column=1, columnspan=3, pady=2, sticky='WE')
+        self.Val11Lbl = Label(stepOne, text="PORT5")
+        self.Val11Lbl.grid(row=4, column=5, sticky='E', padx=5, pady=2)
+        self.Val11Txt = Entry(stepOne)
+        self.Val11Txt.grid(row=4, column=6, columnspan=1, pady=2, sticky='WE')
+        self.Val11Txt.insert(0, '9327')
         self.Val6Lbl = Label(stepOne, text="IP cam6")
         self.Val6Lbl.grid(row=5, column=0, sticky='E', padx=5, pady=2)
         self.Val6Txt = Entry(stepOne)
         self.Val6Txt.grid(row=5, column=1, columnspan=3, pady=2, sticky='WE')
-        self.Val7Lbl = Label(stepOne, text="FIX PORT")
-        self.Val7Lbl.grid(row=6, column=0, sticky='E', padx=5, pady=2)
-        self.Val7Txt = Entry(stepOne)
-        self.Val7Txt.grid(row=6, column=1, columnspan=3, pady=2, sticky='WE')
-        self.Val7Txt.insert(0,'81')
+        self.Val12Lbl = Label(stepOne, text="PORT6")
+        self.Val12Lbl.grid(row=5, column=5, sticky='E', padx=5, pady=2)
+        self.Val12Txt = Entry(stepOne)
+        self.Val12Txt.grid(row=5, column=6, columnspan=1, pady=2, sticky='WE')
+        self.Val12Txt.insert(0,'81')
 
         self.val1 = None
         self.val2 = None
@@ -50,6 +75,11 @@ class GUI(Tk):
         self.val5 = None
         self.val6 = None
         self.val7 = None
+        self.val8 = None
+        self.val9 = None
+        self.val10 = None
+        self.val11 = None
+        self.val12 = None
 
 
         SubmitBtn = Button(stepOne, text="Submit", command=self.submit)
@@ -63,6 +93,11 @@ class GUI(Tk):
         self.val5 = self.Val5Txt.get()
         self.val6 = self.Val6Txt.get()
         self.val7 = self.Val7Txt.get()
+        self.val8 = self.Val8Txt.get()
+        self.val9 = self.Val9Txt.get()
+        self.val10 = self.Val10Txt.get()
+        self.val11 = self.Val11Txt.get()
+        self.val12 = self.Val12Txt.get()
 
         self.destroy()
 
@@ -131,7 +166,12 @@ if __name__ == '__main__':
         ip4 = app.val4
         ip5 = app.val5
         ip6 = app.val6
-        port = app.val7
+        port1 = app.val7
+        port2 = app.val8
+        port3 = app.val9
+        port4 = app.val10
+        port5 = app.val11
+        port6 = app.val12
 
         if ip1 is None or ip1 == '' and ip2 == '' and ip3 == '' and ip4 == '' and ip5 == '' and ip6 == '':
             pass
@@ -143,37 +183,37 @@ if __name__ == '__main__':
 
         if ip1 != '' and ip1 != None:
             but1 = Button(root, text='opencam1', width=20, command=lambda
-                camID='http://{}:{}/videostream.cgi?user=admin&pwd=888888'.format(ip1, port),
-                positionx=200, positiony=0: run(ip1,port,camID, positionx, positiony))
+                camID='http://{}:{}/videostream.cgi?user=admin&pwd=888888'.format(ip1, port1),
+                positionx=200, positiony=0: run(ip1,port1,camID, positionx, positiony))
             but1.pack(padx=5, pady=5)
 
         if ip2 != '' and ip2 != None:
             but2 = Button(root, text='opencam2', width=20, command=lambda
-                camID='http://{}:{}/videostream.cgi?user=admin&pwd=888888'.format(ip2, port),
-                positionx=520, positiony=0: run(ip2,port,camID, positionx, positiony))
+                camID='http://{}:{}/videostream.cgi?user=admin&pwd=888888'.format(ip2, port2),
+                positionx=520, positiony=0: run(ip2,port2,camID, positionx, positiony))
             but2.pack(padx=5, pady=5)
         if ip3 != '' and ip3 != None:
             but3 = Button(root, text='opencam3', width=20, command=lambda
-                camID='http://{}:{}/videostream.cgi?user=admin&pwd=888888'.format(ip3, port),
-                positionx=840, positiony=0: run(ip3,port,camID, positionx, positiony))
+                camID='http://{}:{}/videostream.cgi?user=admin&pwd=888888'.format(ip3, port3),
+                positionx=840, positiony=0: run(ip3,port3,camID, positionx, positiony))
             but3.pack(padx=5, pady=5)
 
         if ip4 != '' and ip4 != None:
             but4 = Button(root, text='opencam4', width=20, command=lambda
-                camID='http://{}:{}/videostream.cgi?user=admin&pwd=888888'.format(ip4, port),
-                positionx=200, positiony=300: run(ip4,port,camID, positionx, positiony))
+                camID='http://{}:{}/videostream.cgi?user=admin&pwd=888888'.format(ip4, port4),
+                positionx=200, positiony=300: run(ip4,port4,camID, positionx, positiony))
             but4.pack(padx=5, pady=5)
 
         if ip5 != '' and ip5 != None:
             but5 = Button(root, text='opencam5', width=20, command=lambda
-                camID='http://{}:{}/videostream.cgi?user=admin&pwd=888888'.format(ip5, port),
-                positionx=520, positiony=300: run(ip5,port,camID, positionx, positiony))
+                camID='http://{}:{}/videostream.cgi?user=admin&pwd=888888'.format(ip5, port5),
+                positionx=520, positiony=300: run(ip5,port5,camID, positionx, positiony))
             but5.pack(padx=5, pady=5)
 
         if ip6 != '' and ip6 != None:
             but6 = Button(root, text='opencam6', width=20, command=lambda
-                camID='http://{}:{}/videostream.cgi?user=admin&pwd=888888'.format(ip6, port),
-                positionx=840, positiony=300: run(ip6,port,camID, positionx, positiony))
+                camID='http://{}:{}/videostream.cgi?user=admin&pwd=888888'.format(ip6, port6),
+                positionx=840, positiony=300: run(ip6,port6,camID, positionx, positiony))
             but6.pack(padx=5, pady=5)
         if ip1 is None:
             exit()
