@@ -48,7 +48,7 @@ class GUI(Tk):
         self.Val10Lbl.grid(row=3, column=5, sticky='E', padx=5, pady=2)
         self.Val10Txt = Entry(stepOne)
         self.Val10Txt.grid(row=3, column=6, columnspan=1, pady=2, sticky='WE')
-        self.Val10Txt.insert(0, '49416')
+        self.Val10Txt.insert(0, '17218')
         self.Val5Lbl = Label(stepOne, text="IP cam5")
         self.Val5Lbl.grid(row=4, column=0, sticky='E', padx=5, pady=2)
         self.Val5Txt = Entry(stepOne)
@@ -144,7 +144,7 @@ def f(ip,port,camID,positionx,positiony):
             os.remove('{}bc.mp4'.format(order))
             # post to url
             url = "https://globalapi.advice.co.th/api/upfile_json"
-            # post_requests(vdo,nameid,customid, order, tel, url)
+            post_requests(vdo,nameid,customid, order, tel, url)
         except Exception as e:
             print(e)
 
