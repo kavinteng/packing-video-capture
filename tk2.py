@@ -104,6 +104,7 @@ def f(ip,port,camID,positionx,positiony):
         try:
             # create new and remove old
             record, font, st, nameid, customid, order, tel, login = main(ip,port,vdo,logo,camID,positionx,positiony,record, font, nameid, login, array, img_aruco)
+            print(nameid, customid, order, tel)
             cutvdo(order,vdo)
             os.remove('{}bc.mp4'.format(order))
             # post to url
@@ -119,12 +120,6 @@ def run(ip,port,camID,positionx,positiony):
     t = Process(target=f, args=(ip,port,camID,positionx,positiony,))
     t.start()
 
-def Setip():
-    ip = txt.get()
-    port = '81'
-    ipadd = ip+':'+port
-    Label(root, text=ipadd, fg='white', font=20, bg='black').pack()
-
 if __name__ == '__main__':
     while True:
         app = GUI(None)
@@ -138,44 +133,51 @@ if __name__ == '__main__':
         ip6 = app.val6
         port = app.val7
 
-        root = Tk()
-        root.title('test')
-        root.geometry('200x240+0+0')
-        root.config(bg='black')
+        if ip1 is None or ip1 == '' and ip2 == '' and ip3 == '' and ip4 == '' and ip5 == '' and ip6 == '':
+            pass
+        else:
+            root = Tk()
+            root.title('test')
+            root.geometry('200x240+0+0')
+            root.config(bg='black')
 
-        if ip1 != '':
+        if ip1 != '' and ip1 != None:
             but1 = Button(root, text='opencam1', width=20, command=lambda
                 camID='http://{}:{}/videostream.cgi?user=admin&pwd=888888'.format(ip1, port),
                 positionx=200, positiony=0: run(ip1,port,camID, positionx, positiony))
             but1.pack(padx=5, pady=5)
 
-        if ip2 != '':
+        if ip2 != '' and ip2 != None:
             but2 = Button(root, text='opencam2', width=20, command=lambda
                 camID='http://{}:{}/videostream.cgi?user=admin&pwd=888888'.format(ip2, port),
                 positionx=520, positiony=0: run(ip2,port,camID, positionx, positiony))
             but2.pack(padx=5, pady=5)
-        if ip3 != '':
+        if ip3 != '' and ip3 != None:
             but3 = Button(root, text='opencam3', width=20, command=lambda
                 camID='http://{}:{}/videostream.cgi?user=admin&pwd=888888'.format(ip3, port),
                 positionx=840, positiony=0: run(ip3,port,camID, positionx, positiony))
             but3.pack(padx=5, pady=5)
 
-        if ip4 != '':
+        if ip4 != '' and ip4 != None:
             but4 = Button(root, text='opencam4', width=20, command=lambda
                 camID='http://{}:{}/videostream.cgi?user=admin&pwd=888888'.format(ip4, port),
                 positionx=200, positiony=300: run(ip4,port,camID, positionx, positiony))
             but4.pack(padx=5, pady=5)
 
-        if ip5 != '':
+        if ip5 != '' and ip5 != None:
             but5 = Button(root, text='opencam5', width=20, command=lambda
                 camID='http://{}:{}/videostream.cgi?user=admin&pwd=888888'.format(ip5, port),
                 positionx=520, positiony=300: run(ip5,port,camID, positionx, positiony))
             but5.pack(padx=5, pady=5)
 
-        if ip6 != '':
+        if ip6 != '' and ip6 != None:
             but6 = Button(root, text='opencam6', width=20, command=lambda
                 camID='http://{}:{}/videostream.cgi?user=admin&pwd=888888'.format(ip6, port),
                 positionx=840, positiony=300: run(ip6,port,camID, positionx, positiony))
             but6.pack(padx=5, pady=5)
-
-        root.mainloop()
+        if ip1 is None:
+            exit()
+        elif ip1 == '' and ip2 == '' and ip3 == '' and ip4 == '' and ip5 == '' and ip6 == '':
+            pass
+        else:
+            root.mainloop()
