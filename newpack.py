@@ -60,16 +60,18 @@ def cutvdo(mydata,vdo):
 def post_requests(vdo,nameid,customid, order, tel, url):
     os.chdir(vdo)
     file_name = "{}.mp4".format(order)
+    # file_name = "01901927test.mp4"
     name, extension = os.path.splitext(file_name)
     with open(file_name, "rb") as file:
-        text = base64.b64encode(file.read()).decode('utf-8')
-        data = {"data": text, "Username": nameid, "Customer ID": customid, "Order ID": order, "Tel": tel, "file_type": extension}
-        response = requests.post(url, json=data)
+        data = {"data": file}
+        text = {"Username": nameid, "Customer ID": customid, "Order ID": order, "Tel": tel, "file_type": extension}
+        response = requests.post(url, files=data ,data=text)
 
         if response.ok:
             print("Upload completed successfully!")
-            # print(response.json())
+
         else:
+            response.raise_for_status()
             print("Something went wrong!")
 
 
@@ -174,7 +176,7 @@ def main(ip,port,vdo,logo,camID,positionx,positiony,record, font, nameid, login,
                         if out == 0:
                             cv2.putText(frame, f"check:{str(len(array))}", (100, 70), font, 0.5, (0, 255, 0), 2)
                         # config frame to check stop
-                        if len(array) > 2:
+                        if len(array) > 3:
                             out = 1
 
             elif mydata.isnumeric() == True and record == 0:
