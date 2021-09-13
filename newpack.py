@@ -145,6 +145,7 @@ def main(ip,port,vdo,logo,camID,positionx,positiony,record, font, nameid, login,
     st = 0
     array2 = []
     out = 0
+    in_st = 0
 
     while True:
         _, frame = cap.read()
@@ -159,7 +160,7 @@ def main(ip,port,vdo,logo,camID,positionx,positiony,record, font, nameid, login,
         # decode qr
         data, type, x, y, w, h = decode(frame)
 
-        if type == 'QRCODE':
+        if type == 'QRCODE' and out != 1 and in_st != 1:
             st = 0
             mydata = data.decode('utf-8')
 
@@ -168,6 +169,7 @@ def main(ip,port,vdo,logo,camID,positionx,positiony,record, font, nameid, login,
                     nameid = "Please Login !!!"
                     continue
                 elif login == True and record != 2:
+                    in_st = 1
                     orderid = mydata
                 elif record == 2:
                     end = mydata
@@ -176,7 +178,7 @@ def main(ip,port,vdo,logo,camID,positionx,positiony,record, font, nameid, login,
                         if out == 0:
                             cv2.putText(frame, f"check:{str(len(array))}", (100, 70), font, 0.5, (0, 255, 0), 2)
                         # config frame to check stop
-                        if len(array) > 3:
+                        if len(array) > 1:
                             out = 1
 
             elif mydata.isnumeric() == True and record == 0:
@@ -202,9 +204,10 @@ def main(ip,port,vdo,logo,camID,positionx,positiony,record, font, nameid, login,
                 st = time.time()
             else:
                 et = time.time()
-                if et - st > 3:
+                if et - st > 1:
                     record = 0
-                    confirm(ip,port)
+                    confirm(ip, port)
+                    time.sleep(1)
                     break
 
         if login == False:
@@ -225,6 +228,7 @@ def main(ip,port,vdo,logo,camID,positionx,positiony,record, font, nameid, login,
                         time.sleep(1)
                     elif et - st <1:
                         confirm(ip,port)
+
             # config time to logout
             elif orderid == "-":
                 # measure_object(frame, aruco_dict, parameters, detector, frame)
@@ -255,6 +259,7 @@ def main(ip,port,vdo,logo,camID,positionx,positiony,record, font, nameid, login,
 
         # video recording
         if record == 2:
+            in_st = 0
             if out != 1:
                 rec_color = (255, 0, 0)
                 cv2.putText(frame, "RECORDING", (10, 70), font, 0.5, (0, 0, 255), 2)
