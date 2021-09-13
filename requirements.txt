@@ -1,6 +1,5 @@
-opencv-contrib-python==4.1.0.25
-pyzbar==0.1.8
-moviepy==1.0.3
-numpy==1.19.3
-requests==2.24.0
-imutils==0.5.4
+moviepy
+numpy
+requests
+opencv-contrib-python
+pyzbar
