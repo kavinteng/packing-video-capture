@@ -3,3 +3,5 @@ numpy
 requests
 opencv-contrib-python
 pyzbar
+jwt
+getmac
