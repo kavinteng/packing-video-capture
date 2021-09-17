@@ -10,6 +10,8 @@ import base64
 from object_detector import *
 from tk2 import confirm
 import urllib.request
+from getmac import getmac
+import jwt
 
 def connect(host='http://google.com'):
     try:
@@ -62,9 +64,12 @@ def post_requests(vdo,nameid,customid, order, tel, url):
     file_name = "{}.mp4".format(order)
     # file_name = "01901927test.mp4"
     name, extension = os.path.splitext(file_name)
+    mac = getmac.get_mac_address()
+    encoded = jwt.encode({'mac address': mac}, 'secret', algorithm='HS256')
+
     with open(file_name, "rb") as file:
         data = {"data": file}
-        text = {"Username": nameid, "Customer ID": customid, "Order ID": order, "Tel": tel, "file_type": extension}
+        text = {"Username": nameid, "Customer ID": customid, "Order ID": order, "Tel": tel, "file_type": extension, "token": encoded}
         response = requests.post(url, files=data ,data=text)
 
         if response.ok:
