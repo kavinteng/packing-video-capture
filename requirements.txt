@@ -5,3 +5,5 @@ opencv-contrib-python
 pyzbar
 PYjwt
 getmac
+
+addtest
