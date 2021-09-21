@@ -3,5 +3,5 @@ numpy
 requests
 opencv-contrib-python
 pyzbar
-jwt
+PYjwt
 getmac
