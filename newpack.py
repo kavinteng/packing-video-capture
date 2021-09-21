@@ -12,6 +12,27 @@ from tk2 import confirm
 import urllib.request
 from getmac import getmac
 import jwt
+import mariadb
+
+def backuppost(record,nameid,customid,orderid,tel):
+    try:
+        connection = mariadb.connect(host="172.20.10.4", user="root", passwd="123456", database="advice")
+    except mariadb.Error as e:
+        print(f"Error connecting to MariaDB Platform: {e}")
+        sys.exit(1)
+    cursor = connection.cursor()
+    try:
+        TableSql = """CREATE TABLE backuppost(ID INT(20) PRIMARY KEY AUTO_INCREMENT,nameid CHAR(20),customid CHAR(20),orderid CHAR(20),tel CHAR(20))"""
+        cursor.execute(TableSql)
+    except:
+        pass
+
+    if record==1:
+        cursor.execute("insert into backuppost(nameid,customid,orderid,tel) values (?,?,?,?)", (nameid,customid,orderid,tel,))
+    elif record==0:
+        cursor.execute("delete from backuppost where orderid = ?", (orderid,))
+    connection.commit()
+    connection.close()
 
 def connect(host='http://google.com'):
     try:
@@ -49,17 +70,16 @@ def cutvdo(mydata,vdo):
     data = cv2.VideoCapture('{}bc.mp4'.format(mydata))
     frames = data.get(cv2.CAP_PROP_FRAME_COUNT)
     fps = int(data.get(cv2.CAP_PROP_FPS))
-
+    print(frames,fps)
     end = int(frames / fps)
-    if end >= 180:
-        start = end - 180
+    if end >= 60:
+        start = end - 60
     else:
         start = 0
     ffmpeg_extract_subclip('{}bc.mp4'.format(mydata), start, end, targetname='{}.mp4'.format(mydata))
 
-
 # post by requests to url
-def post_requests(vdo,nameid,customid, order, tel, url):
+def post_requests(vdo,record,nameid,customid, order, tel, url):
     os.chdir(vdo)
     file_name = "{}.mp4".format(order)
     # file_name = "01901927test.mp4"
@@ -71,9 +91,9 @@ def post_requests(vdo,nameid,customid, order, tel, url):
         data = {"data": file}
         text = {"Username": nameid, "Customer ID": customid, "Order ID": order, "Tel": tel, "file_type": extension, "token": encoded}
         response = requests.post(url, files=data ,data=text)
-
         if response.ok:
             print("Upload completed successfully!")
+            backuppost(record, nameid, customid, order, tel)
 
         else:
             response.raise_for_status()
@@ -192,7 +212,8 @@ def main(ip,port,vdo,logo,camID,positionx,positiony,record, font, nameid, login,
                     continue
                 elif len(mydata)==6 and nameid!=mydata:
                     nameid = mydata
-                    confirm(ip,port)
+                    if ip is not None:
+                        confirm(ip,port)
                     login = True
                     continue
 
@@ -210,8 +231,10 @@ def main(ip,port,vdo,logo,camID,positionx,positiony,record, font, nameid, login,
             else:
                 et = time.time()
                 if et - st > 1:
+                    rec.release()
                     record = 0
-                    confirm(ip, port)
+                    if ip is not None:
+                        confirm(ip, port)
                     time.sleep(1)
                     break
 
@@ -232,7 +255,8 @@ def main(ip,port,vdo,logo,camID,positionx,positiony,record, font, nameid, login,
                         record = 1
                         time.sleep(1)
                     elif et - st <1:
-                        confirm(ip,port)
+                        if ip is not None:
+                            confirm(ip,port)
 
             # config time to logout
             elif orderid == "-":
@@ -256,6 +280,7 @@ def main(ip,port,vdo,logo,camID,positionx,positiony,record, font, nameid, login,
                 orderid = "-"
                 record = 0
                 continue
+            backuppost(record,nameid,customid,order,tel)
             file = str(order) + "bc.mp4"
             video_size = (1080, 720)
             fourcc = cv2.VideoWriter_fourcc(*'H264')

@@ -3,6 +3,10 @@ from multiprocessing import Process
 from newpack import *
 import urllib.request
 import time
+import mariadb
+import jwt
+from getmac import getmac
+
 class GUI(Tk):
     def __init__(self, parent):
         Tk.__init__(self, parent)
@@ -86,7 +90,91 @@ class GUI(Tk):
 
 
         SubmitBtn = Button(stepOne, text="Submit", command=self.submit)
-        SubmitBtn.grid(row=7, column=3, sticky='W', padx=5, pady=2)
+        SubmitBtn.grid(row=7, column=6, sticky='W', padx=5, pady=2)
+        repost = Button(stepOne, text="Re-post", command=self.repost)
+        repost.grid(row=7, column=0, sticky='W', padx=5, pady=2)
+
+    def repost(self):
+        try:
+            connection = mariadb.connect(host="172.20.10.4", user="root", passwd="123456", database="advice")
+        except mariadb.Error as e:
+            print(f"Error connecting to MariaDB Platform: {e}")
+            sys.exit(1)
+        cursor = connection.cursor()
+        try:
+            TableSql = """CREATE TABLE backuppost(ID INT(20) PRIMARY KEY AUTO_INCREMENT,nameid CHAR(20),customid CHAR(20),orderid CHAR(20),tel CHAR(20))"""
+            cursor.execute(TableSql)
+        except:
+            pass
+        self.root2 = Tk()
+        self.root2.title('repost')
+        # root2.geometry('0+0')
+
+        cursor.execute("select * from backuppost ")
+        lists = cursor.fetchall()
+        e = Label(self.root2, width=11, text='PRIMARY KEY', borderwidth=2, relief='ridge', anchor='w', bg='yellow')
+        e.grid(row=0, column=0)
+        e = Label(self.root2, width=11, text='USER ID', borderwidth=2, relief='ridge', anchor='w', bg='yellow')
+        e.grid(row=0, column=1)
+        e = Label(self.root2, width=11, text='CUSTOMER ID', borderwidth=2, relief='ridge', anchor='w', bg='yellow')
+        e.grid(row=0, column=2)
+        e = Label(self.root2, width=11, text='ORDER ID', borderwidth=2, relief='ridge', anchor='w', bg='yellow')
+        e.grid(row=0, column=3)
+        e = Label(self.root2, width=11, text='TEL', borderwidth=2, relief='ridge', anchor='w', bg='yellow')
+        e.grid(row=0, column=4)
+
+        i = 1
+
+        for list in lists:
+            for j in range(len(list)):
+                e = Label(self.root2, width=11, text=list[j],
+                          borderwidth=2, relief='ridge', anchor="w")
+                e.grid(row=i, column=j)
+            i = i + 1
+
+        connection.commit()
+        connection.close()
+
+        repost2 = Button(self.root2, text="POST", command=self.post)
+        repost2.grid(row=i, column=2, sticky='W', padx=5, pady=2)
+        self.root2.mainloop()
+
+    def post(self):
+        try:
+            connection = mariadb.connect(host="172.20.10.4", user="root", passwd="123456", database="advice")
+        except mariadb.Error as e:
+            print(f"Error connecting to MariaDB Platform: {e}")
+            sys.exit(1)
+        cursor = connection.cursor()
+        cursor.execute("select * from backuppost ")
+        lists = cursor.fetchall()
+        url = "https://globalapi.advice.co.th/api/upfile_json"
+
+        for list in lists:
+            _,nameid,customid, order, tel = list
+            file_name = "vdo/{}.mp4".format(order)
+            name, extension = os.path.splitext(file_name)
+            mac = getmac.get_mac_address()
+            encoded = jwt.encode({'mac address': mac}, 'secret', algorithm='HS256')
+
+            with open(file_name, "rb") as file:
+                data = {"data": file}
+                text = {"Username": nameid, "Customer ID": customid, "Order ID": order, "Tel": tel,
+                        "file_type": extension, "token": encoded}
+                response = requests.post(url, files=data, data=text)
+
+                if response.ok:
+                    print("Upload completed successfully!")
+                    cursor.execute("delete from backuppost where orderid = ?", (order,))
+
+                else:
+                    response.raise_for_status()
+                    print("Something went wrong!")
+
+        connection.commit()
+        connection.close()
+        self.root2.destroy()
+
 
     def submit(self):
         self.val1 = self.Val1Txt.get()
@@ -144,10 +232,10 @@ def f(ip,port,camID,positionx,positiony):
             record, font, st, nameid, customid, order, tel, login = main(ip,port,vdo,logo,camID,positionx,positiony,record, font, nameid, login, array, img_aruco)
             print(nameid, customid, order, tel)
             cutvdo(order,vdo)
-            os.remove('{}bc.mp4'.format(order))
+            # os.remove('{}bc.mp4'.format(order))
             # post to url
             url = "https://globalapi.advice.co.th/api/upfile_json"
-            post_requests(vdo,nameid,customid, order, tel, url)
+            post_requests(vdo,record,nameid,customid, order, tel, url)
         except Exception as e:
             print(e)
 
@@ -180,7 +268,7 @@ if __name__ == '__main__':
             pass
         else:
             root = Tk()
-            root.title('test')
+            root.title('CAMERA LIST')
             root.geometry('200x240+0+0')
             root.config(bg='black')
 
@@ -218,6 +306,13 @@ if __name__ == '__main__':
                 camID='http://{}:{}/videostream.cgi?user=admin&pwd=888888'.format(ip6, port6),
                 positionx=840, positiony=300: run(ip6,port6,camID, positionx, positiony))
             but6.pack(padx=5, pady=5)
+        try:
+            but7 = Button(root, text='USB-cam', width=20, command=lambda
+                camID=0,
+                positionx=1160, positiony=0: run(None, None, camID, positionx, positiony))
+            but7.pack(padx=5, pady=5)
+        except:
+            pass
         if ip1 is None:
             exit()
         elif ip1 == '' and ip2 == '' and ip3 == '' and ip4 == '' and ip5 == '' and ip6 == '':
