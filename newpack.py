@@ -70,7 +70,6 @@ def cutvdo(mydata,vdo):
     data = cv2.VideoCapture('{}bc.mp4'.format(mydata))
     frames = data.get(cv2.CAP_PROP_FRAME_COUNT)
     fps = int(data.get(cv2.CAP_PROP_FPS))
-    print(frames,fps)
     end = int(frames / fps)
     if end >= 60:
         start = end - 60
@@ -105,10 +104,10 @@ def checklogo(frame,logo):
     os.chdir(logo)
     img = cv2.imread('logo4.png')
     size = 100
-    img = cv2.resize(img, (size, size))
+    img = cv2.resize(img, (size+90, size))
     imggray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
     ret, mask = cv2.threshold(imggray, 1, 255, cv2.THRESH_BINARY)
-    roilogo = frame[-size - 1:-1, -size - 10:-10]
+    roilogo = frame[-size - 1:-1, -size - 100:-10]
     roilogo[np.where(mask)] = 0
     roilogo += img
 
@@ -180,7 +179,7 @@ def main(ip,port,vdo,logo,camID,positionx,positiony,record, font, nameid, login,
         frame = cv2.resize(frame, (320, 240))
         #         frame = cv2.resize(frame, (1080, 720))
         vdoframe = frame.copy()
-        vdoframe = cv2.resize(vdoframe, (1080, 720))
+        vdoframe = cv2.resize(vdoframe, (1280, 720))
 
         # decode qr
         data, type, x, y, w, h = decode(frame)
@@ -282,7 +281,8 @@ def main(ip,port,vdo,logo,camID,positionx,positiony,record, font, nameid, login,
                 continue
             backuppost(record,nameid,customid,order,tel)
             file = str(order) + "bc.mp4"
-            video_size = (1080, 720)
+            # video_size = (1280, 720)
+            video_size = (1280, 720)
             fourcc = cv2.VideoWriter_fourcc(*'H264')
             rec = cv2.VideoWriter(file, fourcc, 10, video_size)
             record = 2
