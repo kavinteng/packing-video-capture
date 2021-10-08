@@ -255,12 +255,19 @@ def run(ip,port,camID,positionx,positiony):
     t = Process(target=f, args=(ip,port,camID,positionx,positiony,))
     t.start()
 
-def testDevice(source):
+def testDeviceusb(source):
    cap = cv2.VideoCapture(source)
    if cap is None or not cap.isOpened():
        return False
    else:
        return True
+
+def testDeviceip(ip):
+   check = os.system('ping {} /n 1'.format(ip))
+   if check == 0:
+       return True
+   else:
+       return False
 
 if __name__ == '__main__':
     while True:
@@ -289,12 +296,12 @@ if __name__ == '__main__':
             root.title('CAMERA LIST')
             root.geometry('200x240+0+0')
             root.config(bg='black')
-            check_but1 = testDevice('http://{}:{}/videostream.cgi?user=admin&pwd=888888'.format(ip1, port1))
-            check_but2 = testDevice('http://{}:{}/videostream.cgi?user=admin&pwd=888888'.format(ip2, port2))
-            check_but3 = testDevice('http://{}:{}/videostream.cgi?user=admin&pwd=888888'.format(ip3, port3))
-            check_but7 = testDevice(0)
-            check_but8 = testDevice(1)
-            check_but9 = testDevice(2)
+            check_but1 = testDeviceip(ip1)
+            check_but2 = testDeviceip(ip2)
+            check_but3 = testDeviceip(ip3)
+            check_but7 = testDeviceusb(0)
+            check_but8 = testDeviceusb(1)
+            check_but9 = testDeviceusb(2)
 
 
             if check_but1 == True:

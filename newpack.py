@@ -285,7 +285,7 @@ def main(ip,port,vdo,logo,camID,positionx,positiony,record, font, nameid, login,
             # video_size = (1280, 720)
             video_size = (1280, 720)
             fourcc = cv2.VideoWriter_fourcc(*'H264')
-            rec = cv2.VideoWriter(file, fourcc, 10, video_size)
+            rec = cv2.VideoWriter(file, fourcc, 50, video_size)
             record = 2
 
         # video recording
