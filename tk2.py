@@ -286,18 +286,17 @@ if __name__ == '__main__':
         check_but8 = testDevice(1)
         check_but9 = testDevice(2)
 
-        if ip1 != '' and ip1 != None:
+        if check_but1 == True:
             but1 = Button(root, text='opencam1', width=20, command=lambda
                 camID='http://{}:{}/videostream.cgi?user=admin&pwd=888888'.format(ip1, port1),
                 positionx=200, positiony=0: run(ip1,port1,camID, positionx, positiony))
             but1.pack(padx=5, pady=5)
-
-        if ip2 != '' and ip2 != None:
+        if check_but2 == True:
             but2 = Button(root, text='opencam2', width=20, command=lambda
                 camID='http://{}:{}/videostream.cgi?user=admin&pwd=888888'.format(ip2, port2),
                 positionx=520, positiony=0: run(ip2,port2,camID, positionx, positiony))
             but2.pack(padx=5, pady=5)
-        if ip3 != '' and ip3 != None:
+        if check_but3 == True:
             but3 = Button(root, text='opencam3', width=20, command=lambda
                 camID='http://{}:{}/videostream.cgi?user=admin&pwd=888888'.format(ip3, port3),
                 positionx=840, positiony=0: run(ip3,port3,camID, positionx, positiony))
