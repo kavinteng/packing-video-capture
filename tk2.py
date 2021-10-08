@@ -289,34 +289,34 @@ if __name__ == '__main__':
                 positionx=840, positiony=0: run(ip3,port3,camID, positionx, positiony))
             but3.pack(padx=5, pady=5)
 
-        if ip4 != '' and ip4 != None:
-            but4 = Button(root, text='opencam4', width=20, command=lambda
-                camID='http://{}:{}/videostream.cgi?user=admin&pwd=888888'.format(ip4, port4),
-                positionx=200, positiony=300: run(ip4,port4,camID, positionx, positiony))
-            but4.pack(padx=5, pady=5)
-
-        if ip5 != '' and ip5 != None:
-            but5 = Button(root, text='opencam5', width=20, command=lambda
-                camID='http://{}:{}/videostream.cgi?user=admin&pwd=888888'.format(ip5, port5),
-                positionx=520, positiony=300: run(ip5,port5,camID, positionx, positiony))
-            but5.pack(padx=5, pady=5)
-
-        if ip6 != '' and ip6 != None:
-            but6 = Button(root, text='opencam6', width=20, command=lambda
-                camID='http://{}:{}/videostream.cgi?user=admin&pwd=888888'.format(ip6, port6),
-                positionx=840, positiony=300: run(ip6,port6,camID, positionx, positiony))
-            but6.pack(padx=5, pady=5)
+        # if ip4 != '' and ip4 != None:
+        #     but4 = Button(root, text='opencam4', width=20, command=lambda
+        #         camID='http://{}:{}/videostream.cgi?user=admin&pwd=888888'.format(ip4, port4),
+        #         positionx=200, positiony=300: run(ip4,port4,camID, positionx, positiony))
+        #     but4.pack(padx=5, pady=5)
+        #
+        # if ip5 != '' and ip5 != None:
+        #     but5 = Button(root, text='opencam5', width=20, command=lambda
+        #         camID='http://{}:{}/videostream.cgi?user=admin&pwd=888888'.format(ip5, port5),
+        #         positionx=520, positiony=300: run(ip5,port5,camID, positionx, positiony))
+        #     but5.pack(padx=5, pady=5)
+        #
+        # if ip6 != '' and ip6 != None:
+        #     but6 = Button(root, text='opencam6', width=20, command=lambda
+        #         camID='http://{}:{}/videostream.cgi?user=admin&pwd=888888'.format(ip6, port6),
+        #         positionx=840, positiony=300: run(ip6,port6,camID, positionx, positiony))
+        #     but6.pack(padx=5, pady=5)
         try:
             but7 = Button(root, text='PC-cam', width=20, command=lambda
                 camID=0,
-                positionx=1160, positiony=0: run(None, None, camID, positionx, positiony))
+                positionx=200, positiony=300: run(None, None, camID, positionx, positiony))
             but7.pack(padx=5, pady=5)
         except:
             pass
         try:
             but8 = Button(root, text='USB-cam1', width=20, command=lambda
                 camID=1,
-                positionx=1160, positiony=300: run(None, None, camID, positionx, positiony))
+                positionx=520, positiony=300: run(None, None, camID, positionx, positiony))
             but8.pack(padx=5, pady=5)
         except:
             pass
