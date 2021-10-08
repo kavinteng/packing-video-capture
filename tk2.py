@@ -246,6 +246,13 @@ def run(ip,port,camID,positionx,positiony):
     t = Process(target=f, args=(ip,port,camID,positionx,positiony,))
     t.start()
 
+def testDevice(source):
+   cap = cv2.VideoCapture(source)
+   if cap is None or not cap.isOpened():
+       return False
+   else:
+       return True
+
 if __name__ == '__main__':
     while True:
         app = GUI(None)
@@ -306,27 +313,26 @@ if __name__ == '__main__':
         #         camID='http://{}:{}/videostream.cgi?user=admin&pwd=888888'.format(ip6, port6),
         #         positionx=840, positiony=300: run(ip6,port6,camID, positionx, positiony))
         #     but6.pack(padx=5, pady=5)
-        try:
-            but7 = Button(root, text='PC-cam', width=20, command=lambda
+
+        check_but7 = testDevice(0)
+        check_but8 = testDevice(1)
+        check_but9 = testDevice(2)
+        if check_but7 == True:
+            but7 = Button(root, text='USB-cam1', width=20, command=lambda
                 camID=0,
                 positionx=200, positiony=300: run(None, None, camID, positionx, positiony))
             but7.pack(padx=5, pady=5)
-        except:
-            pass
-        try:
-            but8 = Button(root, text='USB-cam1', width=20, command=lambda
+        if check_but8 == True:
+            but8 = Button(root, text='USB-cam2', width=20, command=lambda
                 camID=1,
                 positionx=520, positiony=300: run(None, None, camID, positionx, positiony))
             but8.pack(padx=5, pady=5)
-        except:
-            pass
-        try:
-            but9 = Button(root, text='USB-cam2', width=20, command=lambda
+        if check_but9 == True:
+            but9 = Button(root, text='USB-cam3', width=20, command=lambda
                 camID=2,
                 positionx=840, positiony=300: run(None, None, camID, positionx, positiony))
             but9.pack(padx=5, pady=5)
-        except:
-            pass
+
         if ip1 is None:
             exit()
         elif ip1 == '' and ip2 == '' and ip3 == '' and ip4 == '' and ip5 == '' and ip6 == '':
