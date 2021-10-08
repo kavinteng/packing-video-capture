@@ -96,7 +96,7 @@ class GUI(Tk):
 
     def repost(self):
         try:
-            connection = mariadb.connect(host="172.20.10.4", user="root", passwd="123456", database="advice")
+            connection = mariadb.connect(host="localhost", user="root", passwd="123456", database="advice")
         except mariadb.Error as e:
             print(f"Error connecting to MariaDB Platform: {e}")
             sys.exit(1)
@@ -141,7 +141,7 @@ class GUI(Tk):
 
     def post(self):
         try:
-            connection = mariadb.connect(host="172.20.10.4", user="root", passwd="123456", database="advice")
+            connection = mariadb.connect(host="localhost", user="root", passwd="123456", database="advice")
         except mariadb.Error as e:
             print(f"Error connecting to MariaDB Platform: {e}")
             sys.exit(1)
@@ -307,10 +307,24 @@ if __name__ == '__main__':
                 positionx=840, positiony=300: run(ip6,port6,camID, positionx, positiony))
             but6.pack(padx=5, pady=5)
         try:
-            but7 = Button(root, text='USB-cam', width=20, command=lambda
+            but7 = Button(root, text='PC-cam', width=20, command=lambda
                 camID=0,
                 positionx=1160, positiony=0: run(None, None, camID, positionx, positiony))
             but7.pack(padx=5, pady=5)
+        except:
+            pass
+        try:
+            but8 = Button(root, text='USB-cam1', width=20, command=lambda
+                camID=1,
+                positionx=1160, positiony=300: run(None, None, camID, positionx, positiony))
+            but8.pack(padx=5, pady=5)
+        except:
+            pass
+        try:
+            but9 = Button(root, text='USB-cam2', width=20, command=lambda
+                camID=2,
+                positionx=840, positiony=300: run(None, None, camID, positionx, positiony))
+            but9.pack(padx=5, pady=5)
         except:
             pass
         if ip1 is None:

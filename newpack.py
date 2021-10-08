@@ -13,10 +13,11 @@ import urllib.request
 from getmac import getmac
 import jwt
 import mariadb
+import sys
 
 def backuppost(record,nameid,customid,orderid,tel):
     try:
-        connection = mariadb.connect(host="172.20.10.4", user="root", passwd="123456", database="advice")
+        connection = mariadb.connect(host="localhost", user="root", passwd="123456", database="advice")
     except mariadb.Error as e:
         print(f"Error connecting to MariaDB Platform: {e}")
         sys.exit(1)
@@ -177,7 +178,7 @@ def main(ip,port,vdo,logo,camID,positionx,positiony,record, font, nameid, login,
             continue
 
         frame = cv2.resize(frame, (320, 240))
-        #         frame = cv2.resize(frame, (1080, 720))
+        # frame = cv2.resize(frame, (1280, 720))
         vdoframe = frame.copy()
         vdoframe = cv2.resize(vdoframe, (1280, 720))
 
