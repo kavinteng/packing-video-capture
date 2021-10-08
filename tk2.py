@@ -279,6 +279,13 @@ if __name__ == '__main__':
             root.geometry('200x240+0+0')
             root.config(bg='black')
 
+        check_but1 = testDevice('http://{}:{}/videostream.cgi?user=admin&pwd=888888'.format(ip1, port1))
+        check_but2 = testDevice('http://{}:{}/videostream.cgi?user=admin&pwd=888888'.format(ip2, port2))
+        check_but3 = testDevice('http://{}:{}/videostream.cgi?user=admin&pwd=888888'.format(ip3, port3))
+        check_but7 = testDevice(0)
+        check_but8 = testDevice(1)
+        check_but9 = testDevice(2)
+
         if ip1 != '' and ip1 != None:
             but1 = Button(root, text='opencam1', width=20, command=lambda
                 camID='http://{}:{}/videostream.cgi?user=admin&pwd=888888'.format(ip1, port1),
@@ -313,10 +320,6 @@ if __name__ == '__main__':
         #         camID='http://{}:{}/videostream.cgi?user=admin&pwd=888888'.format(ip6, port6),
         #         positionx=840, positiony=300: run(ip6,port6,camID, positionx, positiony))
         #     but6.pack(padx=5, pady=5)
-
-        check_but7 = testDevice(0)
-        check_but8 = testDevice(1)
-        check_but9 = testDevice(2)
         if check_but7 == True:
             but7 = Button(root, text='USB-cam1', width=20, command=lambda
                 camID=0,
