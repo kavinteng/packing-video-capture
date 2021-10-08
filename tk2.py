@@ -1,8 +1,10 @@
+import os
 from tkinter import *
 from multiprocessing import Process
 from newpack import *
 import urllib.request
 import time
+from datetime import date
 import mariadb
 import jwt
 from getmac import getmac
@@ -205,12 +207,19 @@ def confirm(ip,port):
 def f(ip,port,camID,positionx,positiony):
     base_dir = os.path.dirname(os.path.abspath(__file__))
     qrcode = os.path.join(base_dir, "qrcode")
-    vdo = os.path.join(base_dir, "vdo")
+    # vdo = os.path.join(base_dir, "vdo")
+    date_dir = date.today()
+    vdo_dir = 'D:/vdo_packing'
+    vdo = 'D:/vdo_packing/{}'.format(date_dir)
     logo = os.path.join(base_dir, "image")
     try:
-        os.mkdir(vdo)
+        os.mkdir(vdo_dir)
         os.mkdir(qrcode)
         os.mkdir(logo)
+    except:
+        pass
+    try:
+        os.mkdir(vdo)
     except:
         pass
     record = 0
@@ -271,73 +280,69 @@ if __name__ == '__main__':
         port5 = app.val11
         port6 = app.val12
 
-        if ip1 is None or ip1 == '' and ip2 == '' and ip3 == '' and ip4 == '' and ip5 == '' and ip6 == '':
+        if ip1 == '' and ip2 == '' and ip3 == '' and ip4 == '' and ip5 == '' and ip6 == '':
             pass
+        elif ip1 == None:
+            exit()
         else:
             root = Tk()
             root.title('CAMERA LIST')
             root.geometry('200x240+0+0')
             root.config(bg='black')
+            check_but1 = testDevice('http://{}:{}/videostream.cgi?user=admin&pwd=888888'.format(ip1, port1))
+            check_but2 = testDevice('http://{}:{}/videostream.cgi?user=admin&pwd=888888'.format(ip2, port2))
+            check_but3 = testDevice('http://{}:{}/videostream.cgi?user=admin&pwd=888888'.format(ip3, port3))
+            check_but7 = testDevice(0)
+            check_but8 = testDevice(1)
+            check_but9 = testDevice(2)
 
-        check_but1 = testDevice('http://{}:{}/videostream.cgi?user=admin&pwd=888888'.format(ip1, port1))
-        check_but2 = testDevice('http://{}:{}/videostream.cgi?user=admin&pwd=888888'.format(ip2, port2))
-        check_but3 = testDevice('http://{}:{}/videostream.cgi?user=admin&pwd=888888'.format(ip3, port3))
-        check_but7 = testDevice(0)
-        check_but8 = testDevice(1)
-        check_but9 = testDevice(2)
 
-        if check_but1 == True:
-            but1 = Button(root, text='opencam1', width=20, command=lambda
-                camID='http://{}:{}/videostream.cgi?user=admin&pwd=888888'.format(ip1, port1),
-                positionx=200, positiony=0: run(ip1,port1,camID, positionx, positiony))
-            but1.pack(padx=5, pady=5)
-        if check_but2 == True:
-            but2 = Button(root, text='opencam2', width=20, command=lambda
-                camID='http://{}:{}/videostream.cgi?user=admin&pwd=888888'.format(ip2, port2),
-                positionx=520, positiony=0: run(ip2,port2,camID, positionx, positiony))
-            but2.pack(padx=5, pady=5)
-        if check_but3 == True:
-            but3 = Button(root, text='opencam3', width=20, command=lambda
-                camID='http://{}:{}/videostream.cgi?user=admin&pwd=888888'.format(ip3, port3),
-                positionx=840, positiony=0: run(ip3,port3,camID, positionx, positiony))
-            but3.pack(padx=5, pady=5)
+            if check_but1 == True:
+                but1 = Button(root, text='opencam1', width=20, command=lambda
+                    camID='http://{}:{}/videostream.cgi?user=admin&pwd=888888'.format(ip1, port1),
+                    positionx=200, positiony=0: run(ip1,port1,camID, positionx, positiony))
+                but1.pack(padx=5, pady=5)
+            if check_but2 == True:
+                but2 = Button(root, text='opencam2', width=20, command=lambda
+                    camID='http://{}:{}/videostream.cgi?user=admin&pwd=888888'.format(ip2, port2),
+                    positionx=520, positiony=0: run(ip2,port2,camID, positionx, positiony))
+                but2.pack(padx=5, pady=5)
+            if check_but3 == True:
+                but3 = Button(root, text='opencam3', width=20, command=lambda
+                    camID='http://{}:{}/videostream.cgi?user=admin&pwd=888888'.format(ip3, port3),
+                    positionx=840, positiony=0: run(ip3,port3,camID, positionx, positiony))
+                but3.pack(padx=5, pady=5)
 
-        # if ip4 != '' and ip4 != None:
-        #     but4 = Button(root, text='opencam4', width=20, command=lambda
-        #         camID='http://{}:{}/videostream.cgi?user=admin&pwd=888888'.format(ip4, port4),
-        #         positionx=200, positiony=300: run(ip4,port4,camID, positionx, positiony))
-        #     but4.pack(padx=5, pady=5)
-        #
-        # if ip5 != '' and ip5 != None:
-        #     but5 = Button(root, text='opencam5', width=20, command=lambda
-        #         camID='http://{}:{}/videostream.cgi?user=admin&pwd=888888'.format(ip5, port5),
-        #         positionx=520, positiony=300: run(ip5,port5,camID, positionx, positiony))
-        #     but5.pack(padx=5, pady=5)
-        #
-        # if ip6 != '' and ip6 != None:
-        #     but6 = Button(root, text='opencam6', width=20, command=lambda
-        #         camID='http://{}:{}/videostream.cgi?user=admin&pwd=888888'.format(ip6, port6),
-        #         positionx=840, positiony=300: run(ip6,port6,camID, positionx, positiony))
-        #     but6.pack(padx=5, pady=5)
-        if check_but7 == True:
-            but7 = Button(root, text='USB-cam1', width=20, command=lambda
-                camID=0,
-                positionx=200, positiony=300: run(None, None, camID, positionx, positiony))
-            but7.pack(padx=5, pady=5)
-        if check_but8 == True:
-            but8 = Button(root, text='USB-cam2', width=20, command=lambda
-                camID=1,
-                positionx=520, positiony=300: run(None, None, camID, positionx, positiony))
-            but8.pack(padx=5, pady=5)
-        if check_but9 == True:
-            but9 = Button(root, text='USB-cam3', width=20, command=lambda
-                camID=2,
-                positionx=840, positiony=300: run(None, None, camID, positionx, positiony))
-            but9.pack(padx=5, pady=5)
-
-        if ip1 is None:
-            exit()
-        elif ip1 == '' and ip2 == '' and ip3 == '' and ip4 == '' and ip5 == '' and ip6 == '':
-            pass
-        else:
+            # if ip4 != '' and ip4 != None:
+            #     but4 = Button(root, text='opencam4', width=20, command=lambda
+            #         camID='http://{}:{}/videostream.cgi?user=admin&pwd=888888'.format(ip4, port4),
+            #         positionx=200, positiony=300: run(ip4,port4,camID, positionx, positiony))
+            #     but4.pack(padx=5, pady=5)
+            #
+            # if ip5 != '' and ip5 != None:
+            #     but5 = Button(root, text='opencam5', width=20, command=lambda
+            #         camID='http://{}:{}/videostream.cgi?user=admin&pwd=888888'.format(ip5, port5),
+            #         positionx=520, positiony=300: run(ip5,port5,camID, positionx, positiony))
+            #     but5.pack(padx=5, pady=5)
+            #
+            # if ip6 != '' and ip6 != None:
+            #     but6 = Button(root, text='opencam6', width=20, command=lambda
+            #         camID='http://{}:{}/videostream.cgi?user=admin&pwd=888888'.format(ip6, port6),
+            #         positionx=840, positiony=300: run(ip6,port6,camID, positionx, positiony))
+            #     but6.pack(padx=5, pady=5)
+            if check_but7 == True:
+                but7 = Button(root, text='USB-cam1', width=20, command=lambda
+                    camID=0,
+                    positionx=200, positiony=300: run(None, None, camID, positionx, positiony))
+                but7.pack(padx=5, pady=5)
+            if check_but8 == True:
+                but8 = Button(root, text='USB-cam2', width=20, command=lambda
+                    camID=1,
+                    positionx=520, positiony=300: run(None, None, camID, positionx, positiony))
+                but8.pack(padx=5, pady=5)
+            if check_but9 == True:
+                but9 = Button(root, text='USB-cam3', width=20, command=lambda
+                    camID=2,
+                    positionx=840, positiony=300: run(None, None, camID, positionx, positiony))
+                but9.pack(padx=5, pady=5)
             root.mainloop()
