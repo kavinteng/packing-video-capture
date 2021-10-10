@@ -296,29 +296,29 @@ if __name__ == '__main__':
             root.title('CAMERA LIST')
             root.geometry('200x240+0+0')
             root.config(bg='black')
-            check_but1 = testDeviceip(ip1)
-            check_but2 = testDeviceip(ip2)
-            check_but3 = testDeviceip(ip3)
+            # check_but1 = testDeviceip(ip1)
+            # check_but2 = testDeviceip(ip2)
+            # check_but3 = testDeviceip(ip3)
             check_but7 = testDeviceusb(0)
             check_but8 = testDeviceusb(1)
             check_but9 = testDeviceusb(2)
 
 
-            if check_but1 == True:
-                but1 = Button(root, text='opencam1', width=20, command=lambda
-                    camID='http://{}:{}/videostream.cgi?user=admin&pwd=888888'.format(ip1, port1),
-                    positionx=200, positiony=0: run(ip1,port1,camID, positionx, positiony))
-                but1.pack(padx=5, pady=5)
-            if check_but2 == True:
-                but2 = Button(root, text='opencam2', width=20, command=lambda
-                    camID='http://{}:{}/videostream.cgi?user=admin&pwd=888888'.format(ip2, port2),
-                    positionx=520, positiony=0: run(ip2,port2,camID, positionx, positiony))
-                but2.pack(padx=5, pady=5)
-            if check_but3 == True:
-                but3 = Button(root, text='opencam3', width=20, command=lambda
-                    camID='http://{}:{}/videostream.cgi?user=admin&pwd=888888'.format(ip3, port3),
-                    positionx=840, positiony=0: run(ip3,port3,camID, positionx, positiony))
-                but3.pack(padx=5, pady=5)
+            # if check_but1 == True:
+            #     but1 = Button(root, text='opencam1', width=20, command=lambda
+            #         camID='http://{}:{}/videostream.cgi?user=admin&pwd=888888'.format(ip1, port1),
+            #         positionx=200, positiony=0: run(ip1,port1,camID, positionx, positiony))
+            #     but1.pack(padx=5, pady=5)
+            # if check_but2 == True:
+            #     but2 = Button(root, text='opencam2', width=20, command=lambda
+            #         camID='http://{}:{}/videostream.cgi?user=admin&pwd=888888'.format(ip2, port2),
+            #         positionx=520, positiony=0: run(ip2,port2,camID, positionx, positiony))
+            #     but2.pack(padx=5, pady=5)
+            # if check_but3 == True:
+            #     but3 = Button(root, text='opencam3', width=20, command=lambda
+            #         camID='http://{}:{}/videostream.cgi?user=admin&pwd=888888'.format(ip3, port3),
+            #         positionx=840, positiony=0: run(ip3,port3,camID, positionx, positiony))
+            #     but3.pack(padx=5, pady=5)
 
             # if ip4 != '' and ip4 != None:
             #     but4 = Button(root, text='opencam4', width=20, command=lambda
