@@ -72,11 +72,12 @@ def cutvdo(mydata,vdo,a):
     data = cv2.VideoCapture('{}bc{}.mp4'.format(mydata,a))
     frames = data.get(cv2.CAP_PROP_FRAME_COUNT)
     fps = int(data.get(cv2.CAP_PROP_FPS))
-    end = int(frames / fps)
-    if end >= 60:
-        start = end - 60
+    total = int(frames / fps)
+    if total >= 60:
+        start = total - 60
     else:
         start = 0
+    end = total-1
     # ffmpeg_extract_subclip('{}bc.mp4'.format(mydata), start, end, targetname='{}.mp4'.format(mydata))
     ffmpeg_extract_subclip('{}bc{}.mp4'.format(mydata,a), start, end, targetname='{}{}.mp4'.format(mydata,a))
 
@@ -94,23 +95,25 @@ def post_requests(a, vdo,record,nameid,customid, order, tel, url):
         text = {"Username": nameid, "Customer ID": customid, "Order ID": order, "Tel": tel, "file_type": extension, "token": encoded}
         response = requests.post(url, files=data ,data=text)
         if response.ok:
+            check_post = 1
             print("Upload completed successfully!")
             backuppost(a, record, nameid, customid, order, tel)
 
         else:
+            check_post = 0
             response.raise_for_status()
             print("Something went wrong!")
-
+    return check_post
 
 # load logo image
 def checklogo(frame,logo):
     os.chdir(logo)
     img = cv2.imread('logo4.png')
     size = 100
-    img = cv2.resize(img, (size+90, size))
+    img = cv2.resize(img, (size+90, size+10))
     imggray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
     ret, mask = cv2.threshold(imggray, 1, 255, cv2.THRESH_BINARY)
-    roilogo = frame[-size - 1:-1, -size - 100:-10]
+    roilogo = frame[-size - 11:-1, -size - 100:-10]
     roilogo[np.where(mask)] = 0
     roilogo += img
 
@@ -180,7 +183,11 @@ def main(ip,port,vdo,logo,camID,positionx,positiony,record, font, nameid, login,
         if frame is None:
             continue
 
-        frame = cv2.resize(frame, (320, 240))
+        # frame = cv2.resize(frame, (320, 240))
+
+        # สำหรับ 3 กล้อง
+        frame = cv2.resize(frame, (640, 480))
+
         # frame = cv2.resize(frame, (1280, 720))
         vdoframe = frame.copy()
         vdoframe = cv2.resize(vdoframe, (1280, 720))
@@ -244,7 +251,6 @@ def main(ip,port,vdo,logo,camID,positionx,positiony,record, font, nameid, login,
                     record = 0
                     if ip is not None:
                         confirm(ip, port)
-                    time.sleep(1)
                     break
 
         if login == False:
@@ -262,7 +268,7 @@ def main(ip,port,vdo,logo,camID,positionx,positiony,record, font, nameid, login,
                     et = time.time()
                     if et - st > 3:
                         record = 1
-                        time.sleep(1)
+                        # time.sleep(1)
                     elif et - st <1:
                         if ip is not None:
                             confirm(ip,port)
@@ -326,7 +332,7 @@ def main(ip,port,vdo,logo,camID,positionx,positiony,record, font, nameid, login,
             rec.write(vdoframe)
         cv2.putText(frame, f"Log in as : {str(nameid)}", (10, 25), font, 0.7, (255, 0, 0), 2)
         if login == True:
-            cv2.rectangle(frame, (0, 0), (320, 240), rec_color, 10)
+            cv2.rectangle(frame, (0, 0), (640, 480), rec_color, 15)
         cv2.imshow("{}".format(camID), frame)
 #         cv2.imshow("vdo", vdoframe)
         cv2.moveWindow("{}".format(camID), positionx, positiony)

@@ -8,6 +8,7 @@ from datetime import date
 import mariadb
 import jwt
 from getmac import getmac
+from tkinter import messagebox
 
 class GUI(Tk):
     def __init__(self, parent):
@@ -249,12 +250,13 @@ def f(ip,port,camID,positionx,positiony):
             # os.remove('{}bc.mp4'.format(order))
             # post to url
             url = "https://globalapi.advice.co.th/api/upfile_json"
-            post_requests(a, vdo,record,nameid,customid, order, tel, url)
+            check_post = post_requests(a, vdo,record,nameid,customid, order, tel, url)
+            if check_post == 0:
+                root3 = Tk()
+                root3.withdraw()
+                messagebox.showerror("Error Alert", "fail post")
         except Exception as e:
             print(e)
-
-def quit_(root):
-    root.destroy()
 
 def run(ip,port,camID,positionx,positiony):
     t = Process(target=f, args=(ip,port,camID,positionx,positiony,))
@@ -345,16 +347,16 @@ if __name__ == '__main__':
             if check_but7 == True:
                 but7 = Button(root, text='USB-cam1', width=20, command=lambda
                     camID=0,
-                    positionx=200, positiony=300: run(None, None, camID, positionx, positiony))
+                    positionx=0, positiony=300: run(None, None, camID, positionx, positiony))
                 but7.pack(padx=5, pady=5)
             if check_but8 == True:
                 but8 = Button(root, text='USB-cam2', width=20, command=lambda
                     camID=1,
-                    positionx=520, positiony=300: run(None, None, camID, positionx, positiony))
+                    positionx=640, positiony=300: run(None, None, camID, positionx, positiony))
                 but8.pack(padx=5, pady=5)
             if check_but9 == True:
                 but9 = Button(root, text='USB-cam3', width=20, command=lambda
                     camID=2,
-                    positionx=840, positiony=300: run(None, None, camID, positionx, positiony))
+                    positionx=1280, positiony=300: run(None, None, camID, positionx, positiony))
                 but9.pack(padx=5, pady=5)
             root.mainloop()
