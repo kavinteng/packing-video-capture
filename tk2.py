@@ -104,7 +104,7 @@ class GUI(Tk):
             sys.exit(1)
         cursor = connection.cursor()
         try:
-            TableSql = """CREATE TABLE backuppost(ID INT(20) PRIMARY KEY AUTO_INCREMENT,nameid CHAR(20),customid CHAR(20),orderid CHAR(20),tel CHAR(20))"""
+            TableSql = """CREATE TABLE backuppost(ID INT(20) PRIMARY KEY AUTO_INCREMENT,nameid CHAR(20),customid CHAR(20),orderid CHAR(20),tel CHAR(20),time CHAR(20))"""
             cursor.execute(TableSql)
         except:
             pass
@@ -124,6 +124,8 @@ class GUI(Tk):
         e.grid(row=0, column=3)
         e = Label(self.root2, width=11, text='TEL', borderwidth=2, relief='ridge', anchor='w', bg='yellow')
         e.grid(row=0, column=4)
+        e = Label(self.root2, width=11, text='TIME', borderwidth=2, relief='ridge', anchor='w', bg='yellow')
+        e.grid(row=0, column=5)
 
         i = 1
 
@@ -153,9 +155,10 @@ class GUI(Tk):
         url = "https://globalapi.advice.co.th/api/upfile_json"
 
         for list in lists:
-            _,nameid,customid, order, tel = list
+            _,nameid,customid, order, tel, a = list
             date_dir = date.today()
-            file_name = "D:/vdo_packing/{}/{}.mp4".format(date_dir,order)
+            # file_name = "D:/vdo_packing/{}/{}.mp4".format(date_dir,order)
+            file_name = "D:/vdo_packing/{}/{}{}.mp4".format(date_dir, order,a)
             name, extension = os.path.splitext(file_name)
             mac = getmac.get_mac_address()
             encoded = jwt.encode({'mac address': mac}, 'secret', algorithm='HS256')
@@ -239,13 +242,14 @@ def f(ip,port,camID,positionx,positiony):
             print('Internet connected')
         try:
             # create new and remove old
-            record, font, st, nameid, customid, order, tel, login = main(ip,port,vdo,logo,camID,positionx,positiony,record, font, nameid, login, array, img_aruco)
+            a, record, font, st, nameid, customid, order, tel, login = main(ip,port,vdo,logo,camID,positionx,positiony,record, font, nameid, login, array, img_aruco)
             print(nameid, customid, order, tel)
-            cutvdo(order,vdo)
+            # เพิ่ม a เวลา
+            cutvdo(order,vdo,a)
             # os.remove('{}bc.mp4'.format(order))
             # post to url
             url = "https://globalapi.advice.co.th/api/upfile_json"
-            post_requests(vdo,record,nameid,customid, order, tel, url)
+            post_requests(a, vdo,record,nameid,customid, order, tel, url)
         except Exception as e:
             print(e)
 

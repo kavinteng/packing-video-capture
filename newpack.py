@@ -15,7 +15,7 @@ import jwt
 import mariadb
 import sys
 
-def backuppost(record,nameid,customid,orderid,tel):
+def backuppost(a, record,nameid,customid,orderid,tel):
     try:
         connection = mariadb.connect(host="localhost", user="root", passwd="123456", database="advice")
     except mariadb.Error as e:
@@ -23,13 +23,13 @@ def backuppost(record,nameid,customid,orderid,tel):
         sys.exit(1)
     cursor = connection.cursor()
     try:
-        TableSql = """CREATE TABLE backuppost(ID INT(20) PRIMARY KEY AUTO_INCREMENT,nameid CHAR(20),customid CHAR(20),orderid CHAR(20),tel CHAR(20))"""
+        TableSql = """CREATE TABLE backuppost(ID INT(20) PRIMARY KEY AUTO_INCREMENT,nameid CHAR(20),customid CHAR(20),orderid CHAR(20),tel CHAR(20),time CHAR(20))"""
         cursor.execute(TableSql)
     except:
         pass
 
     if record==1:
-        cursor.execute("insert into backuppost(nameid,customid,orderid,tel) values (?,?,?,?)", (nameid,customid,orderid,tel,))
+        cursor.execute("insert into backuppost(nameid,customid,orderid,tel,time) values (?,?,?,?,?)", (nameid,customid,orderid,tel,a,))
     elif record==0:
         cursor.execute("delete from backuppost where orderid = ?", (orderid,))
     connection.commit()
@@ -66,9 +66,10 @@ def draw_box(decoded, image):
 
 
 # edit video
-def cutvdo(mydata,vdo):
+def cutvdo(mydata,vdo,a):
     os.chdir(vdo)
-    data = cv2.VideoCapture('{}bc.mp4'.format(mydata))
+    # data = cv2.VideoCapture('{}bc.mp4'.format(mydata))
+    data = cv2.VideoCapture('{}bc{}.mp4'.format(mydata,a))
     frames = data.get(cv2.CAP_PROP_FRAME_COUNT)
     fps = int(data.get(cv2.CAP_PROP_FPS))
     end = int(frames / fps)
@@ -76,13 +77,14 @@ def cutvdo(mydata,vdo):
         start = end - 60
     else:
         start = 0
-    ffmpeg_extract_subclip('{}bc.mp4'.format(mydata), start, end, targetname='{}.mp4'.format(mydata))
+    # ffmpeg_extract_subclip('{}bc.mp4'.format(mydata), start, end, targetname='{}.mp4'.format(mydata))
+    ffmpeg_extract_subclip('{}bc{}.mp4'.format(mydata,a), start, end, targetname='{}{}.mp4'.format(mydata,a))
 
 # post by requests to url
-def post_requests(vdo,record,nameid,customid, order, tel, url):
+def post_requests(a, vdo,record,nameid,customid, order, tel, url):
     os.chdir(vdo)
-    file_name = "{}.mp4".format(order)
-    # file_name = "01901927test.mp4"
+    # file_name = "{}.mp4".format(order)
+    file_name = "{}{}.mp4".format(order,a)
     name, extension = os.path.splitext(file_name)
     mac = getmac.get_mac_address()
     encoded = jwt.encode({'mac address': mac}, 'secret', algorithm='HS256')
@@ -93,7 +95,7 @@ def post_requests(vdo,record,nameid,customid, order, tel, url):
         response = requests.post(url, files=data ,data=text)
         if response.ok:
             print("Upload completed successfully!")
-            backuppost(record, nameid, customid, order, tel)
+            backuppost(a, record, nameid, customid, order, tel)
 
         else:
             response.raise_for_status()
@@ -171,6 +173,7 @@ def main(ip,port,vdo,logo,camID,positionx,positiony,record, font, nameid, login,
     array2 = []
     out = 0
     in_st = 0
+    forget_end = 0
 
     while True:
         _, frame = cap.read()
@@ -205,6 +208,12 @@ def main(ip,port,vdo,logo,camID,positionx,positiony,record, font, nameid, login,
                         # config frame to check stop
                         if len(array) > 1:
                             out = 1
+                    # เพิ่มอัดวิดิโอต่อ แล้วจบของเก่า ตอนที่ลืมสแกนจบคลิป
+                    elif end != orderid:
+                        forget_end = 1
+                        record = 0
+                        order_old = order
+                        a_old = a
 
             elif mydata.isnumeric() == True and record == 0:
                 if mydata == "":
@@ -259,14 +268,14 @@ def main(ip,port,vdo,logo,camID,positionx,positiony,record, font, nameid, login,
                             confirm(ip,port)
 
             # config time to logout
-            elif orderid == "-":
-                # measure_object(frame, aruco_dict, parameters, detector, frame)
-                if st == 0:
-                    st = time.time()
-                else:
-                    et = time.time()
-                    if et - st > 1800:
-                        login = False
+            # elif orderid == "-":
+            #     # measure_object(frame, aruco_dict, parameters, detector, frame)
+            #     if st == 0:
+            #         st = time.time()
+            #     else:
+            #         et = time.time()
+            #         if et - st > 1800:
+            #             login = False
 
         # create video file
         if record == 1:
@@ -280,12 +289,25 @@ def main(ip,port,vdo,logo,camID,positionx,positiony,record, font, nameid, login,
                 orderid = "-"
                 record = 0
                 continue
-            backuppost(record,nameid,customid,order,tel)
-            file = str(order) + "bc.mp4"
+
+
+            # เพิ่มเวลาทุกคลิป
+            a = datetime.datetime.now().strftime("%T")
+            a = a.replace(':','-')
+
+            backuppost(a, record, nameid, customid, order, tel)
+            file = str(order) + "bc{}.mp4".format(a)
+
+            # file = str(order) + "bc.mp4"
             # video_size = (1280, 720)
             video_size = (1280, 720)
             fourcc = cv2.VideoWriter_fourcc(*'H264')
             rec = cv2.VideoWriter(file, fourcc, 50, video_size)
+
+            # ตัดคลิปเก่าของกรณีลืมจบคลิป
+            if forget_end == 1:
+                cutvdo(order_old, vdo, a_old)
+
             record = 2
 
         # video recording
@@ -313,7 +335,8 @@ def main(ip,port,vdo,logo,camID,positionx,positiony,record, font, nameid, login,
         if k == ord('q'):
             exit()
     try:
-        return record, font, st, nameid, customid, order, tel, login
+        # return record, font, st, nameid, customid, order, tel, login
+        return a, record, font, st, nameid, customid, order, tel, login
     except:
         pass
 
