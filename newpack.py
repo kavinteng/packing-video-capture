@@ -28,7 +28,7 @@ def backuppost(a, record,nameid,customid,orderid,tel):
     except:
         pass
 
-    if record==1:
+    if record==2:
         cursor.execute("insert into backuppost(nameid,customid,orderid,tel,time) values (?,?,?,?,?)", (nameid,customid,orderid,tel,a,))
     elif record==0:
         cursor.execute("delete from backuppost where orderid = ?", (orderid,))
@@ -185,8 +185,8 @@ def main(ip,port,vdo,logo,camID,positionx,positiony,record, font, nameid, login,
 
         # frame = cv2.resize(frame, (320, 240))
 
-        # สำหรับ 3 กล้อง
-        frame = cv2.resize(frame, (640, 480))
+        # สำหรับ 3 กล้อง (1600*900)
+        frame = cv2.resize(frame, (530, 380))
 
         # frame = cv2.resize(frame, (1280, 720))
         vdoframe = frame.copy()
@@ -248,6 +248,7 @@ def main(ip,port,vdo,logo,camID,positionx,positiony,record, font, nameid, login,
                 et = time.time()
                 if et - st > 1:
                     rec.release()
+                    backuppost(a, record, nameid, customid, order, tel)
                     record = 0
                     if ip is not None:
                         confirm(ip, port)
@@ -301,7 +302,7 @@ def main(ip,port,vdo,logo,camID,positionx,positiony,record, font, nameid, login,
             a = datetime.datetime.now().strftime("%T")
             a = a.replace(':','-')
 
-            backuppost(a, record, nameid, customid, order, tel)
+            # backuppost(a, record, nameid, customid, order, tel)
             file = str(order) + "bc{}.mp4".format(a)
 
             # file = str(order) + "bc.mp4"
@@ -332,7 +333,7 @@ def main(ip,port,vdo,logo,camID,positionx,positiony,record, font, nameid, login,
             rec.write(vdoframe)
         cv2.putText(frame, f"Log in as : {str(nameid)}", (10, 25), font, 0.7, (255, 0, 0), 2)
         if login == True:
-            cv2.rectangle(frame, (0, 0), (640, 480), rec_color, 15)
+            cv2.rectangle(frame, (0, 0), (530, 380), rec_color, 15)
         cv2.imshow("{}".format(camID), frame)
 #         cv2.imshow("vdo", vdoframe)
         cv2.moveWindow("{}".format(camID), positionx, positiony)

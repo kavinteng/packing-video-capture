@@ -236,11 +236,6 @@ def f(ip,port,camID,positionx,positiony):
     login = False
     img_aruco = cv2.imread("phone_aruco_marker.jpg")
     while True:
-        if connect() == False:
-            print('No Internet connection!')
-            continue
-        else:
-            print('Internet connected')
         try:
             # create new and remove old
             a, record, font, st, nameid, customid, order, tel, login = main(ip,port,vdo,logo,camID,positionx,positiony,record, font, nameid, login, array, img_aruco)
@@ -250,7 +245,14 @@ def f(ip,port,camID,positionx,positiony):
             # os.remove('{}bc.mp4'.format(order))
             # post to url
             url = "https://globalapi.advice.co.th/api/upfile_json"
-            check_post = post_requests(a, vdo,record,nameid,customid, order, tel, url)
+            if connect() == False:
+                root4 = Tk()
+                root4.withdraw()
+                messagebox.showerror("Network error", "No internet connection")
+                continue
+            else:
+                print('Internet connected')
+                check_post = post_requests(a, vdo,record,nameid,customid, order, tel, url)
             if check_post == 0:
                 root3 = Tk()
                 root3.withdraw()
@@ -264,10 +266,9 @@ def run(ip,port,camID,positionx,positiony):
 
 def testDeviceusb(source):
    cap = cv2.VideoCapture(source)
-   if cap is None or not cap.isOpened():
-       return False
-   else:
-       return True
+   ret, _ = cap.read()
+
+   return ret
 
 def testDeviceip(ip):
    check = os.system('ping {} /n 1'.format(ip))
@@ -352,11 +353,11 @@ if __name__ == '__main__':
             if check_but8 == True:
                 but8 = Button(root, text='USB-cam2', width=20, command=lambda
                     camID=1,
-                    positionx=640, positiony=300: run(None, None, camID, positionx, positiony))
+                    positionx=530, positiony=300: run(None, None, camID, positionx, positiony))
                 but8.pack(padx=5, pady=5)
             if check_but9 == True:
                 but9 = Button(root, text='USB-cam3', width=20, command=lambda
                     camID=2,
-                    positionx=1280, positiony=300: run(None, None, camID, positionx, positiony))
+                    positionx=1060, positiony=300: run(None, None, camID, positionx, positiony))
                 but9.pack(padx=5, pady=5)
             root.mainloop()
