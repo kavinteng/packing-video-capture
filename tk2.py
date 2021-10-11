@@ -154,7 +154,8 @@ class GUI(Tk):
 
         for list in lists:
             _,nameid,customid, order, tel = list
-            file_name = "vdo/{}.mp4".format(order)
+            date_dir = date.today()
+            file_name = "D:/vdo_packing/{}/{}.mp4".format(date_dir,order)
             name, extension = os.path.splitext(file_name)
             mac = getmac.get_mac_address()
             encoded = jwt.encode({'mac address': mac}, 'secret', algorithm='HS256')
