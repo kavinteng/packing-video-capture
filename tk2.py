@@ -207,7 +207,7 @@ def repost():
         sys.exit(1)
     cursor = connection.cursor()
     try:
-        TableSql = """CREATE TABLE backuppost(ID INT(20) PRIMARY KEY AUTO_INCREMENT,nameid CHAR(20),customid CHAR(20),orderid CHAR(20),tel CHAR(20),time CHAR(20))"""
+        TableSql = """CREATE TABLE backuppost(ID INT(20) PRIMARY KEY AUTO_INCREMENT,nameid CHAR(20),customid CHAR(20),orderid CHAR(20),tel CHAR(20),date CHAR(20),time CHAR(20))"""
         cursor.execute(TableSql)
     except:
         pass
@@ -226,8 +226,10 @@ def repost():
     e.grid(row=0, column=3)
     e = Label(root2, width=11, text='TEL', borderwidth=2, relief='ridge', anchor='w', bg='yellow')
     e.grid(row=0, column=4)
-    e = Label(root2, width=11, text='TIME', borderwidth=2, relief='ridge', anchor='w', bg='yellow')
+    e = Label(root2, width=11, text='DATE', borderwidth=2, relief='ridge', anchor='w', bg='yellow')
     e.grid(row=0, column=5)
+    e = Label(root2, width=11, text='TIME', borderwidth=2, relief='ridge', anchor='w', bg='yellow')
+    e.grid(row=0, column=6)
 
     i = 1
 
@@ -242,7 +244,7 @@ def repost():
     connection.close()
 
     repost2 = Button(root2, text="POST", command=post)
-    repost2.grid(row=i, column=2, sticky='W', padx=5, pady=2)
+    repost2.grid(row=i, column=3, sticky='W', padx=5, pady=2)
     root2.mainloop()
 
 def post():
@@ -256,27 +258,28 @@ def post():
     lists = cursor.fetchall()
     url = "https://globalapi.advice.co.th/api/upfile_json"
     for list in lists:
-        _, nameid, customid, order, tel, a = list
-        date_dir = date.today()
+        _, nameid, customid, order, tel, date, a = list
         # file_name = "D:/vdo_packing/{}/{}.mp4".format(date_dir,order)
-        file_name = "D:/vdo_packing/{}/{}{}.mp4".format(date_dir, order, a)
+        file_name = "D:/vdo_packing/{}/{}{}.mp4".format(date, order, a)
         name, extension = os.path.splitext(file_name)
         mac = getmac.get_mac_address()
         encoded = jwt.encode({'mac address': mac}, 'secret', algorithm='HS256')
 
-        with open(file_name, "rb") as file:
-            data = {"data": file}
-            text = {"Username": nameid, "Customer ID": customid, "Order ID": order, "Tel": tel,
-                    "file_type": extension, "token": encoded}
-            response = requests.post(url, files=data, data=text)
+        try:
+            with open(file_name, "rb") as file:
+                data = {"data": file}
+                text = {"Username": nameid, "Customer ID": customid, "Order ID": order, "Tel": tel,
+                        "file_type": extension, "token": encoded}
+                response = requests.post(url, files=data, data=text)
 
-            if response.ok:
-                print("Upload completed successfully!")
-                cursor.execute("delete from backuppost where orderid = ?", (order,))
-
-            else:
-                response.raise_for_status()
-                print("Something went wrong!")
+                if response.ok:
+                    print("Upload completed successfully!")
+                    cursor.execute("delete from backuppost where orderid = ? and time = ?", (order,a))
+                else:
+                    response.raise_for_status()
+                    print("Something went wrong!")
+        except:
+            pass
 
     connection.commit()
     connection.close()
@@ -468,5 +471,8 @@ if __name__ == '__main__':
             count = '-'
             num_report = Label(root,text = 'UNPOST = {}'.format(count), fg='red', font=('Arial', 15))
             num_report.pack(padx=5, pady=5)
-            count_unpost()
+            try:
+                count_unpost()
+            except:
+                pass
             root.mainloop()

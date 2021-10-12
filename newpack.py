@@ -14,8 +14,8 @@ from getmac import getmac
 import jwt
 import mariadb
 import sys
-
-def backuppost(a, record,nameid,customid,orderid,tel):
+date_dir = datetime.date.today()
+def backuppost(date, a, record,nameid,customid,orderid,tel):
     try:
         connection = mariadb.connect(host="localhost", user="root", passwd="123456", database="advice")
     except mariadb.Error as e:
@@ -23,13 +23,13 @@ def backuppost(a, record,nameid,customid,orderid,tel):
         sys.exit(1)
     cursor = connection.cursor()
     try:
-        TableSql = """CREATE TABLE backuppost(ID INT(20) PRIMARY KEY AUTO_INCREMENT,nameid CHAR(20),customid CHAR(20),orderid CHAR(20),tel CHAR(20),time CHAR(20))"""
+        TableSql = """CREATE TABLE backuppost(ID INT(20) PRIMARY KEY AUTO_INCREMENT,nameid CHAR(20),customid CHAR(20),orderid CHAR(20),tel CHAR(20),date CHAR(20),time CHAR(20))"""
         cursor.execute(TableSql)
     except:
         pass
 
     if record==2:
-        cursor.execute("insert into backuppost(nameid,customid,orderid,tel,time) values (?,?,?,?,?)", (nameid,customid,orderid,tel,a,))
+        cursor.execute("insert into backuppost(nameid,customid,orderid,tel,date,time) values (?,?,?,?,?,?)", (nameid,customid,orderid,tel,date,a,))
     elif record==0:
         cursor.execute("delete from backuppost where orderid = ? and time = ?", (orderid,a))
     connection.commit()
@@ -97,7 +97,7 @@ def post_requests(a, vdo,record,nameid,customid, order, tel, url):
         if response.ok:
             check_post = 1
             print("Upload completed successfully!")
-            backuppost(a, record, nameid, customid, order, tel)
+            backuppost(date_dir, a, record, nameid, customid, order, tel)
 
         else:
             check_post = 0
@@ -218,7 +218,7 @@ def main(ip,port,vdo,logo,camID,positionx,positiony,record, font, nameid, login,
                     # เพิ่มอัดวิดิโอต่อ แล้วจบของเก่า ตอนที่ลืมสแกนจบคลิป
                     elif end != orderid:
                         forget_end = 1
-                        backuppost(a, record, nameid, customid, order, tel)
+                        backuppost(date_dir, a, record, nameid, customid, order, tel)
                         record = 0
                         order_old = order
                         a_old = a
@@ -249,7 +249,7 @@ def main(ip,port,vdo,logo,camID,positionx,positiony,record, font, nameid, login,
                 et = time.time()
                 if et - st > 1:
                     rec.release()
-                    backuppost(a, record, nameid, customid, order, tel)
+                    backuppost(date_dir, a, record, nameid, customid, order, tel)
                     record = 0
                     if ip is not None:
                         confirm(ip, port)
