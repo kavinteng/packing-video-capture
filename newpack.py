@@ -31,7 +31,7 @@ def backuppost(a, record,nameid,customid,orderid,tel):
     if record==2:
         cursor.execute("insert into backuppost(nameid,customid,orderid,tel,time) values (?,?,?,?,?)", (nameid,customid,orderid,tel,a,))
     elif record==0:
-        cursor.execute("delete from backuppost where orderid = ?", (orderid,))
+        cursor.execute("delete from backuppost where orderid = ? and time = ?", (orderid,a))
     connection.commit()
     connection.close()
 
@@ -218,6 +218,7 @@ def main(ip,port,vdo,logo,camID,positionx,positiony,record, font, nameid, login,
                     # เพิ่มอัดวิดิโอต่อ แล้วจบของเก่า ตอนที่ลืมสแกนจบคลิป
                     elif end != orderid:
                         forget_end = 1
+                        backuppost(a, record, nameid, customid, order, tel)
                         record = 0
                         order_old = order
                         a_old = a
@@ -301,6 +302,7 @@ def main(ip,port,vdo,logo,camID,positionx,positiony,record, font, nameid, login,
             # เพิ่มเวลาทุกคลิป
             a = datetime.datetime.now().strftime("%T")
             a = a.replace(':','-')
+            a = str(a)
 
             # backuppost(a, record, nameid, customid, order, tel)
             file = str(order) + "bc{}.mp4".format(a)

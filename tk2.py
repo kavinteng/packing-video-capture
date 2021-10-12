@@ -94,93 +94,93 @@ class GUI(Tk):
 
         SubmitBtn = Button(stepOne, text="Submit", command=self.submit)
         SubmitBtn.grid(row=7, column=6, sticky='W', padx=5, pady=2)
-        repost = Button(stepOne, text="Re-post", command=self.repost)
-        repost.grid(row=7, column=0, sticky='W', padx=5, pady=2)
+        # repost = Button(stepOne, text="Re-post", command=self.repost)
+        # repost.grid(row=7, column=0, sticky='W', padx=5, pady=2)
 
-    def repost(self):
-        try:
-            connection = mariadb.connect(host="localhost", user="root", passwd="123456", database="advice")
-        except mariadb.Error as e:
-            print(f"Error connecting to MariaDB Platform: {e}")
-            sys.exit(1)
-        cursor = connection.cursor()
-        try:
-            TableSql = """CREATE TABLE backuppost(ID INT(20) PRIMARY KEY AUTO_INCREMENT,nameid CHAR(20),customid CHAR(20),orderid CHAR(20),tel CHAR(20),time CHAR(20))"""
-            cursor.execute(TableSql)
-        except:
-            pass
-        self.root2 = Tk()
-        self.root2.title('repost')
-        # root2.geometry('0+0')
+    # def repost(self):
+    #     try:
+    #         connection = mariadb.connect(host="localhost", user="root", passwd="123456", database="advice")
+    #     except mariadb.Error as e:
+    #         print(f"Error connecting to MariaDB Platform: {e}")
+    #         sys.exit(1)
+    #     cursor = connection.cursor()
+    #     try:
+    #         TableSql = """CREATE TABLE backuppost(ID INT(20) PRIMARY KEY AUTO_INCREMENT,nameid CHAR(20),customid CHAR(20),orderid CHAR(20),tel CHAR(20),time CHAR(20))"""
+    #         cursor.execute(TableSql)
+    #     except:
+    #         pass
+    #     self.root2 = Tk()
+    #     self.root2.title('repost')
+    #     # root2.geometry('0+0')
+    #
+    #     cursor.execute("select * from backuppost ")
+    #     lists = cursor.fetchall()
+    #     e = Label(self.root2, width=11, text='PRIMARY KEY', borderwidth=2, relief='ridge', anchor='w', bg='yellow')
+    #     e.grid(row=0, column=0)
+    #     e = Label(self.root2, width=11, text='USER ID', borderwidth=2, relief='ridge', anchor='w', bg='yellow')
+    #     e.grid(row=0, column=1)
+    #     e = Label(self.root2, width=11, text='CUSTOMER ID', borderwidth=2, relief='ridge', anchor='w', bg='yellow')
+    #     e.grid(row=0, column=2)
+    #     e = Label(self.root2, width=11, text='ORDER ID', borderwidth=2, relief='ridge', anchor='w', bg='yellow')
+    #     e.grid(row=0, column=3)
+    #     e = Label(self.root2, width=11, text='TEL', borderwidth=2, relief='ridge', anchor='w', bg='yellow')
+    #     e.grid(row=0, column=4)
+    #     e = Label(self.root2, width=11, text='TIME', borderwidth=2, relief='ridge', anchor='w', bg='yellow')
+    #     e.grid(row=0, column=5)
+    #
+    #     i = 1
+    #
+    #     for list in lists:
+    #         for j in range(len(list)):
+    #             e = Label(self.root2, width=11, text=list[j],
+    #                       borderwidth=2, relief='ridge', anchor="w")
+    #             e.grid(row=i, column=j)
+    #         i = i + 1
+    #
+    #     connection.commit()
+    #     connection.close()
+    #
+    #     repost2 = Button(self.root2, text="POST", command=self.post)
+    #     repost2.grid(row=i, column=2, sticky='W', padx=5, pady=2)
+    #     self.root2.mainloop()
 
-        cursor.execute("select * from backuppost ")
-        lists = cursor.fetchall()
-        e = Label(self.root2, width=11, text='PRIMARY KEY', borderwidth=2, relief='ridge', anchor='w', bg='yellow')
-        e.grid(row=0, column=0)
-        e = Label(self.root2, width=11, text='USER ID', borderwidth=2, relief='ridge', anchor='w', bg='yellow')
-        e.grid(row=0, column=1)
-        e = Label(self.root2, width=11, text='CUSTOMER ID', borderwidth=2, relief='ridge', anchor='w', bg='yellow')
-        e.grid(row=0, column=2)
-        e = Label(self.root2, width=11, text='ORDER ID', borderwidth=2, relief='ridge', anchor='w', bg='yellow')
-        e.grid(row=0, column=3)
-        e = Label(self.root2, width=11, text='TEL', borderwidth=2, relief='ridge', anchor='w', bg='yellow')
-        e.grid(row=0, column=4)
-        e = Label(self.root2, width=11, text='TIME', borderwidth=2, relief='ridge', anchor='w', bg='yellow')
-        e.grid(row=0, column=5)
-
-        i = 1
-
-        for list in lists:
-            for j in range(len(list)):
-                e = Label(self.root2, width=11, text=list[j],
-                          borderwidth=2, relief='ridge', anchor="w")
-                e.grid(row=i, column=j)
-            i = i + 1
-
-        connection.commit()
-        connection.close()
-
-        repost2 = Button(self.root2, text="POST", command=self.post)
-        repost2.grid(row=i, column=2, sticky='W', padx=5, pady=2)
-        self.root2.mainloop()
-
-    def post(self):
-        try:
-            connection = mariadb.connect(host="localhost", user="root", passwd="123456", database="advice")
-        except mariadb.Error as e:
-            print(f"Error connecting to MariaDB Platform: {e}")
-            sys.exit(1)
-        cursor = connection.cursor()
-        cursor.execute("select * from backuppost ")
-        lists = cursor.fetchall()
-        url = "https://globalapi.advice.co.th/api/upfile_json"
-
-        for list in lists:
-            _,nameid,customid, order, tel, a = list
-            date_dir = date.today()
-            # file_name = "D:/vdo_packing/{}/{}.mp4".format(date_dir,order)
-            file_name = "D:/vdo_packing/{}/{}{}.mp4".format(date_dir, order,a)
-            name, extension = os.path.splitext(file_name)
-            mac = getmac.get_mac_address()
-            encoded = jwt.encode({'mac address': mac}, 'secret', algorithm='HS256')
-
-            with open(file_name, "rb") as file:
-                data = {"data": file}
-                text = {"Username": nameid, "Customer ID": customid, "Order ID": order, "Tel": tel,
-                        "file_type": extension, "token": encoded}
-                response = requests.post(url, files=data, data=text)
-
-                if response.ok:
-                    print("Upload completed successfully!")
-                    cursor.execute("delete from backuppost where orderid = ?", (order,))
-
-                else:
-                    response.raise_for_status()
-                    print("Something went wrong!")
-
-        connection.commit()
-        connection.close()
-        self.root2.destroy()
+    # def post(self):
+    #     try:
+    #         connection = mariadb.connect(host="localhost", user="root", passwd="123456", database="advice")
+    #     except mariadb.Error as e:
+    #         print(f"Error connecting to MariaDB Platform: {e}")
+    #         sys.exit(1)
+    #     cursor = connection.cursor()
+    #     cursor.execute("select * from backuppost ")
+    #     lists = cursor.fetchall()
+    #     url = "https://globalapi.advice.co.th/api/upfile_json"
+    #
+    #     for list in lists:
+    #         _,nameid,customid, order, tel, a = list
+    #         date_dir = date.today()
+    #         # file_name = "D:/vdo_packing/{}/{}.mp4".format(date_dir,order)
+    #         file_name = "D:/vdo_packing/{}/{}{}.mp4".format(date_dir, order,a)
+    #         name, extension = os.path.splitext(file_name)
+    #         mac = getmac.get_mac_address()
+    #         encoded = jwt.encode({'mac address': mac}, 'secret', algorithm='HS256')
+    #
+    #         with open(file_name, "rb") as file:
+    #             data = {"data": file}
+    #             text = {"Username": nameid, "Customer ID": customid, "Order ID": order, "Tel": tel,
+    #                     "file_type": extension, "token": encoded}
+    #             response = requests.post(url, files=data, data=text)
+    #
+    #             if response.ok:
+    #                 print("Upload completed successfully!")
+    #                 cursor.execute("delete from backuppost where orderid = ?", (order,))
+    #
+    #             else:
+    #                 response.raise_for_status()
+    #                 print("Something went wrong!")
+    #
+    #     connection.commit()
+    #     connection.close()
+    #     self.root2.destroy()
 
 
     def submit(self):
@@ -198,6 +198,106 @@ class GUI(Tk):
         self.val12 = self.Val12Txt.get()
 
         self.destroy()
+
+def repost():
+    try:
+        connection = mariadb.connect(host="localhost", user="root", passwd="123456", database="advice")
+    except mariadb.Error as e:
+        print(f"Error connecting to MariaDB Platform: {e}")
+        sys.exit(1)
+    cursor = connection.cursor()
+    try:
+        TableSql = """CREATE TABLE backuppost(ID INT(20) PRIMARY KEY AUTO_INCREMENT,nameid CHAR(20),customid CHAR(20),orderid CHAR(20),tel CHAR(20),time CHAR(20))"""
+        cursor.execute(TableSql)
+    except:
+        pass
+    global root2
+    root2 = Tk()
+    root2.title('repost')
+    cursor.execute("select * from backuppost ")
+    lists = cursor.fetchall()
+    e = Label(root2, width=11, text='PRIMARY KEY', borderwidth=2, relief='ridge', anchor='w', bg='yellow')
+    e.grid(row=0, column=0)
+    e = Label(root2, width=11, text='USER ID', borderwidth=2, relief='ridge', anchor='w', bg='yellow')
+    e.grid(row=0, column=1)
+    e = Label(root2, width=11, text='CUSTOMER ID', borderwidth=2, relief='ridge', anchor='w', bg='yellow')
+    e.grid(row=0, column=2)
+    e = Label(root2, width=11, text='ORDER ID', borderwidth=2, relief='ridge', anchor='w', bg='yellow')
+    e.grid(row=0, column=3)
+    e = Label(root2, width=11, text='TEL', borderwidth=2, relief='ridge', anchor='w', bg='yellow')
+    e.grid(row=0, column=4)
+    e = Label(root2, width=11, text='TIME', borderwidth=2, relief='ridge', anchor='w', bg='yellow')
+    e.grid(row=0, column=5)
+
+    i = 1
+
+    for list in lists:
+        for j in range(len(list)):
+            e = Label(root2, width=11, text=list[j],
+                      borderwidth=2, relief='ridge', anchor="w")
+            e.grid(row=i, column=j)
+        i = i + 1
+
+    connection.commit()
+    connection.close()
+
+    repost2 = Button(root2, text="POST", command=post)
+    repost2.grid(row=i, column=2, sticky='W', padx=5, pady=2)
+    root2.mainloop()
+
+def post():
+    try:
+        connection = mariadb.connect(host="localhost", user="root", passwd="123456", database="advice")
+    except mariadb.Error as e:
+        print(f"Error connecting to MariaDB Platform: {e}")
+        sys.exit(1)
+    cursor = connection.cursor()
+    cursor.execute("select * from backuppost ")
+    lists = cursor.fetchall()
+    url = "https://globalapi.advice.co.th/api/upfile_json"
+    for list in lists:
+        _, nameid, customid, order, tel, a = list
+        date_dir = date.today()
+        # file_name = "D:/vdo_packing/{}/{}.mp4".format(date_dir,order)
+        file_name = "D:/vdo_packing/{}/{}{}.mp4".format(date_dir, order, a)
+        name, extension = os.path.splitext(file_name)
+        mac = getmac.get_mac_address()
+        encoded = jwt.encode({'mac address': mac}, 'secret', algorithm='HS256')
+
+        with open(file_name, "rb") as file:
+            data = {"data": file}
+            text = {"Username": nameid, "Customer ID": customid, "Order ID": order, "Tel": tel,
+                    "file_type": extension, "token": encoded}
+            response = requests.post(url, files=data, data=text)
+
+            if response.ok:
+                print("Upload completed successfully!")
+                cursor.execute("delete from backuppost where orderid = ?", (order,))
+
+            else:
+                response.raise_for_status()
+                print("Something went wrong!")
+
+    connection.commit()
+    connection.close()
+    root2.destroy()
+
+def count_unpost():
+    try:
+        connection = mariadb.connect(host="localhost", user="root", passwd="123456", database="advice")
+    except mariadb.Error as e:
+        print(f"Error connecting to MariaDB Platform: {e}")
+        sys.exit(1)
+    cursor = connection.cursor()
+    cursor.execute("select * from backuppost ")
+    lists = cursor.fetchall()
+    connection.commit()
+    connection.close()
+    count = len(lists)
+
+    num_report.configure(text = 'UNPOST = {}'.format(count))
+    root.after(1000, count_unpost)
+
 
 def confirm(ip,port):
     left = 'http://{}:{}/decoder_control.cgi?loginuse=admin&loginpas=888888&command=4&onestep=1'.format(ip,port)
@@ -264,11 +364,13 @@ def run(ip,port,camID,positionx,positiony):
     t = Process(target=f, args=(ip,port,camID,positionx,positiony,))
     t.start()
 
-def testDeviceusb(source):
-   cap = cv2.VideoCapture(source)
-   ret, _ = cap.read()
-
-   return ret
+def testDeviceusb(source,positionx,positiony):
+    cap = cv2.VideoCapture(source)
+    if cap.isOpened():
+        run(None, None, camID=source, positionx=positionx, positiony=positiony)
+        return True
+    else:
+        return False
 
 def testDeviceip(ip):
    check = os.system('ping {} /n 1'.format(ip))
@@ -303,14 +405,13 @@ if __name__ == '__main__':
             root = Tk()
             root.title('CAMERA LIST')
             root.geometry('200x240+0+0')
-            root.config(bg='black')
+
             # check_but1 = testDeviceip(ip1)
             # check_but2 = testDeviceip(ip2)
             # check_but3 = testDeviceip(ip3)
-            check_but7 = testDeviceusb(0)
-            check_but8 = testDeviceusb(1)
-            check_but9 = testDeviceusb(2)
-
+            check_but7 = testDeviceusb(source=0, positionx=0, positiony=380)
+            check_but8 = testDeviceusb(source=1, positionx=530, positiony=380)
+            check_but9 = testDeviceusb(source=2, positionx=1060, positiony=380)
 
             # if check_but1 == True:
             #     but1 = Button(root, text='opencam1', width=20, command=lambda
@@ -346,18 +447,26 @@ if __name__ == '__main__':
             #         positionx=840, positiony=300: run(ip6,port6,camID, positionx, positiony))
             #     but6.pack(padx=5, pady=5)
             if check_but7 == True:
-                but7 = Button(root, text='USB-cam1', width=20, command=lambda
+                but7 = Button(root, text='USB-cam1', width=20, bg='#32CD32',fg='white', command=lambda
                     camID=0,
                     positionx=0, positiony=300: run(None, None, camID, positionx, positiony))
                 but7.pack(padx=5, pady=5)
             if check_but8 == True:
-                but8 = Button(root, text='USB-cam2', width=20, command=lambda
+                but8 = Button(root, text='USB-cam2', width=20, bg='#32CD32',fg='white', command=lambda
                     camID=1,
                     positionx=530, positiony=300: run(None, None, camID, positionx, positiony))
                 but8.pack(padx=5, pady=5)
             if check_but9 == True:
-                but9 = Button(root, text='USB-cam3', width=20, command=lambda
+                but9 = Button(root, text='USB-cam3', width=20, bg='#32CD32',fg='white', command=lambda
                     camID=2,
                     positionx=1060, positiony=300: run(None, None, camID, positionx, positiony))
                 but9.pack(padx=5, pady=5)
+
+            repost = Button(root, text="Re-post", width=20, bg='red' ,fg='white', command=repost)
+            repost.pack(padx=5, pady=5)
+
+            count = '-'
+            num_report = Label(root,text = 'UNPOST = {}'.format(count), fg='red', font=('Arial', 15))
+            num_report.pack(padx=5, pady=5)
+            count_unpost()
             root.mainloop()
