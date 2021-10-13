@@ -109,7 +109,7 @@ def post_requests(a, vdo,record,nameid,customid, order, tel, url):
 def checklogo(frame,logo):
     os.chdir(logo)
     img = cv2.imread('logo4.png')
-    size = 100
+    size = 50
     img = cv2.resize(img, (size+90, size+10))
     imggray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
     ret, mask = cv2.threshold(imggray, 1, 255, cv2.THRESH_BINARY)
@@ -190,7 +190,7 @@ def main(ip,port,vdo,logo,camID,positionx,positiony,record, font, nameid, login,
 
         # frame = cv2.resize(frame, (1280, 720))
         vdoframe = frame.copy()
-        vdoframe = cv2.resize(vdoframe, (1280, 720))
+        vdoframe = cv2.resize(vdoframe, (640, 360))
 
         # decode qr
         data, type, x, y, w, h = decode(frame)
@@ -309,7 +309,7 @@ def main(ip,port,vdo,logo,camID,positionx,positiony,record, font, nameid, login,
 
             # file = str(order) + "bc.mp4"
             # video_size = (1280, 720)
-            video_size = (1280, 720)
+            video_size = (640, 360)
             fourcc = cv2.VideoWriter_fourcc(*'H264')
             rec = cv2.VideoWriter(file, fourcc, 50, video_size)
 
@@ -328,10 +328,16 @@ def main(ip,port,vdo,logo,camID,positionx,positiony,record, font, nameid, login,
             elif out == 1:
                 rec_color = (0, 0, 255)
             checklogo(vdoframe,logo)
-            cv2.putText(vdoframe, "Order ID: {}".format(str(order)), (10, 20), cv2.FONT_HERSHEY_SIMPLEX, 0.7,
-                        (0, 0, 255), 2)
+            # cv2.putText(vdoframe, "Order ID: {}".format(str(order)), (10, 20), cv2.FONT_HERSHEY_SIMPLEX, 0.7,
+            #             (0, 0, 255), 2)
+            # cv2.putText(vdoframe, datetime.datetime.now().strftime("%d/%m/%Y %T"), (10, vdoframe.shape[0] - 10),
+            #             font, 0.4, (0, 0, 255), 1)
+
+            # config over 300 mb
+            cv2.putText(vdoframe, "Order ID: {}".format(str(order)), (10, 20), cv2.FONT_HERSHEY_SIMPLEX, 0.5,
+                        (0, 0, 255), 1)
             cv2.putText(vdoframe, datetime.datetime.now().strftime("%d/%m/%Y %T"), (10, vdoframe.shape[0] - 10),
-                        font, 0.4, (0, 0, 255), 1)
+                        font, 0.4, (255, 255, 0), 1)
             rec.write(vdoframe)
         cv2.putText(frame, f"Log in as : {str(nameid)}", (10, 25), font, 0.7, (255, 0, 0), 2)
         if login == True:
