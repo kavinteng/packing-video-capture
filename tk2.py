@@ -291,12 +291,18 @@ def count_unpost():
     except mariadb.Error as e:
         print(f"Error connecting to MariaDB Platform: {e}")
         sys.exit(1)
+    lists = None
+    count = '0'
     cursor = connection.cursor()
-    cursor.execute("select * from backuppost ")
-    lists = cursor.fetchall()
+    try:
+        cursor.execute("select * from backuppost ")
+        lists = cursor.fetchall()
+    except:
+        pass
     connection.commit()
     connection.close()
-    count = len(lists)
+    if lists is not None:
+        count = len(lists)
 
     num_report.configure(text = 'UNPOST = {}'.format(count))
     root.after(1000, count_unpost)
@@ -468,11 +474,8 @@ if __name__ == '__main__':
             repost = Button(root, text="Re-post", width=20, bg='red' ,fg='white', command=repost)
             repost.pack(padx=5, pady=5)
 
-            count = '-'
+            count = '0'
             num_report = Label(root,text = 'UNPOST = {}'.format(count), fg='red', font=('Arial', 15))
             num_report.pack(padx=5, pady=5)
-            try:
-                count_unpost()
-            except:
-                pass
+            count_unpost()
             root.mainloop()
