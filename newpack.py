@@ -14,6 +14,7 @@ from getmac import getmac
 import jwt
 import mariadb
 import sys
+import cvzone
 date_dir = datetime.date.today()
 def backuppost(date, a, record,nameid,customid,orderid,tel):
     try:
@@ -108,14 +109,22 @@ def post_requests(a, vdo,record,nameid,customid, order, tel, url):
 # load logo image
 def checklogo(frame,logo):
     os.chdir(logo)
-    img = cv2.imread('logo4.png')
-    size = 50
-    img = cv2.resize(img, (size+90, size+10))
-    imggray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
-    ret, mask = cv2.threshold(imggray, 1, 255, cv2.THRESH_BINARY)
-    roilogo = frame[-size - 11:-1, -size - 100:-10]
-    roilogo[np.where(mask)] = 0
-    roilogo += img
+    img = cv2.imread('a++F--20_.png',cv2.IMREAD_UNCHANGED)
+    img = cv2.resize(img, (0, 0), None, 0.18, 0.18)
+    hf, wf, cf = img.shape
+    hb, wb, cb = frame.shape
+
+    vdoframe = cvzone.overlayPNG(frame, img, [wb - wf, hb - hf])
+    return vdoframe
+
+    # size = 50
+    # img = cv2.resize(img, (size+90, size+10))
+    # imggray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+    # ret, mask = cv2.threshold(imggray, 1, 255, cv2.THRESH_BINARY)
+    # roilogo = frame[-size - 11:-1, -size - 100:-10]
+    # roilogo = frame[-48:-10, -127:-1]
+    # roilogo[np.where(mask)] = 0
+    # roilogo += img
 
 
 # measure object
@@ -327,7 +336,7 @@ def main(ip,port,vdo,logo,camID,positionx,positiony,record, font, nameid, login,
                 cv2.putText(frame, "RECORDING", (10, 70), font, 0.5, (0, 0, 255), 2)
             elif out == 1:
                 rec_color = (0, 0, 255)
-            checklogo(vdoframe,logo)
+            vdoframe = checklogo(vdoframe,logo)
             # cv2.putText(vdoframe, "Order ID: {}".format(str(order)), (10, 20), cv2.FONT_HERSHEY_SIMPLEX, 0.7,
             #             (0, 0, 255), 2)
             # cv2.putText(vdoframe, datetime.datetime.now().strftime("%d/%m/%Y %T"), (10, vdoframe.shape[0] - 10),
