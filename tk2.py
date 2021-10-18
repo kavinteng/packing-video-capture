@@ -286,6 +286,7 @@ def post():
     root2.destroy()
 
 def count_unpost():
+    global after_id
     try:
         connection = mariadb.connect(host="localhost", user="root", passwd="123456", database="advice")
     except mariadb.Error as e:
@@ -305,8 +306,13 @@ def count_unpost():
         count = len(lists)
 
     num_report.configure(text = 'UNPOST = {}'.format(count))
-    root.after(1000, count_unpost)
+    after_id  = root.after(1000, count_unpost)
 
+def quit():
+    """Cancel all scheduled callbacks and quit."""
+    for after_id in root.tk.eval('after info').split():
+        root.after_cancel(after_id)
+    root.destroy()
 
 def confirm(ip,port):
     left = 'http://{}:{}/decoder_control.cgi?loginuse=admin&loginpas=888888&command=4&onestep=1'.format(ip,port)
@@ -478,4 +484,5 @@ if __name__ == '__main__':
             num_report = Label(root,text = 'UNPOST = {}'.format(count), fg='red', font=('Arial', 15))
             num_report.pack(padx=5, pady=5)
             count_unpost()
+            root.protocol('WM_DELETE_WINDOW', quit)
             root.mainloop()

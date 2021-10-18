@@ -1,12 +1,10 @@
 import os
-import cv2
 from pyzbar import pyzbar
 from moviepy.video.io.ffmpeg_tools import ffmpeg_extract_subclip
 import time
 import datetime
 import numpy as np
 import requests
-import base64
 from object_detector import *
 from tk2 import confirm
 import urllib.request
@@ -14,7 +12,7 @@ from getmac import getmac
 import jwt
 import mariadb
 import sys
-import cvzone
+
 date_dir = datetime.date.today()
 def backuppost(date, a, record,nameid,customid,orderid,tel):
     try:
@@ -110,11 +108,25 @@ def post_requests(a, vdo,record,nameid,customid, order, tel, url):
 def checklogo(frame,logo):
     os.chdir(logo)
     img = cv2.imread('a++F--20_.png',cv2.IMREAD_UNCHANGED)
-    img = cv2.resize(img, (0, 0), None, 0.18, 0.18)
+    img = cv2.resize(img, (0, 0), None, 0.16, 0.16)
+    *_, mask = cv2.split(img)
+    maskBGRA = cv2.cvtColor(mask, cv2.COLOR_GRAY2BGRA)
+    maskBGR = cv2.cvtColor(mask, cv2.COLOR_GRAY2BGR)
+    imgRGBA = cv2.bitwise_and(img, maskBGRA)
+    imgRGB = cv2.cvtColor(imgRGBA, cv2.COLOR_BGRA2BGR)
     hf, wf, cf = img.shape
     hb, wb, cb = frame.shape
 
-    vdoframe = cvzone.overlayPNG(frame, img, [wb - wf, hb - hf])
+    pos = [wb - wf, hb - hf]
+    imgMaskFull = np.zeros((hb, wb, cb), np.uint8)
+    imgMaskFull[pos[1]:hf + pos[1], pos[0]:wf + pos[0], :] = imgRGB
+    imgMaskFull2 = np.ones((hb, wb, cb), np.uint8) * 255
+    maskBGRInv = cv2.bitwise_not(maskBGR)
+    imgMaskFull2[pos[1]:hf + pos[1], pos[0]:wf + pos[0], :] = maskBGRInv
+
+    imgback2 = cv2.bitwise_and(frame, imgMaskFull2)
+    vdoframe = cv2.bitwise_or(imgback2, imgMaskFull)
+
     return vdoframe
 
     # size = 50
