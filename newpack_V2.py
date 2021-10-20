@@ -184,7 +184,7 @@ def checklogo(frame,logo):
 #                         cv2.FONT_HERSHEY_PLAIN, 2, (100, 200, 0), 2)
 
 
-def main(order_dummy, ip,port,vdo,logo,camID,positionx,positiony,record, font, nameid, login, array, img_aruco):
+def main(cap,order_dummy, ip,port,vdo,logo,camID,positionx,positiony,record, font, nameid, login, array, img_aruco):
     # Load Aruco detector
     # parameters = cv2.aruco.DetectorParameters_create()
     # aruco_dict = cv2.aruco.Dictionary_get(cv2.aruco.DICT_5X5_50)
@@ -192,7 +192,7 @@ def main(order_dummy, ip,port,vdo,logo,camID,positionx,positiony,record, font, n
     # Load Object Detector
     detector = HomogeneousBgDetector()
 
-    cap = cv2.VideoCapture(camID)
+    # cap = cv2.VideoCapture(camID)
     # cap.set(3, 640)
     # cap.set(4, 480)
     # frame_w = int(cap.get(4))
@@ -270,17 +270,17 @@ def main(order_dummy, ip,port,vdo,logo,camID,positionx,positiony,record, font, n
         # config delay stop time
         if out == 1:
             cv2.putText(frame, "STOP", (10, 90), font, 1, (0, 0, 255), 4)
-            # if st == 0:
-            #     st = time.time()
-            # else:
-            #     et = time.time()
-            #     if et - st > 0.5:
-            rec.release()
-            backuppost(forget_end,date_dir, a, record, nameid, customid, order, tel)
-            record = 0
-            if ip is not None:
-                confirm(ip, port)
-            break
+            if st == 0:
+                st = time.time()
+            else:
+                et = time.time()
+                if et - st > 0.5:
+                    rec.release()
+                    backuppost(forget_end,date_dir, a, record, nameid, customid, order, tel)
+                    record = 0
+                    if ip is not None:
+                        confirm(ip, port)
+                    break
 
         if login == False:
             nameid = "-"

@@ -353,10 +353,11 @@ def f(ip,port,camID,positionx,positiony):
     order_dummy = 1
     login = False
     img_aruco = cv2.imread("phone_aruco_marker.jpg")
+    cap = cv2.VideoCapture(camID)
     while True:
         try:
             # create new and remove old
-            a, record, font, st, nameid, customid, order, tel, login = main(order_dummy,ip,port,vdo,logo,camID,positionx,positiony,record, font, nameid, login, array, img_aruco)
+            a, record, font, st, nameid, customid, order, tel, login = main(cap,order_dummy,ip,port,vdo,logo,camID,positionx,positiony,record, font, nameid, login, array, img_aruco)
             # order_dummy = 'C' + customid + 'O' + order + 'T' + tel
             print(nameid, customid, order, tel)
             # เพิ่ม a เวลา
