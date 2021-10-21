@@ -282,7 +282,7 @@ def post():
                     response.raise_for_status()
                     print("Something went wrong!")
         except:
-            pass
+            cursor.execute("update backuppost set detail = 'No such file' where orderid = ? and time = ?", (order, a))
 
     connection.commit()
     connection.close()
@@ -372,25 +372,29 @@ def f(ip,port,camID,positionx,positiony):
                 root4.withdraw()
                 messagebox.showerror("Network error", "No internet connection")
                 continue
-            else:
+            elif connect() == True:
                 print('Internet connected')
                 m = Process(target=multipost ,args=(a, vdo,record,nameid,customid, order, tel, url,))
                 m.start()
+            else:
+                pass_func = Tk()
+                pass_func.withdraw()
+                messagebox.showerror("Error Skip", 'Failed Skip post process')
         except Exception as e:
             print(e)
             root3 = Tk()
             root3.withdraw()
-            messagebox.showerror("Error Alert", e)
+            messagebox.showerror("Error Process", e)
 
 def run(ip,port,camID,positionx,positiony):
     t = Process(target=f, args=(ip,port,camID,positionx,positiony,))
     t.start()
 
 def multipost(a, vdo,record,nameid,customid, order, tel, url):
-    check_post = post_requests(None,a, vdo, record, nameid, customid, order, tel, url)
-    date_dir = datetime.date.today()
-    if check_post == 0:
-        backuppost(check_post, date_dir, a, record, nameid, customid, order, tel)
+    post_requests(None,a, vdo, record, nameid, customid, order, tel, url)
+    # date_dir = datetime.date.today()
+    # if check_post == 2:
+    #     backuppost(check_post, date_dir, a, record, nameid, customid, order, tel)
     #     root3 = Tk()
     #     root3.withdraw()
     #     messagebox.showerror("Error Alert", "fail post")

@@ -34,8 +34,10 @@ def backuppost(forget_end,date, a, record,nameid,customid,orderid,tel):
         if forget_end == 1:
             cursor.execute("update backuppost set detail = 'forget end' where orderid = ? and time = ?", (orderid,a))
         elif forget_end == 0:
-            cursor.execute("update backuppost set detail = 'post failed' where orderid = ? and time = ?", (orderid, a))
-    elif record==0:
+            cursor.execute("update backuppost set detail = 'processing' where orderid = ? and time = ?", (orderid, a))
+    elif forget_end == 2:
+        cursor.execute("update backuppost set detail = 'post failed' where orderid = ? and time = ?", (orderid, a))
+    elif record==0 and forget_end == None:
         cursor.execute("delete from backuppost where orderid = ? and time = ?", (orderid,a))
     connection.commit()
     connection.close()
@@ -105,14 +107,17 @@ def post_requests(forget_end,a, vdo,record,nameid,customid, order, tel, url):
                 backuppost(forget_end,date_dir, a, record, nameid, customid, order, tel)
 
             else:
-                check_post = 0
+                check_post = 2
                 response.raise_for_status()
                 print("Something went wrong!")
+                backuppost(check_post, date_dir, a, record, nameid, customid, order, tel)
     except Exception as e:
+        print(e)
         failpost = Tk()
         failpost.withdraw()
-        messagebox.showerror("Error Alert", e)
-    return check_post
+        errorpost = e + 'time: ' + a
+        messagebox.showerror("Error post", errorpost)
+    # return check_post
 
 # load logo image
 def checklogo(frame,logo):
@@ -327,7 +332,7 @@ def main(cap,order_dummy, ip,port,vdo,logo,camID,positionx,positiony,record, fon
                 print(e)
                 failqr = Tk()
                 failqr.withdraw()
-                messagebox.showerror("Error Alert", 'Wrong QRCODE Format')
+                messagebox.showerror("Error QRCODE", 'Wrong QRCODE Format')
                 orderid = "-"
                 record = 0
                 in_st = 0
@@ -373,7 +378,7 @@ def main(cap,order_dummy, ip,port,vdo,logo,camID,positionx,positiony,record, fon
             # cv2.putText(vdoframe, "Order ID: {}".format(str(order)), (10, 20), cv2.FONT_HERSHEY_SIMPLEX, 0.5,
             #             (0, 0, 255), 1)
             cv2.putText(vdoframe, datetime.datetime.now().strftime("%d/%m/%Y %T"), (10, vdoframe.shape[0] - 10),
-                        font, 0.4, (255, 255, 0), 1)
+                        font, 0.4, (255, 0, 0), 1)
             rec.write(vdoframe)
         cv2.putText(frame, f"Log in as : {str(nameid)}", (10, 25), font, 0.7, (255, 0, 0), 2)
         if login == True:
