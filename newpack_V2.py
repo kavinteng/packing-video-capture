@@ -213,6 +213,7 @@ def main(cap,order_dummy, ip,port,vdo,logo,camID,positionx,positiony,record, fon
     out = 0
     in_st = 0
     forget_end = 0
+    st_scan_in = time.time()
 
     while True:
         _, frame = cap.read()
@@ -240,24 +241,31 @@ def main(cap,order_dummy, ip,port,vdo,logo,camID,positionx,positiony,record, fon
                     nameid = "Please Login !!!"
                     continue
                 elif login == True and record != 2:
-                    in_st = 1
-                    orderid = mydata
+                    et_scan_in = time.time()
+                    if et_scan_in - st_scan_in > 1:
+                        in_st = 1
+                        orderid = mydata
                 elif record == 2:
-                    end = mydata
-                    if end == orderid:
-                        array.append(end)
-                        if out == 0:
-                            cv2.putText(frame, f"check:{str(len(array))}", (100, 70), font, 0.5, (0, 255, 0), 2)
-                        # config frame to check stop
-                        if len(array) > 1:
-                            out = 1
-                    # เพิ่มอัดวิดิโอต่อ แล้วจบของเก่า ตอนที่ลืมสแกนจบคลิป
-                    elif end != orderid:
-                        forget_end = 1
-                        backuppost(forget_end,date_dir, a, record, nameid, customid, order, tel)
-                        record = 0
-                        order_old = order
-                        a_old = a
+                    et_scan = time.time()
+                    if et_scan - st_scan > 5:
+                        no_scan = 0
+
+                    if no_scan == 0:
+                        end = mydata
+                        if end == orderid:
+                            array.append(end)
+                            if out == 0:
+                                cv2.putText(frame, f"check:{str(len(array))}", (100, 70), font, 0.5, (0, 255, 0), 2)
+                            # config frame to check stop
+                            if len(array) > 1:
+                                out = 1
+                        # เพิ่มอัดวิดิโอต่อ แล้วจบของเก่า ตอนที่ลืมสแกนจบคลิป
+                        elif end != orderid:
+                            forget_end = 1
+                            backuppost(forget_end,date_dir, a, record, nameid, customid, order, tel)
+                            record = 0
+                            order_old = order
+                            a_old = a
 
             elif mydata.isnumeric() == True and record == 0:
                 if mydata == "":
@@ -305,6 +313,8 @@ def main(cap,order_dummy, ip,port,vdo,logo,camID,positionx,positiony,record, fon
                 else:
                     et = time.time()
                     if et - st > 3:
+                        no_scan = 1
+                        st_scan = time.time()
                         record = 1
                         # time.sleep(1)
                     elif et - st <1:
