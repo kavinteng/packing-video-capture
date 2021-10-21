@@ -94,20 +94,24 @@ def post_requests(forget_end,a, vdo,record,nameid,customid, order, tel, url):
     name, extension = os.path.splitext(file_name)
     mac = getmac.get_mac_address()
     encoded = jwt.encode({'mac address': mac}, 'secret', algorithm='HS256')
+    try:
+        with open(file_name, "rb") as file:
+            data = {"data": file}
+            text = {"Username": nameid, "Customer ID": customid, "Order ID": order, "Tel": tel, "file_type": extension, "token": encoded}
+            response = requests.post(url, files=data ,data=text)
+            if response.ok:
+                check_post = 1
+                print("Upload completed successfully!")
+                backuppost(forget_end,date_dir, a, record, nameid, customid, order, tel)
 
-    with open(file_name, "rb") as file:
-        data = {"data": file}
-        text = {"Username": nameid, "Customer ID": customid, "Order ID": order, "Tel": tel, "file_type": extension, "token": encoded}
-        response = requests.post(url, files=data ,data=text)
-        if response.ok:
-            check_post = 1
-            print("Upload completed successfully!")
-            backuppost(forget_end,date_dir, a, record, nameid, customid, order, tel)
-
-        else:
-            check_post = 0
-            response.raise_for_status()
-            print("Something went wrong!")
+            else:
+                check_post = 0
+                response.raise_for_status()
+                print("Something went wrong!")
+    except Exception as e:
+        failpost = Tk()
+        failpost.withdraw()
+        messagebox.showerror("Error Alert", e)
     return check_post
 
 # load logo image

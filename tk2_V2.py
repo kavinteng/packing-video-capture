@@ -361,9 +361,9 @@ def f(ip,port,camID,positionx,positiony):
             # order_dummy = 'C' + customid + 'O' + order + 'T' + tel
             print(nameid, customid, order, tel)
             # เพิ่ม a เวลา
-            c = Process(target=cutvdo , args=(order,vdo,a,))
-            c.start()
-            # cutvdo(order,vdo,a)
+            # c = Process(target=cutvdo , args=(order,vdo,a,))
+            # c.start()
+            cutvdo(order,vdo,a)
             # os.remove('{}bc.mp4'.format(order))
             # post to url
             url = "https://globalapi.advice.co.th/api/upfile_json"
