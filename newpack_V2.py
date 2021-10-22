@@ -291,7 +291,7 @@ def main(cap,order_dummy, ip,port,vdo,logo,camID,positionx,positiony,record, fon
                 st = time.time()
             else:
                 et = time.time()
-                if et - st > 0.5:
+                if et - st > 0.2:
                     rec.release()
                     backuppost(forget_end,date_dir, a, record, nameid, customid, order, tel)
                     record = 0
@@ -312,7 +312,7 @@ def main(cap,order_dummy, ip,port,vdo,logo,camID,positionx,positiony,record, fon
                     st = time.time()
                 else:
                     et = time.time()
-                    if et - st > 3:
+                    if et - st > 1:
                         no_scan = 1
                         st_scan = time.time()
                         record = 1

@@ -4,6 +4,8 @@ error report 	-> None
 post		-> after packed
 video display	-> orderid, logo, date&time
 color		-> date&time -> cyan
+delay stop	-> 3 sec
+delay before record -> 3 sec
 
 
 
@@ -20,4 +22,6 @@ error report	-> repost fail -> No such file
 post		-> done in background (parallel)
 video display	-> remove orderid & logo
 color		-> date&time -> blue
+delay stop	-> 0.2 sec
+delay before record -> 1 sec
 ** from parallel post -> create delay time that not scan qrcode between main process loop. Such after start and after stop (หลังจากเริ่มจะไม่สามารถสแกนจบได้ และจากจบจะไม่สามารถสแกนริ่มได้ในช่วงเวลาที่กำหนด)
