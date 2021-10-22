@@ -1,0 +1,23 @@
+V1
+sql 		-> scheme(ID,nameid,customid,orderid,tel,date,time)
+error report 	-> None
+post		-> after packed
+video display	-> orderid, logo, date&time
+color		-> date&time -> cyan
+
+
+
+V2
+sql 		-> scheme(ID,nameid,customid,orderid,tel,date,time,error detail)
+error report	-> repost fail -> No such file
+		-> skip post -> Failed Skip post process
+		-> fail main process -> show error
+		-> forget end clip
+		-> post fail
+		-> fail request process -> show error
+		-> scan fail -> Wrong QRCODE Format
+
+post		-> done in background (parallel)
+video display	-> remove orderid & logo
+color		-> date&time -> blue
+** from parallel post -> create delay time that not scan qrcode between main process loop. Such after start and after stop (หลังจากเริ่มจะไม่สามารถสแกนจบได้ และจากจบจะไม่สามารถสแกนริ่มได้ในช่วงเวลาที่กำหนด)
