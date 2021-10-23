@@ -120,29 +120,18 @@ def post_requests(forget_end,a, vdo,record,nameid,customid, order, tel, url):
     # return check_post
 
 # load logo image
-def checklogo(frame,logo):
+def checklogo(frame,logo,order,customid):
     os.chdir(logo)
-    img = cv2.imread('a++F--20_.png',cv2.IMREAD_UNCHANGED)
-    img = cv2.resize(img, (0, 0), None, 0.16, 0.16)
-    *_, mask = cv2.split(img)
-    maskBGRA = cv2.cvtColor(mask, cv2.COLOR_GRAY2BGRA)
-    maskBGR = cv2.cvtColor(mask, cv2.COLOR_GRAY2BGR)
-    imgRGBA = cv2.bitwise_and(img, maskBGRA)
-    imgRGB = cv2.cvtColor(imgRGBA, cv2.COLOR_BGRA2BGR)
-    hf, wf, cf = img.shape
-    hb, wb, cb = frame.shape
-
-    pos = [wb - wf, hb - hf]
-    imgMaskFull = np.zeros((hb, wb, cb), np.uint8)
-    imgMaskFull[pos[1]:hf + pos[1], pos[0]:wf + pos[0], :] = imgRGB
-    imgMaskFull2 = np.ones((hb, wb, cb), np.uint8) * 255
-    maskBGRInv = cv2.bitwise_not(maskBGR)
-    imgMaskFull2[pos[1]:hf + pos[1], pos[0]:wf + pos[0], :] = maskBGRInv
-
-    imgback2 = cv2.bitwise_and(frame, imgMaskFull2)
-    vdoframe = cv2.bitwise_or(imgback2, imgMaskFull)
-
-    return vdoframe
+    font = cv2.FONT_HERSHEY_SIMPLEX
+    img = cv2.imread('Banner03.jpg')
+    img = cv2.resize(img, (640, 85))
+    img_height, img_width, _ = img.shape
+    x, y = 0, 0
+    frame[y:y + img_height, x:x + img_width] = img
+    cv2.putText(frame, 'order No: {}'.format(str(order)), (20, 45), font, 0.4, (0, 0, 0), 1)
+    cv2.putText(frame, 'Customer No: {}'.format(customid), (20, 65), font, 0.4, (0, 0, 0), 1)
+    cv2.putText(frame, 'Record Time: {}'.format(datetime.datetime.now().strftime("%d/%m/%Y")), (210, 45), font, 0.4, (0, 0, 0), 1)
+    cv2.putText(frame, '{}'.format(datetime.datetime.now().strftime("%T")), (310, 65), font, 0.4,(0, 0, 0), 1)
 
     # size = 50
     # img = cv2.resize(img, (size+90, size+10))
@@ -378,7 +367,7 @@ def main(cap,order_dummy, ip,port,vdo,logo,camID,positionx,positiony,record, fon
                 cv2.putText(frame, "RECORDING", (10, 70), font, 0.5, (0, 0, 255), 2)
             elif out == 1:
                 rec_color = (0, 0, 255)
-            # vdoframe = checklogo(vdoframe,logo)
+            checklogo(vdoframe,logo,order,customid)
             # cv2.putText(vdoframe, "Order ID: {}".format(str(order)), (10, 20), cv2.FONT_HERSHEY_SIMPLEX, 0.7,
             #             (0, 0, 255), 2)
             # cv2.putText(vdoframe, datetime.datetime.now().strftime("%d/%m/%Y %T"), (10, vdoframe.shape[0] - 10),
@@ -387,8 +376,8 @@ def main(cap,order_dummy, ip,port,vdo,logo,camID,positionx,positiony,record, fon
             # config over 300 mb
             # cv2.putText(vdoframe, "Order ID: {}".format(str(order)), (10, 20), cv2.FONT_HERSHEY_SIMPLEX, 0.5,
             #             (0, 0, 255), 1)
-            cv2.putText(vdoframe, datetime.datetime.now().strftime("%d/%m/%Y %T"), (10, vdoframe.shape[0] - 10),
-                        font, 0.4, (255, 0, 0), 1)
+            # cv2.putText(vdoframe, datetime.datetime.now().strftime("%d/%m/%Y %T"), (10, vdoframe.shape[0] - 10),
+            #             font, 0.4, (255, 0, 0), 1)
             rec.write(vdoframe)
         cv2.putText(frame, f"Log in as : {str(nameid)}", (10, 25), font, 0.7, (255, 0, 0), 2)
         if login == True:
