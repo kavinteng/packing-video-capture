@@ -2,7 +2,7 @@ import os
 import cv2
 from tkinter import *
 from multiprocessing import Process
-from newpack_V2 import *
+from newpack_V3 import *
 import urllib.request
 import time
 from datetime import date
@@ -202,13 +202,13 @@ class GUI(Tk):
 
 def repost():
     try:
-        connection = mariadb.connect(host="localhost", user="root", passwd="123456", database="advicev2")
+        connection = mariadb.connect(host="localhost", user="root", passwd="123456", database="advicev3")
     except mariadb.Error as e:
         print(f"Error connecting to MariaDB Platform: {e}")
         sys.exit(1)
     cursor = connection.cursor()
     try:
-        TableSql = """CREATE TABLE backuppost(ID INT(20) PRIMARY KEY AUTO_INCREMENT,nameid CHAR(20),customid CHAR(20),orderid CHAR(20),tel CHAR(20),date CHAR(20),time CHAR(20),detail CHAR(50))"""
+        TableSql = """CREATE TABLE backuppost(ID INT(20) PRIMARY KEY AUTO_INCREMENT,nameid CHAR(20),customid CHAR(20),orderid CHAR(20),tel CHAR(20),size CHAR(20),date CHAR(20),time CHAR(20),detail CHAR(50))"""
         cursor.execute(TableSql)
     except:
         pass
@@ -228,17 +228,19 @@ def repost():
     e.grid(row=0, column=3)
     e = Label(root2, width=11, text='TEL', borderwidth=2, relief='ridge', anchor='w', bg='yellow')
     e.grid(row=0, column=4)
-    e = Label(root2, width=11, text='DATE', borderwidth=2, relief='ridge', anchor='w', bg='yellow')
+    e = Label(root2, width=11, text='BOX SIZE', borderwidth=2, relief='ridge', anchor='w', bg='yellow')
     e.grid(row=0, column=5)
-    e = Label(root2, width=11, text='TIME', borderwidth=2, relief='ridge', anchor='w', bg='yellow')
+    e = Label(root2, width=11, text='DATE', borderwidth=2, relief='ridge', anchor='w', bg='yellow')
     e.grid(row=0, column=6)
-    e = Label(root2, width=30, text='Error detail', borderwidth=2, relief='ridge', anchor='w', bg='yellow')
+    e = Label(root2, width=11, text='TIME', borderwidth=2, relief='ridge', anchor='w', bg='yellow')
     e.grid(row=0, column=7)
+    e = Label(root2, width=30, text='Error detail', borderwidth=2, relief='ridge', anchor='w', bg='yellow')
+    e.grid(row=0, column=8)
 
     i = 1
     for list in lists:
         for j in range(len(list)):
-            if j%7 == 0 and j != 0:
+            if j%8 == 0 and j != 0:
                 e = Label(root2, width=30, text=list[j],
                             borderwidth=2, relief='ridge', anchor="w")
             else:
@@ -256,7 +258,7 @@ def repost():
 
 def post():
     try:
-        connection = mariadb.connect(host="localhost", user="root", passwd="123456", database="advicev2")
+        connection = mariadb.connect(host="localhost", user="root", passwd="123456", database="advicev3")
     except mariadb.Error as e:
         print(f"Error connecting to MariaDB Platform: {e}")
         sys.exit(1)
@@ -265,7 +267,7 @@ def post():
     lists = cursor.fetchall()
     url = "https://globalapi.advice.co.th/api/upfile_json"
     for list in lists:
-        _, nameid, customid, order, tel, date, a, _ = list
+        _, nameid, customid, order, tel, size, date, a, _ = list
         # file_name = "D:/vdo_packing/{}/{}.mp4".format(date_dir,order)
         file_name = "D:/vdo_packing/{}/{}{}.mp4".format(date, order, a)
         name, extension = os.path.splitext(file_name)
@@ -275,7 +277,7 @@ def post():
         try:
             with open(file_name, "rb") as file:
                 data = {"data": file}
-                text = {"Username": nameid, "Customer ID": customid, "Order ID": order, "Tel": tel,
+                text = {"Username": nameid, "Customer ID": customid, "Order ID": order, "Tel": tel, "Box size": size,
                         "file_type": extension, "token": encoded}
                 response = requests.post(url, files=data, data=text)
 
@@ -298,7 +300,7 @@ def post():
 def count_unpost():
     global after_id
     try:
-        connection = mariadb.connect(host="localhost", user="root", passwd="123456", database="advicev2")
+        connection = mariadb.connect(host="localhost", user="root", passwd="123456", database="advicev3")
     except mariadb.Error as e:
         print(f"Error connecting to MariaDB Platform: {e}")
         sys.exit(1)
@@ -364,7 +366,7 @@ def f(ip,port,camID,positionx,positiony):
     while True:
         try:
             # create new and remove old
-            a, record, font, st, nameid, customid, order, tel, login = main(cap,order_dummy,ip,port,vdo,logo,camID,positionx,positiony,record, font, nameid, login, array, img_aruco)
+            box_size, a, record, font, st, nameid, customid, order, tel, login = main(cap,order_dummy,ip,port,vdo,logo,camID,positionx,positiony,record, font, nameid, login, array, img_aruco)
             # order_dummy = 'C' + customid + 'O' + order + 'T' + tel
             print(nameid, customid, order, tel)
             # เพิ่ม a เวลา
@@ -381,7 +383,7 @@ def f(ip,port,camID,positionx,positiony):
                 continue
             elif connect() == True:
                 print('Internet connected')
-                m = Process(target=multipost ,args=(a, vdo,record,nameid,customid, order, tel, url,))
+                m = Process(target=multipost ,args=(box_size, a, vdo,record,nameid,customid, order, tel, url,))
                 m.start()
             else:
                 pass_func = Tk()
@@ -397,9 +399,9 @@ def run(ip,port,camID,positionx,positiony):
     t = Process(target=f, args=(ip,port,camID,positionx,positiony,))
     t.start()
 
-def multipost(a, vdo,record,nameid,customid, order, tel, url):
+def multipost(box_size, a, vdo,record,nameid,customid, order, tel, url):
     print('------multipost------')
-    post_requests(None,a, vdo, record, nameid, customid, order, tel, url)
+    post_requests(box_size, None,a, vdo, record, nameid, customid, order, tel, url)
     # date_dir = datetime.date.today()
     # if check_post == 2:
     #     backuppost(check_post, date_dir, a, record, nameid, customid, order, tel)

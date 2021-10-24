@@ -6,7 +6,7 @@ import datetime
 import numpy as np
 import requests
 from object_detector import *
-from tk2_V2 import confirm
+from tk2_V3 import confirm
 import urllib.request
 from getmac import getmac
 import jwt
@@ -16,21 +16,21 @@ from tkinter import messagebox
 from tkinter import *
 
 date_dir = datetime.date.today()
-def backuppost(forget_end,date, a, record,nameid,customid,orderid,tel):
+def backuppost(size,forget_end,date, a, record,nameid,customid,orderid,tel):
     try:
-        connection = mariadb.connect(host="localhost", user="root", passwd="123456", database="advicev2")
+        connection = mariadb.connect(host="localhost", user="root", passwd="123456", database="advicev3")
     except mariadb.Error as e:
         print(f"Error connecting to MariaDB Platform: {e}")
         sys.exit(1)
     cursor = connection.cursor()
     try:
-        TableSql = """CREATE TABLE backuppost(ID INT(20) PRIMARY KEY AUTO_INCREMENT,nameid CHAR(20),customid CHAR(20),orderid CHAR(20),tel CHAR(20),date CHAR(20),time CHAR(20),detail CHAR(50))"""
+        TableSql = """CREATE TABLE backuppost(ID INT(20) PRIMARY KEY AUTO_INCREMENT,nameid CHAR(20),customid CHAR(20),orderid CHAR(20),tel CHAR(20),size CHAR(20),date CHAR(20),time CHAR(20),detail CHAR(50))"""
         cursor.execute(TableSql)
     except:
         pass
 
     if record==2:
-        cursor.execute("insert into backuppost(nameid,customid,orderid,tel,date,time) values (?,?,?,?,?,?)", (nameid,customid,orderid,tel,date,a,))
+        cursor.execute("insert into backuppost(nameid,customid,orderid,tel,size,date,time) values (?,?,?,?,?,?,?)", (nameid,customid,orderid,tel,size,date,a,))
         if forget_end == 1:
             cursor.execute("update backuppost set detail = 'forget end' where orderid = ? and time = ?", (orderid,a))
         elif forget_end == 0:
@@ -91,7 +91,7 @@ def cutvdo(mydata,vdo,a):
     ffmpeg_extract_subclip('{}bc{}.mp4'.format(mydata,a), start, end, targetname='{}{}.mp4'.format(mydata,a))
 
 # post by requests to url
-def post_requests(forget_end,a, vdo,record,nameid,customid, order, tel, url):
+def post_requests(size,forget_end,a, vdo,record,nameid,customid, order, tel, url):
     os.chdir(vdo)
     # file_name = "{}.mp4".format(order)
     file_name = "{}{}.mp4".format(order,a)
@@ -101,13 +101,13 @@ def post_requests(forget_end,a, vdo,record,nameid,customid, order, tel, url):
     try:
         with open(file_name, "rb") as file:
             data = {"data": file}
-            text = {"Username": nameid, "Customer ID": customid, "Order ID": order, "Tel": tel, "file_type": extension, "token": encoded}
+            text = {"Username": nameid, "Customer ID": customid, "Order ID": order, "Tel": tel, "Box size": size, "file_type": extension, "token": encoded}
             response = requests.post(url, files=data ,data=text)
             print('------posting------')
             if response.ok:
                 check_post = 1
                 print("Upload completed successfully!")
-                backuppost(forget_end,date_dir, a, record, nameid, customid, order, tel)
+                backuppost(size,forget_end,date_dir, a, record, nameid, customid, order, tel)
 
             else:
                 response.raise_for_status()
@@ -117,7 +117,7 @@ def post_requests(forget_end,a, vdo,record,nameid,customid, order, tel, url):
         e = str(e)
         detail1, detail2 = e.split(':', 1)
         # check_post = 2
-        backuppost(detail1, date_dir, a, record, nameid, customid, order, tel)
+        backuppost(size,detail1, date_dir, a, record, nameid, customid, order, tel)
 
     # return check_post
 
@@ -205,6 +205,7 @@ def main(cap,order_dummy, ip,port,vdo,logo,camID,positionx,positiony,record, fon
     in_st = 0
     forget_end = 0
     st_scan_in = time.time()
+    qrsize = 0
 
     while True:
         _, frame = cap.read()
@@ -234,9 +235,13 @@ def main(cap,order_dummy, ip,port,vdo,logo,camID,positionx,positiony,record, fon
                 elif login == True and record != 2:
                     et_scan_in = time.time()
                     if et_scan_in - st_scan_in > 1:
-                        in_st = 1
-                        orderid = mydata
-                elif record == 2:
+                        if len(mydata) == 4:
+                            qrsize = 1
+                            box_size = mydata
+                            in_st = 1
+                        else:
+                            orderid = mydata
+                elif record == 2 :
                     et_scan = time.time()
                     if et_scan - st_scan > 5:
                         no_scan = 0
@@ -251,9 +256,10 @@ def main(cap,order_dummy, ip,port,vdo,logo,camID,positionx,positiony,record, fon
                             if len(array) > 1:
                                 out = 1
                         # เพิ่มอัดวิดิโอต่อ แล้วจบของเก่า ตอนที่ลืมสแกนจบคลิป
-                        elif end != orderid:
+                        elif end != orderid and len(end) == 29:
                             forget_end = 1
-                            backuppost(forget_end,date_dir, a, record, nameid, customid, order, tel)
+                            qrsize = 0
+                            backuppost(box_size,forget_end,date_dir, a, record, nameid, customid, order, tel)
                             record = 0
                             order_old = order
                             a_old = a
@@ -284,7 +290,7 @@ def main(cap,order_dummy, ip,port,vdo,logo,camID,positionx,positiony,record, fon
                 et = time.time()
                 if et - st > 0.2:
                     rec.release()
-                    backuppost(forget_end,date_dir, a, record, nameid, customid, order, tel)
+                    backuppost(box_size,forget_end,date_dir, a, record, nameid, customid, order, tel)
                     record = 0
                     if ip is not None:
                         confirm(ip, port)
@@ -298,19 +304,22 @@ def main(cap,order_dummy, ip,port,vdo,logo,camID,positionx,positiony,record, fon
             rec_color = (0,255,0)
             cv2.putText(frame, f"Order ID : {str(orderid)}", (10, 50), font, 0.5, (0, 0, 255), 2)
             if orderid != "-" and record == 0:
-                cv2.putText(frame, "RECORDING", (10, 70), font, 0.5, (0, 0, 255), 2)
-                if st == 0:
-                    st = time.time()
-                else:
-                    et = time.time()
-                    if et - st > 1:
-                        no_scan = 1
-                        st_scan = time.time()
-                        record = 1
-                        # time.sleep(1)
-                    elif et - st <1:
-                        if ip is not None:
-                            confirm(ip,port)
+                if qrsize == 0:
+                    cv2.putText(frame, "SCAN BOX SIZE", (10, 120), font, 2, (0, 0, 255), 3)
+                elif qrsize == 1:
+                    cv2.putText(frame, f"RECORDING : {str(box_size)}", (10, 70), font, 0.5, (0, 0, 255), 2)
+                    if st == 0:
+                        st = time.time()
+                    else:
+                        et = time.time()
+                        if et - st > 1:
+                            no_scan = 1
+                            st_scan = time.time()
+                            record = 1
+                            # time.sleep(1)
+                        elif et - st <1:
+                            if ip is not None:
+                                confirm(ip,port)
 
             # config time to logout
             # elif orderid == "-":
@@ -366,7 +375,7 @@ def main(cap,order_dummy, ip,port,vdo,logo,camID,positionx,positiony,record, fon
             in_st = 0
             if out != 1:
                 rec_color = (255, 0, 0)
-                cv2.putText(frame, "RECORDING", (10, 70), font, 0.5, (0, 0, 255), 2)
+                cv2.putText(frame, f"RECORDING : {str(box_size)}", (10, 70), font, 0.5, (0, 0, 255), 2)
             elif out == 1:
                 rec_color = (0, 0, 255)
             checklogo(vdoframe,logo,order,customid)
@@ -393,7 +402,7 @@ def main(cap,order_dummy, ip,port,vdo,logo,camID,positionx,positiony,record, fon
             exit()
     try:
         # return record, font, st, nameid, customid, order, tel, login
-        return a, record, font, st, nameid, customid, order, tel, login
+        return box_size, a, record, font, st, nameid, customid, order, tel, login
     except:
         pass
 

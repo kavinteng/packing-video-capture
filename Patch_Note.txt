@@ -20,17 +20,29 @@ error report	-> repost fail -> No such file
 		-> scan fail -> Wrong QRCODE Format
 
 post		-> done in background (parallel)
-video display	-> remove orderid & logo
-color		-> date&time -> blue
+video display	-> banner (orderid , customer , date&time)
 delay stop	-> 0.2 sec
 delay before record -> 1 sec
 ** from parallel post -> create delay time that not scan qrcode between main process loop. Such after start and after stop (หลังจากเริ่มจะไม่สามารถสแกนจบได้ และจากจบจะไม่สามารถสแกนเริ่มได้ในช่วงเวลาที่กำหนด)
 
 
 
+V3
+sql 		-> scheme(ID,nameid,customid,orderid,tel,box size,date,time,error detail)
+error report	-> repost fail -> No such file
+		-> skip post -> Failed Skip post process
+		-> fail main process -> show error
+		-> forget end clip
+		-> post fail
+		-> fail request process -> show error
+		-> scan fail -> Wrong QRCODE Format
+post		-> done in background (parallel)
+video display	-> banner (orderid , customer , date&time)
+box size	-> scan after order id
 
 
-***note improve -> V3***
+
+***note improve***
 	สแกน invoice เริ่มอย่างเดียว แล้วตอนจบจะใช้การเขียนเงื่อนไขเช่น กล่องต้องลงไปบนสายพานอยู่แล้ว หรือ คำนวนจากพื้นที่สีเขียวบนโต๊ะ เมื่อมีกล่องมาวางพื้นที่ สีเขียวจะลดลง แต่ในทางกลับกันถ้าพื้นที่กลับมาขนาดเต็ม ก็คือแพ็คเสร็จแล้ว
 
 	รูปแบบนี้จะใช้ในการแก้ปัญหาลืมสแกนเพื่อจบ แต่เมื่อแพ็คเสร็จแล้วนำสินค้าลงสายพานคลิปก็จะจบเอง
