@@ -117,7 +117,11 @@ def post_requests(forget_end,a, vdo,record,nameid,customid, order, tel, url):
         e = str(e)
         detail1, detail2 = e.split(':', 1)
         # check_post = 2
-        backuppost(detail1, date_dir, a, record, nameid, customid, order, tel)
+        try:
+            backuppost(detail1, date_dir, a, record, nameid, customid, order, tel)
+        except:
+            detail1 = 'Error Something'
+            backuppost(detail1, date_dir, a, record, nameid, customid, order, tel)
 
     # return check_post
 
