@@ -1,6 +1,7 @@
 import os
 import cv2
 from tkinter import *
+from tkinter.ttk import *
 from multiprocessing import Process
 from newpack_V3 import *
 import urllib.request
@@ -212,13 +213,13 @@ def repost():
         cursor.execute(TableSql)
     except:
         pass
-    global root2
+    global root2, i
     root2 = Tk()
     root2.title('repost')
-    cursor.execute("select * from backuppost ")
+    cursor.execute("select * from backuppost limit 0,10")
     lists = cursor.fetchall()
 
-    e = Label(root2, width=11, text='PRIMARY KEY', borderwidth=2, relief='ridge', anchor='w', bg='yellow')
+    e = Label(root2, width=11, text='ID', borderwidth=2, relief='ridge', anchor='w', bg='yellow')
     e.grid(row=0, column=0)
     e = Label(root2, width=11, text='USER ID', borderwidth=2, relief='ridge', anchor='w', bg='yellow')
     e.grid(row=0, column=1)
@@ -243,10 +244,14 @@ def repost():
             if j%8 == 0 and j != 0:
                 e = Label(root2, width=30, text=list[j],
                             borderwidth=2, relief='ridge', anchor="w")
+                e.grid(row=i, column=j)
             else:
                 e = Label(root2, width=11, text=list[j],
                             borderwidth=2, relief='ridge', anchor="w")
-            e.grid(row=i, column=j)
+                e.grid(row=i, column=j)
+        # e = Button(root2, width=5, text='Edit', relief='ridge', bg='#32CD32',fg='white',
+        #               anchor="w", command=lambda k=list[0]: edit_data(k))
+        # e.grid(row=i, column=9)
         i = i + 1
 
     connection.commit()
@@ -254,7 +259,58 @@ def repost():
 
     repost2 = Button(root2, text="POST", command=post)
     repost2.grid(row=i+1, column=4, sticky='W', padx=5, pady=2)
+    edit_box = Button(root2, text="Edit box size", command=editbox)
+    edit_box.grid(row=i + 1, column=0, sticky='W', padx=5, pady=2)
     root2.mainloop()
+
+
+def editbox():
+    global entry1,entry2,text3
+    form_edit = ''
+    edit = Tk()
+    edit.title('Edit box size')
+    edit.geometry('300x50+1100+120')
+    text1 = Label(edit,text='ID',borderwidth=2, relief='ridge', anchor="w", bg='yellow')
+    text1.grid(row=0, column=0)
+    entry1 = Entry(edit, width= 11)
+    entry1.grid(row=0, column=1)
+    text2 = Label(edit, text='Box size', borderwidth=2, relief='ridge', anchor="w", bg='yellow')
+    text2.grid(row=0, column=2)
+    choices = ['A', 'B', 'C', 'D', 'E']
+    variable = StringVar(edit)
+    variable.set('A')
+    entry2 = Combobox(edit, values=choices,width=6)
+    # entry2 = Entry(edit, width=11)
+    entry2.grid(row=0, column=3)
+
+    text3 = Label(edit, text=form_edit,fg='red')
+    text3.grid(row=1, column=4)
+
+    edit_box = Button(edit, text="submit", command=addsize)
+    edit_box.grid(row=1, column=3, sticky='W', padx=5, pady=2)
+    edit.mainloop()
+
+def addsize():
+    try:
+        connection = mariadb.connect(host="localhost", user="root", passwd="123456", database="advicev3")
+    except mariadb.Error as e:
+        print(f"Error connecting to MariaDB Platform: {e}")
+        sys.exit(1)
+    global form_edit
+    cursor = connection.cursor()
+    ID = entry1.get()
+    boxsize = entry2.get()
+
+    boxsize = '000'+ boxsize
+    form_edit = 'ID:{} SIZE:{}'.format(ID,boxsize)
+    if len(boxsize) == 4 and ID != '':
+        cursor.execute("update backuppost set size = ? where ID = ? ", (boxsize, ID))
+        text3.configure(text=form_edit)
+    else:
+        text3.configure(text='Error')
+
+    connection.commit()
+    connection.close()
 
 def post():
     try:
@@ -275,18 +331,21 @@ def post():
         encoded = jwt.encode({'mac address': mac}, 'secret', algorithm='HS256')
 
         try:
-            with open(file_name, "rb") as file:
-                data = {"data": file}
-                text = {"Username": nameid, "Customer ID": customid, "Order ID": order, "Tel": tel, "Box size": size,
-                        "file_type": extension, "token": encoded}
-                response = requests.post(url, files=data, data=text)
+            if size == '-':
+                pass
+            else:
+                with open(file_name, "rb") as file:
+                    data = {"data": file}
+                    text = {"Username": nameid, "Customer ID": customid, "Order ID": order, "Tel": tel, "Box size": size,
+                            "file_type": extension, "token": encoded}
+                    response = requests.post(url, files=data, data=text)
 
-                if response.ok:
-                    print("Upload completed successfully!")
-                    cursor.execute("delete from backuppost where orderid = ? and time = ?", (order,a))
-                else:
-                    response.raise_for_status()
-                    # print("Something went wrong!")
+                    if response.ok:
+                        print("Upload completed successfully!")
+                        cursor.execute("delete from backuppost where orderid = ? and time = ?", (order,a))
+                    else:
+                        response.raise_for_status()
+                        # print("Something went wrong!")
         except Exception as e:
             e = str(e)
             detail1, detail2 = e.split(':',1)

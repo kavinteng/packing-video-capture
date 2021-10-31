@@ -235,30 +235,31 @@ def main(cap,order_dummy, ip,port,vdo,logo,camID,positionx,positiony,record, fon
                 elif login == True and record != 2:
                     et_scan_in = time.time()
                     if et_scan_in - st_scan_in > 1:
-                        if len(mydata) == 4:
-                            qrsize = 1
-                            box_size = mydata
-                            in_st = 1
-                        else:
-                            orderid = mydata
+                        # if len(mydata) == 4:
+                        #     qrsize = 1
+                        #     box_size = mydata
+                        #     in_st = 1
+                        # else:
+                        orderid = mydata
+
                 elif record == 2 :
                     et_scan = time.time()
                     if et_scan - st_scan > 5:
                         no_scan = 0
 
                     if no_scan == 0:
-                        end = mydata
-                        if end == orderid:
-                            array.append(end)
+                        box_size = mydata
+                        if len(box_size) == 4:
+                            array.append(box_size)
                             if out == 0:
                                 cv2.putText(frame, f"check:{str(len(array))}", (100, 70), font, 0.5, (0, 255, 0), 2)
                             # config frame to check stop
                             if len(array) > 1:
                                 out = 1
                         # เพิ่มอัดวิดิโอต่อ แล้วจบของเก่า ตอนที่ลืมสแกนจบคลิป
-                        elif end != orderid and len(end) == 29:
+                        elif box_size != orderid and len(box_size) == 29:
                             forget_end = 1
-                            qrsize = 0
+                            box_size = '-'
                             backuppost(box_size,forget_end,date_dir, a, record, nameid, customid, order, tel)
                             record = 0
                             order_old = order
@@ -270,8 +271,8 @@ def main(cap,order_dummy, ip,port,vdo,logo,camID,positionx,positiony,record, fon
                     continue
                 elif len(mydata)==6 and nameid!=mydata:
                     nameid = mydata
-                    if ip is not None:
-                        confirm(ip,port)
+                    # if ip is not None:
+                    #     confirm(ip,port)
                     login = True
                     continue
 
@@ -292,8 +293,8 @@ def main(cap,order_dummy, ip,port,vdo,logo,camID,positionx,positiony,record, fon
                     rec.release()
                     backuppost(box_size,forget_end,date_dir, a, record, nameid, customid, order, tel)
                     record = 0
-                    if ip is not None:
-                        confirm(ip, port)
+                    # if ip is not None:
+                    #     confirm(ip, port)
                     break
 
         if login == False:
@@ -304,22 +305,22 @@ def main(cap,order_dummy, ip,port,vdo,logo,camID,positionx,positiony,record, fon
             rec_color = (0,255,0)
             cv2.putText(frame, f"Order ID : {str(orderid)}", (10, 50), font, 0.5, (0, 0, 255), 2)
             if orderid != "-" and record == 0:
-                if qrsize == 0:
-                    cv2.putText(frame, "SCAN BOX SIZE", (10, 120), font, 2, (0, 0, 255), 3)
-                elif qrsize == 1:
-                    cv2.putText(frame, f"RECORDING : {str(box_size)}", (10, 70), font, 0.5, (0, 0, 255), 2)
-                    if st == 0:
-                        st = time.time()
-                    else:
-                        et = time.time()
-                        if et - st > 1:
-                            no_scan = 1
-                            st_scan = time.time()
-                            record = 1
-                            # time.sleep(1)
-                        elif et - st <1:
-                            if ip is not None:
-                                confirm(ip,port)
+                # if qrsize == 0:
+                #     cv2.putText(frame, "SCAN BOX SIZE", (10, 120), font, 2, (0, 0, 255), 3)
+                # if qrsize == 1:
+                cv2.putText(frame, "RECORDING", (10, 70), font, 0.5, (0, 0, 255), 2)
+                if st == 0:
+                    st = time.time()
+                else:
+                    et = time.time()
+                    if et - st > 1:
+                        no_scan = 1
+                        st_scan = time.time()
+                        record = 1
+                        # time.sleep(1)
+                    # elif et - st <1:
+                    #     if ip is not None:
+                    #         confirm(ip,port)
 
             # config time to logout
             # elif orderid == "-":
@@ -375,7 +376,7 @@ def main(cap,order_dummy, ip,port,vdo,logo,camID,positionx,positiony,record, fon
             in_st = 0
             if out != 1:
                 rec_color = (255, 0, 0)
-                cv2.putText(frame, f"RECORDING : {str(box_size)}", (10, 70), font, 0.5, (0, 0, 255), 2)
+                cv2.putText(frame, "RECORDING", (10, 70), font, 0.5, (0, 0, 255), 2)
             elif out == 1:
                 rec_color = (0, 0, 255)
             checklogo(vdoframe,logo,order,customid)
