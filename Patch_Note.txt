@@ -38,7 +38,12 @@ error report	-> repost fail -> No such file
 		-> scan fail -> Wrong QRCODE Format
 post		-> done in background (parallel)
 video display	-> banner (orderid , customer , date&time)
-box size	-> scan after order id
+box size	-> scan for end clip
+
+forget end case	-> collect logs but not include box size
+interface	-> insert box size
+real time interface
+botton display vdo that post failed -> function q to quit and p to pause
 
 
 
