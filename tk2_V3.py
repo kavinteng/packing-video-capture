@@ -523,7 +523,7 @@ def f(ip,port,camID,positionx,positiony):
             # create new and remove old
             box_size, a, record, font, st, nameid, customid, order, tel, login = main(cap,order_dummy,ip,port,vdo,logo,camID,positionx,positiony,record, font, nameid, login, array, img_aruco)
             # order_dummy = 'C' + customid + 'O' + order + 'T' + tel
-            print(nameid, customid, order, tel)
+            print(nameid, customid, order, tel, box_size)
             # เพิ่ม a เวลา
             # c = Process(target=cutvdo , args=(order,vdo,a,))
             # c.start()

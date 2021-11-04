@@ -198,6 +198,15 @@ def main(cap,order_dummy, ip,port,vdo,logo,camID,positionx,positiony,record, fon
     # frame_w = int(cap.get(4))
     # frame_h = int(cap.get(3))
     # print(frame_w,frame_h)
+
+    QR_dict = {
+        "bcDwYT": "000A",
+        "bcWPu4": "000B",
+        "bcWPuJ": "000C",
+        "bcWPuU": "000D",
+        "000E": "000E"
+    }
+
     orderid = "-"
     st = 0
     array2 = []
@@ -248,8 +257,13 @@ def main(cap,order_dummy, ip,port,vdo,logo,camID,positionx,positiony,record, fon
                         no_scan = 0
 
                     if no_scan == 0:
-                        box_size = mydata
-                        if len(box_size) == 4:
+                        if mydata == '000E':
+                            getdict = ['0','0','0','000E']
+                        else:
+                            getdict = mydata.split('/')
+
+                        if len(getdict) == 4:
+                            box_size = QR_dict["{}".format(getdict[3])]
                             array.append(box_size)
                             if out == 0:
                                 cv2.putText(frame, f"check:{str(len(array))}", (100, 70), font, 0.5, (0, 255, 0), 2)
