@@ -35,8 +35,9 @@ def backuppost(size,forget_end,date, a, record,nameid,customid,orderid,tel):
             cursor.execute("update backuppost set detail = 'forget end' where orderid = ? and time = ?", (orderid,a))
         elif forget_end == 0:
             cursor.execute("update backuppost set detail = 'processing' where orderid = ? and time = ?", (orderid, a))
-    # elif forget_end == 2:
-    #     cursor.execute("update backuppost set detail = 'post failed' where orderid = ? and time = ?", (orderid, a))
+    elif forget_end == 'no internet':
+        cursor.execute("update backuppost set detail = 'No internet connection' where orderid = ? and time = ?",
+                       (orderid, a))
     elif record==0 and forget_end == None:
         cursor.execute("delete from backuppost where orderid = ? and time = ?", (orderid,a))
     else:
@@ -271,7 +272,7 @@ def main(cap,order_dummy, ip,port,vdo,logo,camID,positionx,positiony,record, fon
                             if len(array) > 1:
                                 out = 1
                         # เพิ่มอัดวิดิโอต่อ แล้วจบของเก่า ตอนที่ลืมสแกนจบคลิป
-                        elif box_size != orderid and len(box_size) == 29:
+                        elif len(mydata) == 29:
                             forget_end = 1
                             box_size = '-'
                             backuppost(box_size,forget_end,date_dir, a, record, nameid, customid, order, tel)

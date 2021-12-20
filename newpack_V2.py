@@ -35,8 +35,8 @@ def backuppost(forget_end,date, a, record,nameid,customid,orderid,tel):
             cursor.execute("update backuppost set detail = 'forget end' where orderid = ? and time = ?", (orderid,a))
         elif forget_end == 0:
             cursor.execute("update backuppost set detail = 'processing' where orderid = ? and time = ?", (orderid, a))
-    # elif forget_end == 2:
-    #     cursor.execute("update backuppost set detail = 'post failed' where orderid = ? and time = ?", (orderid, a))
+    elif forget_end == 'no internet':
+        cursor.execute("update backuppost set detail = 'No internet connection' where orderid = ? and time = ?", (orderid, a))
     elif record==0 and forget_end == None:
         cursor.execute("delete from backuppost where orderid = ? and time = ?", (orderid,a))
     else:

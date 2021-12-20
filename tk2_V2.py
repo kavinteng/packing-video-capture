@@ -10,6 +10,7 @@ import mariadb
 import jwt
 from getmac import getmac
 from tkinter import messagebox
+import webbrowser
 
 class GUI(Tk):
     def __init__(self, parent):
@@ -377,7 +378,10 @@ def f(ip,port,camID,positionx,positiony):
             if connect() == False:
                 root4 = Tk()
                 root4.withdraw()
+                forget_end = 'no internet'
+                backuppost(forget_end, date_dir, a, record, nameid, customid, order, tel)
                 messagebox.showerror("Network error", "No internet connection")
+                webbrowser.open('http://google.com', new=2)
                 continue
             elif connect() == True:
                 print('Internet connected')
