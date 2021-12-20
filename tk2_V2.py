@@ -216,7 +216,7 @@ def repost():
     global root2
     root2 = Tk()
     root2.title('repost')
-    cursor.execute("select * from backuppost ")
+    cursor.execute("select * from backuppost limit 0,10")
     lists = cursor.fetchall()
 
     e = Label(root2, width=11, text='PRIMARY KEY', borderwidth=2, relief='ridge', anchor='w', bg='yellow')
@@ -262,7 +262,7 @@ def post():
         print(f"Error connecting to MariaDB Platform: {e}")
         sys.exit(1)
     cursor = connection.cursor()
-    cursor.execute("select * from backuppost ")
+    cursor.execute("select * from backuppost limit 0,10")
     lists = cursor.fetchall()
     url = "https://globalapi.advice.co.th/api/upfile_json"
     for list in lists:
