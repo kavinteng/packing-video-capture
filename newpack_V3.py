@@ -225,9 +225,9 @@ def main(cap,order_dummy, ip,port,vdo,logo,camID,positionx,positiony,record, fon
         # frame = cv2.resize(frame, (320, 240))
 
         # สำหรับ 3 กล้อง (1600*900)
-        frame = cv2.resize(frame, (530, 380))
+        # frame = cv2.resize(frame, (530, 380))
 
-        # frame = cv2.resize(frame, (1280, 720))
+        frame = cv2.resize(frame, (1280, 720))
         vdoframe = frame.copy()
         vdoframe = cv2.resize(vdoframe, (640, 360))
 
