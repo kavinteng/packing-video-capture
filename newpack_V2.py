@@ -218,9 +218,9 @@ def main(cap,order_dummy, ip,port,vdo,logo,camID,positionx,positiony,record, fon
         # frame = cv2.resize(frame, (320, 240))
 
         # สำหรับ 3 กล้อง (1600*900)
-        frame = cv2.resize(frame, (530, 380))
+        # frame = cv2.resize(frame, (530, 380))
 
-        # frame = cv2.resize(frame, (1280, 720))
+        frame = cv2.resize(frame, (1280, 720))
         vdoframe = frame.copy()
         vdoframe = cv2.resize(vdoframe, (640, 360))
 
@@ -387,10 +387,10 @@ def main(cap,order_dummy, ip,port,vdo,logo,camID,positionx,positiony,record, fon
             rec.write(vdoframe)
         cv2.putText(frame, f"Log in as : {str(nameid)}", (10, 25), font, 0.7, (255, 0, 0), 2)
         if login == True:
-            cv2.rectangle(frame, (0, 0), (530, 380), rec_color, 15)
+            cv2.rectangle(frame, (0, 0), (1280, 720), rec_color, 15)
         cv2.imshow("{}".format(camID), frame)
 #         cv2.imshow("vdo", vdoframe)
-        cv2.moveWindow("{}".format(camID), positionx, positiony)
+#         cv2.moveWindow("{}".format(camID), positionx, positiony)
 #         cv2.moveWindow("vdo", 0, 0)
         k = cv2.waitKey(1)
         if k == ord('q'):
