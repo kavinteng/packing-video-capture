@@ -654,17 +654,17 @@ if __name__ == '__main__':
             if check_but7 == True:
                 but7 = Button(root, text='USB-cam1', width=20, bg='#32CD32',fg='white', command=lambda
                     camID=0,
-                    positionx=0, positiony=300: run(None, None, camID, positionx, positiony))
+                    positionx=25, positiony=106: run(None, None, camID, positionx, positiony))
                 but7.pack(padx=5, pady=5)
             if check_but8 == True:
                 but8 = Button(root, text='USB-cam2', width=20, bg='#32CD32',fg='white', command=lambda
                     camID=1,
-                    positionx=530, positiony=300: run(None, None, camID, positionx, positiony))
+                    positionx=-1256, positiony=106: run(None, None, camID, positionx, positiony))
                 but8.pack(padx=5, pady=5)
             if check_but9 == True:
                 but9 = Button(root, text='USB-cam3', width=20, bg='#32CD32',fg='white', command=lambda
                     camID=2,
-                    positionx=1060, positiony=300: run(None, None, camID, positionx, positiony))
+                    positionx=1288, positiony=350: run(None, None, camID, positionx, positiony))
                 but9.pack(padx=5, pady=5)
 
             repost = Button(root, text="Re-post", width=20, bg='red' ,fg='white', command=repost)

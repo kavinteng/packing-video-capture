@@ -227,7 +227,7 @@ def main(cap,order_dummy, ip,port,vdo,logo,camID,positionx,positiony,record, fon
         # สำหรับ 3 กล้อง (1600*900)
         # frame = cv2.resize(frame, (530, 380))
 
-        frame = cv2.resize(frame, (1280, 720))
+        frame = cv2.resize(frame, (800, 450))
         vdoframe = frame.copy()
         vdoframe = cv2.resize(vdoframe, (640, 360))
 
@@ -411,7 +411,7 @@ def main(cap,order_dummy, ip,port,vdo,logo,camID,positionx,positiony,record, fon
             cv2.rectangle(frame, (0, 0), (530, 380), rec_color, 15)
         cv2.imshow("{}".format(camID), frame)
 #         cv2.imshow("vdo", vdoframe)
-#         cv2.moveWindow("{}".format(camID), positionx, positiony)
+        cv2.moveWindow("{}".format(camID), positionx, positiony)
 #         cv2.moveWindow("vdo", 0, 0)
         k = cv2.waitKey(1)
         if k == ord('q'):
