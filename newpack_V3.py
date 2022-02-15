@@ -411,7 +411,7 @@ def main(cap,order_dummy, ip,port,vdo,logo,camID,positionx,positiony,record, fon
             cv2.rectangle(frame, (0, 0), (530, 380), rec_color, 15)
         cv2.imshow("{}".format(camID), frame)
 #         cv2.imshow("vdo", vdoframe)
-        cv2.moveWindow("{}".format(camID), positionx, positiony)
+#         cv2.moveWindow("{}".format(camID), positionx, positiony)
 #         cv2.moveWindow("vdo", 0, 0)
         k = cv2.waitKey(1)
         if k == ord('q'):
