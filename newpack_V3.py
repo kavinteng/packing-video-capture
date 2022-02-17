@@ -408,7 +408,7 @@ def main(cap,order_dummy, ip,port,vdo,logo,camID,positionx,positiony,record, fon
             rec.write(vdoframe)
         cv2.putText(frame, f"Log in as : {str(nameid)}", (10, 25), font, 0.7, (255, 0, 0), 2)
         if login == True:
-            cv2.rectangle(frame, (0, 0), (530, 380), rec_color, 15)
+            cv2.rectangle(frame, (0, 0), (1530, 780), rec_color, 15)
         # print("{}".format(camID), cv2.getWindowImageRect("{}".format(camID)))
         cv2.imshow("{}".format(camID), frame)
 #         cv2.imshow("vdo", vdoframe)
