@@ -614,8 +614,8 @@ if __name__ == '__main__':
             # check_but1 = testDeviceip(ip1)
             # check_but2 = testDeviceip(ip2)
             # check_but3 = testDeviceip(ip3)
-            check_but7 = testDeviceusb(source=0, positionx=0, positiony=0)
-            check_but8 = testDeviceusb(source=1, positionx=1530, positiony=0)
+            check_but7 = testDeviceusb(source=0, positionx=1530, positiony=0)
+            check_but8 = testDeviceusb(source=1, positionx=0, positiony=0)
             check_but9 = testDeviceusb(source=2, positionx=3060, positiony=0)
 
             # if check_but1 == True:
@@ -654,12 +654,12 @@ if __name__ == '__main__':
             if check_but7 == True:
                 but7 = Button(root, text='USB-cam1', width=20, bg='#32CD32',fg='white', command=lambda
                     camID=0,
-                    positionx=0, positiony=0: run(None, None, camID, positionx, positiony))
+                    positionx=1530, positiony=0: run(None, None, camID, positionx, positiony))
                 but7.pack(padx=5, pady=5)
             if check_but8 == True:
                 but8 = Button(root, text='USB-cam2', width=20, bg='#32CD32',fg='white', command=lambda
                     camID=1,
-                    positionx=1530, positiony=0: run(None, None, camID, positionx, positiony))
+                    positionx=0, positiony=0: run(None, None, camID, positionx, positiony))
                 but8.pack(padx=5, pady=5)
             if check_but9 == True:
                 but9 = Button(root, text='USB-cam3', width=20, bg='#32CD32',fg='white', command=lambda
