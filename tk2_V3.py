@@ -531,7 +531,7 @@ def f(ip,port,camID,positionx,positiony):
             cutvdo(order,vdo,a)
             # os.remove('{}bc.mp4'.format(order))
             # post to url
-            url = "https://globalapi.advice.co.th/api/upfile_json"
+            url = "https://globalapi2.advice.co.th/api/upfile_json"
             if connect() == False:
                 root4 = Tk()
                 root4.withdraw()
