@@ -93,8 +93,10 @@ def cutvdo(mydata,vdo,a):
 # post by requests to url
 def post_requests(forget_end,a, vdo,record,nameid,customid, order, tel, url):
     os.chdir(vdo)
+    print(vdo)
     # file_name = "{}.mp4".format(order)
     file_name = "{}{}.mp4".format(order,a)
+    print(file_name)
     name, extension = os.path.splitext(file_name)
     mac = getmac.get_mac_address()
     encoded = jwt.encode({'mac address': mac}, 'secret', algorithm='HS256')
