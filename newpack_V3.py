@@ -227,7 +227,7 @@ def main(cap,order_dummy, ip,port,vdo,logo,camID,positionx,positiony,record, fon
         # สำหรับ 3 กล้อง (1600*900)
         # frame = cv2.resize(frame, (530, 380))
 
-        frame = cv2.resize(frame, (1530, 780))
+        frame = cv2.resize(frame, (1530, 780)) 
         vdoframe = frame.copy()
         vdoframe = cv2.resize(vdoframe, (640, 360))
 
@@ -272,7 +272,7 @@ def main(cap,order_dummy, ip,port,vdo,logo,camID,positionx,positiony,record, fon
                             if len(array) > 1:
                                 out = 1
                         # เพิ่มอัดวิดิโอต่อ แล้วจบของเก่า ตอนที่ลืมสแกนจบคลิป
-                        elif len(mydata) == 29:
+                        elif len(mydata) == 29 and mydata != orderid:
                             forget_end = 1
                             box_size = '-'
                             backuppost(box_size,forget_end,date_dir, a, record, nameid, customid, order, tel)

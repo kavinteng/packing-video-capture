@@ -417,7 +417,7 @@ def post():
     cursor = connection.cursor()
     cursor.execute("select * from backuppost limit 0,10")
     lists = cursor.fetchall()
-    url = "https://globalapi.advice.co.th/api/upfile_json"
+    url = "https://globalapi2.advice.co.th/api/upfile_json"
     for list in lists:
         _, nameid, customid, order, tel, size, date, a, _ = list
         # file_name = "D:/vdo_packing/{}/{}.mp4".format(date_dir,order)
@@ -434,7 +434,7 @@ def post():
                     data = {"data": file}
                     text = {"Username": nameid, "Customer ID": customid, "Order ID": order, "Tel": tel, "Box size": size,
                             "file_type": extension, "token": encoded}
-
+                    print(nameid, customid, order, tel, size)
                     response = requests.post(url, files=data, data=text)
 
                     if response.ok:
@@ -584,7 +584,19 @@ def testDeviceip(ip):
    else:
        return False
 
+def delete_store(date_ref):
+    vdo_dir = 'D:/vdo_packing/'
+    date_dir = date.today()
+    for file in os.listdir(vdo_dir):
+        yy,mm,dd = file.split('-')
+        old_file = date(int(yy),int(mm),int(dd))
+        check_old_file = date_dir-old_file
+        if check_old_file.days > date_ref:
+            os.system('rm -rf {}{}'.format(vdo_dir,file))
+            print('delete {}{}'.format(vdo_dir,file))
+
 if __name__ == '__main__':
+    delete_store(30)
     while True:
         app = GUI(None)
         app.title('Camera Config')
