@@ -1,11 +1,12 @@
 import os
+import cv2
 from pyzbar import pyzbar
 from moviepy.video.io.ffmpeg_tools import ffmpeg_extract_subclip
 import time
 import datetime
 import numpy as np
 import requests
-from object_detector import *
+# from object_detector import *
 from tk2_V3 import confirm
 import urllib.request
 from getmac import getmac
@@ -193,7 +194,7 @@ def main(cap,order_dummy, ip,port,vdo,logo,camID,positionx,positiony,record, fon
     # aruco_dict = cv2.aruco.Dictionary_get(cv2.aruco.DICT_5X5_50)
 
     # Load Object Detector
-    detector = HomogeneousBgDetector()
+    # detector = HomogeneousBgDetector()
 
     # cap = cv2.VideoCapture(camID)
     # cap.set(3, 640)
