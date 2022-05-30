@@ -592,11 +592,12 @@ def delete_store(date_ref):
         old_file = date(int(yy),int(mm),int(dd))
         check_old_file = date_dir-old_file
         if check_old_file.days > date_ref:
-            os.system('rm -rf {}{}'.format(vdo_dir,file))
+            # os.system('rm -rf {}{}'.format(vdo_dir,file))
+            shutil.rmtree('{}{}'.format(vdo_dir,file))
             print('delete {}{}'.format(vdo_dir,file))
 
 if __name__ == '__main__':
-    delete_store(30)
+    delete_store(60)
     while True:
         app = GUI(None)
         app.title('Camera Config')

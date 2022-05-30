@@ -14,6 +14,8 @@ import mariadb
 import sys
 from tkinter import messagebox
 from tkinter import *
+import urllib.request
+import shutil
 
 date_dir = datetime.date.today()
 def backuppost(size,forget_end,date, a, record,nameid,customid,orderid,tel):
