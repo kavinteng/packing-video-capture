@@ -240,12 +240,17 @@ def main(cap,order_dummy, ip,port,vdo,logo,camID,positionx,positiony,record, fon
         if type == 'QRCODE' and out != 1 and in_st != 1:
             st = 0
             mydata = data.decode('utf-8')
+            check_c,check_o,check_t = 'C','O','T'
+            if (check_c in mydata) and (check_o in mydata) and (check_t in mydata) and len(mydata) == 29:
+                check_order = True
+            else:
+                check_order = False
 
             if mydata.isnumeric() == False:
                 if login == False:
                     nameid = "Please Login !!!"
                     continue
-                elif login == True and record != 2:
+                elif login == True and record != 2 and check_order == True:
                     et_scan_in = time.time()
                     if et_scan_in - st_scan_in > 1:
                         # if len(mydata) == 4:
@@ -331,6 +336,7 @@ def main(cap,order_dummy, ip,port,vdo,logo,camID,positionx,positiony,record, fon
                     st = time.time()
                 else:
                     et = time.time()
+                    rec_color = (0, 255, 255)
                     if et - st > 1:
                         no_scan = 1
                         st_scan = time.time()
@@ -409,7 +415,10 @@ def main(cap,order_dummy, ip,port,vdo,logo,camID,positionx,positiony,record, fon
             # cv2.putText(vdoframe, datetime.datetime.now().strftime("%d/%m/%Y %T"), (10, vdoframe.shape[0] - 10),
             #             font, 0.4, (255, 0, 0), 1)
             rec.write(vdoframe)
-        cv2.putText(frame, f"Log in as : {str(nameid)}", (10, 25), font, 0.7, (255, 0, 0), 2)
+
+        cv2.rectangle(frame, (0, 0), (240, 35), (255, 255, 255), cv2.FILLED)
+        cv2.putText(frame, f"Log in as : {str(nameid)}", (10, 25), font, 0.7, (0, 0, 0), 2)
+
         if login == True:
             cv2.rectangle(frame, (0, 0), (640, 360), rec_color, 15)
         # print("{}".format(camID), cv2.getWindowImageRect("{}".format(camID)))

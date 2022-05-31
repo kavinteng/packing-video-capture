@@ -259,8 +259,8 @@ def repost():
     connection.commit()
     connection.close()
 
-    repost2 = Button(root2, text="POST", command=post)
-    repost2.grid(row=i+1, column=4, sticky='W', padx=5, pady=2)
+    # repost2 = Button(root2, text="POST", command=post)
+    # repost2.grid(row=i+1, column=4, sticky='W', padx=5, pady=2)
     edit_box = Button(root2, text="Edit box size", command=editbox)
     edit_box.grid(row=i + 1, column=0, sticky='W', padx=5, pady=2)
     root2.mainloop()
@@ -555,8 +555,10 @@ def f(ip,port,camID,positionx,positiony):
             messagebox.showerror("Error Process", e)
 
 def run(ip,port,camID,positionx,positiony):
+    global log_processing
     t = Process(target=f, args=(ip,port,camID,positionx,positiony,))
     t.start()
+    log_processing.append(t)
 
 def multipost(box_size, a, vdo,record,nameid,customid, order, tel, url):
     print('------multipost------')
@@ -596,96 +598,114 @@ def delete_store(date_ref):
             shutil.rmtree('{}{}'.format(vdo_dir,file))
             print('delete {}{}'.format(vdo_dir,file))
 
+def confirm_yesno(root,message = 'ข้อความ'):
+    answer = messagebox.askyesno(title='confirmation',
+                    message=message)
+    if answer:
+        for i in log_processing:
+            i.terminate()
+        root.destroy()
+        sys.exit(1)
+
 if __name__ == '__main__':
+    log_processing = []
     delete_store(60)
+    check_but7, check_but8, check_but9 = False, False, False
     while True:
-        app = GUI(None)
-        app.title('Camera Config')
-        app.mainloop()
-        ip1 = app.val1
-        ip2 = app.val2
-        ip3 = app.val3
-        ip4 = app.val4
-        ip5 = app.val5
-        ip6 = app.val6
-        port1 = app.val7
-        port2 = app.val8
-        port3 = app.val9
-        port4 = app.val10
-        port5 = app.val11
-        port6 = app.val12
+        # app = GUI(None)
+        # app.title('Camera Config')
+        # app.mainloop()
+        # ip1 = app.val1
+        # ip2 = app.val2
+        # ip3 = app.val3
+        # ip4 = app.val4
+        # ip5 = app.val5
+        # ip6 = app.val6
+        # port1 = app.val7
+        # port2 = app.val8
+        # port3 = app.val9
+        # port4 = app.val10
+        # port5 = app.val11
+        # port6 = app.val12
 
-        if ip1 == '' and ip2 == '' and ip3 == '' and ip4 == '' and ip5 == '' and ip6 == '':
-            pass
-        elif ip1 == None:
-            exit()
-        else:
-            root = Tk()
-            root.title('CAMERA LIST')
-            root.geometry('200x240+0+0')
+        # if ip1 == '' and ip2 == '' and ip3 == '' and ip4 == '' and ip5 == '' and ip6 == '':
+        #     pass
+        # elif ip1 == None:
+        #     exit()
 
-            # check_but1 = testDeviceip(ip1)
-            # check_but2 = testDeviceip(ip2)
-            # check_but3 = testDeviceip(ip3)
+        root = Tk()
+        root.title('CAMERA LIST')
+        root.geometry('200x240+0+0')
+
+        # check_but1 = testDeviceip(ip1)
+        # check_but2 = testDeviceip(ip2)
+        # check_but3 = testDeviceip(ip3)
+
+        if check_but7 == False:
             check_but7 = testDeviceusb(source=0, positionx=100, positiony=0)
+        if check_but8 == False:
             check_but8 = testDeviceusb(source=1, positionx=900, positiony=0)
+        if check_but9 == False:
             check_but9 = testDeviceusb(source=2, positionx=1700, positiony=0)
 
-            # if check_but1 == True:
-            #     but1 = Button(root, text='opencam1', width=20, command=lambda
-            #         camID='http://{}:{}/videostream.cgi?user=admin&pwd=888888'.format(ip1, port1),
-            #         positionx=200, positiony=0: run(ip1,port1,camID, positionx, positiony))
-            #     but1.pack(padx=5, pady=5)
-            # if check_but2 == True:
-            #     but2 = Button(root, text='opencam2', width=20, command=lambda
-            #         camID='http://{}:{}/videostream.cgi?user=admin&pwd=888888'.format(ip2, port2),
-            #         positionx=520, positiony=0: run(ip2,port2,camID, positionx, positiony))
-            #     but2.pack(padx=5, pady=5)
-            # if check_but3 == True:
-            #     but3 = Button(root, text='opencam3', width=20, command=lambda
-            #         camID='http://{}:{}/videostream.cgi?user=admin&pwd=888888'.format(ip3, port3),
-            #         positionx=840, positiony=0: run(ip3,port3,camID, positionx, positiony))
-            #     but3.pack(padx=5, pady=5)
+        # if check_but1 == True:
+        #     but1 = Button(root, text='opencam1', width=20, command=lambda
+        #         camID='http://{}:{}/videostream.cgi?user=admin&pwd=888888'.format(ip1, port1),
+        #         positionx=200, positiony=0: run(ip1,port1,camID, positionx, positiony))
+        #     but1.pack(padx=5, pady=5)
+        # if check_but2 == True:
+        #     but2 = Button(root, text='opencam2', width=20, command=lambda
+        #         camID='http://{}:{}/videostream.cgi?user=admin&pwd=888888'.format(ip2, port2),
+        #         positionx=520, positiony=0: run(ip2,port2,camID, positionx, positiony))
+        #     but2.pack(padx=5, pady=5)
+        # if check_but3 == True:
+        #     but3 = Button(root, text='opencam3', width=20, command=lambda
+        #         camID='http://{}:{}/videostream.cgi?user=admin&pwd=888888'.format(ip3, port3),
+        #         positionx=840, positiony=0: run(ip3,port3,camID, positionx, positiony))
+        #     but3.pack(padx=5, pady=5)
 
-            # if ip4 != '' and ip4 != None:
-            #     but4 = Button(root, text='opencam4', width=20, command=lambda
-            #         camID='http://{}:{}/videostream.cgi?user=admin&pwd=888888'.format(ip4, port4),
-            #         positionx=200, positiony=300: run(ip4,port4,camID, positionx, positiony))
-            #     but4.pack(padx=5, pady=5)
-            #
-            # if ip5 != '' and ip5 != None:
-            #     but5 = Button(root, text='opencam5', width=20, command=lambda
-            #         camID='http://{}:{}/videostream.cgi?user=admin&pwd=888888'.format(ip5, port5),
-            #         positionx=520, positiony=300: run(ip5,port5,camID, positionx, positiony))
-            #     but5.pack(padx=5, pady=5)
-            #
-            # if ip6 != '' and ip6 != None:
-            #     but6 = Button(root, text='opencam6', width=20, command=lambda
-            #         camID='http://{}:{}/videostream.cgi?user=admin&pwd=888888'.format(ip6, port6),
-            #         positionx=840, positiony=300: run(ip6,port6,camID, positionx, positiony))
-            #     but6.pack(padx=5, pady=5)
-            if check_but7 == True:
-                but7 = Button(root, text='USB-cam1', width=20, bg='#32CD32',fg='white', command=lambda
-                    camID=0,
-                    positionx=1530, positiony=0: run(None, None, camID, positionx, positiony))
-                but7.pack(padx=5, pady=5)
-            if check_but8 == True:
-                but8 = Button(root, text='USB-cam2', width=20, bg='#32CD32',fg='white', command=lambda
-                    camID=1,
-                    positionx=0, positiony=0: run(None, None, camID, positionx, positiony))
-                but8.pack(padx=5, pady=5)
-            if check_but9 == True:
-                but9 = Button(root, text='USB-cam3', width=20, bg='#32CD32',fg='white', command=lambda
-                    camID=2,
-                    positionx=3060, positiony=0: run(None, None, camID, positionx, positiony))
-                but9.pack(padx=5, pady=5)
+        # if ip4 != '' and ip4 != None:
+        #     but4 = Button(root, text='opencam4', width=20, command=lambda
+        #         camID='http://{}:{}/videostream.cgi?user=admin&pwd=888888'.format(ip4, port4),
+        #         positionx=200, positiony=300: run(ip4,port4,camID, positionx, positiony))
+        #     but4.pack(padx=5, pady=5)
+        #
+        # if ip5 != '' and ip5 != None:
+        #     but5 = Button(root, text='opencam5', width=20, command=lambda
+        #         camID='http://{}:{}/videostream.cgi?user=admin&pwd=888888'.format(ip5, port5),
+        #         positionx=520, positiony=300: run(ip5,port5,camID, positionx, positiony))
+        #     but5.pack(padx=5, pady=5)
+        #
+        # if ip6 != '' and ip6 != None:
+        #     but6 = Button(root, text='opencam6', width=20, command=lambda
+        #         camID='http://{}:{}/videostream.cgi?user=admin&pwd=888888'.format(ip6, port6),
+        #         positionx=840, positiony=300: run(ip6,port6,camID, positionx, positiony))
+        #     but6.pack(padx=5, pady=5)
+        if check_but7 == True:
+            but7 = Button(root, text='USB-cam1', width=20, bg='#32CD32',fg='white', command=lambda
+                camID=0,
+                positionx=1530, positiony=0: run(None, None, camID, positionx, positiony))
+            but7.pack(padx=5, pady=5)
+        if check_but8 == True:
+            but8 = Button(root, text='USB-cam2', width=20, bg='#32CD32',fg='white', command=lambda
+                camID=1,
+                positionx=0, positiony=0: run(None, None, camID, positionx, positiony))
+            but8.pack(padx=5, pady=5)
+        if check_but9 == True:
+            but9 = Button(root, text='USB-cam3', width=20, bg='#32CD32',fg='white', command=lambda
+                camID=2,
+                positionx=3060, positiony=0: run(None, None, camID, positionx, positiony))
+            but9.pack(padx=5, pady=5)
 
-            repost = Button(root, text="Re-post", width=20, bg='red' ,fg='white', command=repost)
-            repost.pack(padx=5, pady=5)
+        repost = Button(root, text="Re-post", width=20, bg='red' ,fg='white', command=repost)
+        repost.pack(padx=5, pady=5)
 
-            count = '0'
-            num_report = Label(root,text = 'UNPOST = {}'.format(count), fg='red', font=('Arial', 15))
-            num_report.pack(padx=5, pady=5)
-            count_unpost()
-            root.protocol('WM_DELETE_WINDOW', quit)
-            root.mainloop()
+        count = '0'
+        num_report = Label(root,text = 'UNPOST = {}'.format(count), fg='red', font=('Arial', 15))
+        num_report.pack(padx=5, pady=5)
+        count_unpost()
+        # root.protocol('WM_DELETE_WINDOW', confirm_yesno(root,message='ยืนยันที่จะปิดโปรแกรมหรือไม่'))
+        Button(root, text='ปิดโปรแกรม', command=lambda root=root, message='ยืนยันที่จะปิดโปรแกรมหรือไม่': confirm_yesno(root,message)).pack(expand=True)
+        # print(len(log_processing))
+
+        root.mainloop()
