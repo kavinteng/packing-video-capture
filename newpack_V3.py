@@ -7,7 +7,7 @@ import datetime
 import numpy as np
 import requests
 # from object_detector import *
-from tk2_V3 import confirm
+# from tk2_V3 import confirm
 import urllib.request
 from getmac import getmac
 import jwt
@@ -38,6 +38,10 @@ def backuppost(size,forget_end,date, a, record,nameid,customid,orderid,tel):
             cursor.execute("update backuppost set detail = 'forget end' where orderid = ? and time = ?", (orderid,a))
         elif forget_end == 0:
             cursor.execute("update backuppost set detail = 'processing' where orderid = ? and time = ?", (orderid, a))
+        elif forget_end == 'limit timeout':
+            cursor.execute("update backuppost set detail = 'Limit Timeout 5 min' where orderid = ? and time = ?", (orderid, a))
+        elif forget_end == 'no box':
+            cursor.execute("update backuppost set detail = 'No box 1 min' where orderid = ? and time = ?", (orderid, a))
     elif forget_end == 'no internet':
         cursor.execute("update backuppost set detail = 'No internet connection' where orderid = ? and time = ?",
                        (orderid, a))
@@ -188,7 +192,25 @@ def checklogo(frame,logo,order,customid):
 #                         cv2.FONT_HERSHEY_PLAIN, 2, (100, 200, 0), 2)
 
 
-def main(cap,order_dummy, ip,port,vdo,logo,camID,positionx,positiony,record, font, nameid, login, array, img_aruco):
+def box_detect(img):
+    lower1 = np.array([39, 73, 125])
+    upper1 = np.array([178, 220, 219])
+    mask1 = cv2.inRange(img, lower1, upper1)
+    # gray_thresh = cv2.adaptiveThreshold(mask1, 255, cv2.ADAPTIVE_THRESH_GAUSSIAN_C,
+    #                                     cv2.THRESH_BINARY_INV, 11, 1)
+    kernel = np.ones((1, 1), np.uint8)
+    closing = cv2.morphologyEx(mask1, cv2.MORPH_CLOSE, kernel, iterations=2)
+    contours, hierachy = cv2.findContours(closing, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+    for cnt in contours:
+        area = cv2.contourArea(cnt)
+        thresh = 5000
+        if area > thresh:
+            ellipse = cv2.fitEllipse(cnt)
+            # cv2.ellipse(img,ellipse,(0,255,0),2)
+            return 1
+    return 2
+
+def main(cap,order_dummy, ip,port,vdo,logo,camID,positionx,positiony,record, font, nameid, login, array):
     # Load Aruco detector
     # parameters = cv2.aruco.DetectorParameters_create()
     # aruco_dict = cv2.aruco.Dictionary_get(cv2.aruco.DICT_5X5_50)
@@ -219,6 +241,8 @@ def main(cap,order_dummy, ip,port,vdo,logo,camID,positionx,positiony,record, fon
     forget_end = 0
     st_scan_in = time.time()
     qrsize = 0
+    check_box = 0
+    et_no_box,st_no_box = 0,0
 
     while True:
         _, frame = cap.read()
@@ -234,8 +258,10 @@ def main(cap,order_dummy, ip,port,vdo,logo,camID,positionx,positiony,record, fon
         vdoframe = frame.copy()
         vdoframe = cv2.resize(vdoframe, (640, 360))
 
+
         # decode qr
         data, type, x, y, w, h = decode(frame)
+        # check_box = box_detect(frame)
 
         if type == 'QRCODE' and out != 1 and in_st != 1:
             st = 0
@@ -259,7 +285,6 @@ def main(cap,order_dummy, ip,port,vdo,logo,camID,positionx,positiony,record, fon
                         #     in_st = 1
                         # else:
                         orderid = mydata
-
                 elif record == 2 :
                     et_scan = time.time()
                     if et_scan - st_scan > 5:
@@ -320,6 +345,23 @@ def main(cap,order_dummy, ip,port,vdo,logo,camID,positionx,positiony,record, fon
                     #     confirm(ip, port)
                     break
 
+        if out == 2:
+            cv2.putText(frame, "limit timeout", (10, 90), font, 1, (0, 0, 255), 4)
+            forget_end = 'limit timeout'
+            box_size = '-'
+            backuppost(box_size, forget_end, date_dir, a, record, nameid, customid, order, tel)
+            record = 0
+            rec.release()
+            break
+
+        if out == 3:
+            forget_end = 'no box'
+            box_size = '-'
+            backuppost(box_size, forget_end, date_dir, a, record, nameid, customid, order, tel)
+            record = 0
+            rec.release()
+            break
+
         if login == False:
             nameid = "-"
 
@@ -345,6 +387,17 @@ def main(cap,order_dummy, ip,port,vdo,logo,camID,positionx,positiony,record, fon
                     # elif et - st <1:
                     #     if ip is not None:
                     #         confirm(ip,port)
+            if record == 2:
+                check_box = box_detect(frame)
+                et_limit = time.time()
+                if et_limit - st_scan > 300:
+                    out = 2
+                if check_box == 1:
+                    st_no_box = time.time()
+                if check_box == 2:
+                    et_no_box = time.time()
+                # if et_no_box-st_no_box > 60:
+                #     out = 3
 
             # config time to logout
             # elif orderid == "-":
@@ -418,6 +471,8 @@ def main(cap,order_dummy, ip,port,vdo,logo,camID,positionx,positiony,record, fon
 
         cv2.rectangle(frame, (0, 0), (240, 35), (255, 255, 255), cv2.FILLED)
         cv2.putText(frame, f"Log in as : {str(nameid)}", (10, 25), font, 0.7, (0, 0, 0), 2)
+        if check_box == 2:
+            cv2.putText(frame, 'No box', (500, 25), font, 0.7, (0, 0, 255), 2)
 
         if login == True:
             cv2.rectangle(frame, (0, 0), (640, 360), rec_color, 15)

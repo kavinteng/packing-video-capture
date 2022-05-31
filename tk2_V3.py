@@ -377,7 +377,7 @@ def addsize():
     ID = entry1.get()
     boxsize = entry2.get()
 
-    detail = 'forget end (Added box size)'
+    detail = '(Added box size)'
     boxsizes = '000'+ boxsize
     ID = str(ID)
 
@@ -517,18 +517,20 @@ def f(ip,port,camID,positionx,positiony):
     nameid = "-"
     order_dummy = 1
     login = False
-    img_aruco = cv2.imread("phone_aruco_marker.jpg")
     cap = cv2.VideoCapture(camID)
+    # cap = cv2.VideoCapture('test_box_color.mp4')
     while True:
         try:
             # create new and remove old
-            box_size, a, record, font, st, nameid, customid, order, tel, login = main(cap,order_dummy,ip,port,vdo,logo,camID,positionx,positiony,record, font, nameid, login, array, img_aruco)
+            box_size, a, record, font, st, nameid, customid, order, tel, login = main(cap,order_dummy,ip,port,vdo,logo,camID,positionx,positiony,record, font, nameid, login, array)
             # order_dummy = 'C' + customid + 'O' + order + 'T' + tel
             print(nameid, customid, order, tel, box_size)
             # เพิ่ม a เวลา
             # c = Process(target=cutvdo , args=(order,vdo,a,))
             # c.start()
             cutvdo(order,vdo,a)
+            if box_size == '-':
+                continue
             # os.remove('{}bc.mp4'.format(order))
             # post to url
             url = "https://globalapi2.advice.co.th/api/upfile_json"
