@@ -193,8 +193,8 @@ def checklogo(frame,logo,order,customid):
 
 
 def box_detect(img):
-    lower1 = np.array([39, 73, 125])
-    upper1 = np.array([178, 220, 219])
+    lower1 = np.array([105, 127, 152])
+    upper1 = np.array([121, 151, 166])
     mask1 = cv2.inRange(img, lower1, upper1)
     # gray_thresh = cv2.adaptiveThreshold(mask1, 255, cv2.ADAPTIVE_THRESH_GAUSSIAN_C,
     #                                     cv2.THRESH_BINARY_INV, 11, 1)
@@ -203,7 +203,7 @@ def box_detect(img):
     contours, hierachy = cv2.findContours(closing, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
     for cnt in contours:
         area = cv2.contourArea(cnt)
-        thresh = 5000
+        thresh = 0
         if area > thresh:
             ellipse = cv2.fitEllipse(cnt)
             # cv2.ellipse(img,ellipse,(0,255,0),2)
@@ -396,8 +396,8 @@ def main(cap,order_dummy, ip,port,vdo,logo,camID,positionx,positiony,record, fon
                     st_no_box = time.time()
                 if check_box == 2:
                     et_no_box = time.time()
-                # if et_no_box-st_no_box > 60:
-                #     out = 3
+                if et_no_box-st_no_box > 60:
+                    out = 3
 
             # config time to logout
             # elif orderid == "-":
