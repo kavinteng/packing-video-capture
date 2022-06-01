@@ -315,7 +315,11 @@ def choices_id_list():
         return choices_id
 
 def check_vdo(order,date,time):
-    file_name = "D:/vdo_packing/{}/{}{}.mp4".format(date, order, time)
+    if os.path.exists('d'+'://') == True:
+        path = 'D:/vdo_packing'
+    else:
+        path = 'C:/vdo_packing'
+    file_name = "{}/{}/{}{}.mp4".format(path,date, order, time)
     cap = cv2.VideoCapture(file_name)
 
     while True:
@@ -421,7 +425,11 @@ def post():
     for list in lists:
         _, nameid, customid, order, tel, size, date, a, _ = list
         # file_name = "D:/vdo_packing/{}/{}.mp4".format(date_dir,order)
-        file_name = "D:/vdo_packing/{}/{}{}.mp4".format(date, order, a)
+        if os.path.exists('d' + '://') == True:
+            path = 'D:/vdo_packing'
+        else:
+            path = 'C:/vdo_packing'
+        file_name = "{}/{}/{}{}.mp4".format(path,date, order, a)
         name, extension = os.path.splitext(file_name)
         mac = getmac.get_mac_address()
         encoded = jwt.encode({'mac address': mac}, 'secret', algorithm='HS256')
@@ -497,8 +505,11 @@ def f(ip,port,camID,positionx,positiony):
     qrcode = os.path.join(base_dir, "qrcode")
     # vdo = os.path.join(base_dir, "vdo")
     date_dir = date.today()
-    vdo_dir = 'D:/vdo_packing'
-    vdo = 'D:/vdo_packing/{}'.format(date_dir)
+    if os.path.exists('d'+'://') == True:
+        vdo_dir = 'D:/vdo_packing'
+    else:
+        vdo_dir = 'C:/vdo_packing'
+    vdo = '{}/{}'.format(vdo_dir,date_dir)
     logo = os.path.join(base_dir, "image")
     try:
         os.mkdir(vdo_dir)
@@ -594,7 +605,10 @@ def testDeviceip(ip):
        return False
 
 def delete_store(date_ref):
-    vdo_dir = 'D:/vdo_packing/'
+    if os.path.exists('d'+'://') == True:
+        vdo_dir = 'D:/vdo_packing/'
+    else:
+        vdo_dir = 'C:/vdo_packing/'
     date_dir = date.today()
     for file in os.listdir(vdo_dir):
         yy,mm,dd = file.split('-')
@@ -616,7 +630,11 @@ def confirm_yesno(root,message = 'ข้อความ'):
 
 if __name__ == '__main__':
     log_processing = []
-    if os.path.isdir('D:/vdo_packing') == True:
+    if os.path.exists('d'+'://') == True:
+        path = 'D:/vdo_packing'
+    else:
+        path = 'C:/vdo_packing'
+    if os.path.isdir(path) == True:
         delete_store(60)
     check_but7, check_but8, check_but9 = False, False, False
     while True:
