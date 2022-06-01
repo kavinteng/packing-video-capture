@@ -651,7 +651,7 @@ if __name__ == '__main__':
         if check_but7 == False:
             check_but7 = testDeviceusb(source=0, positionx=900, positiony=100)
         if check_but8 == False:
-            check_but8 = testDeviceusb(source=1, positionx=-900, positiony=100)
+            check_but8 = testDeviceusb(source=1, positionx=-700, positiony=100)
         if check_but9 == False:
             check_but9 = testDeviceusb(source=2, positionx=100, positiony=100)
 
