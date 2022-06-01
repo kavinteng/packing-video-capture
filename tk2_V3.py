@@ -545,8 +545,8 @@ def f(ip,port,camID,positionx,positiony):
             else:
                 no_box_1min = 0
             cutvdo(order,vdo,a,no_box_1min)
-            # if box_size == '-':
-            continue
+            if box_size == '-':
+                continue
             # os.remove('{}bc.mp4'.format(order))
             # post to url
             url = "https://globalapi2.advice.co.th/api/upfile_json"
