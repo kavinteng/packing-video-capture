@@ -201,6 +201,7 @@ def checklogo(frame,logo,order,customid):
 
 
 def box_detect(img):
+    img = img[50:360,0:640]
     lower1 = np.array([105, 127, 152])
     upper1 = np.array([121, 151, 166])
     mask1 = cv2.inRange(img, lower1, upper1)
