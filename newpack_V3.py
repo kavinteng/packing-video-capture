@@ -214,7 +214,7 @@ def box_detect(img):
         area = cv2.contourArea(cnt)
         thresh = 0
         if area > thresh:
-            ellipse = cv2.fitEllipse(cnt)
+            # ellipse = cv2.fitEllipse(cnt)
             # cv2.ellipse(img,ellipse,(0,255,0),2)
             return 1
     return 2
