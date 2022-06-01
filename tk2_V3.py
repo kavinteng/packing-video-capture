@@ -534,8 +534,8 @@ def f(ip,port,camID,positionx,positiony):
             else:
                 no_box_1min = 0
             cutvdo(order,vdo,a,no_box_1min)
-            if box_size == '-':
-                continue
+            # if box_size == '-':
+            continue
             # os.remove('{}bc.mp4'.format(order))
             # post to url
             url = "https://globalapi2.advice.co.th/api/upfile_json"
@@ -616,7 +616,8 @@ def confirm_yesno(root,message = 'ข้อความ'):
 
 if __name__ == '__main__':
     log_processing = []
-    delete_store(60)
+    if os.path.isdir('D:/vdo_packing') == True:
+        delete_store(60)
     check_but7, check_but8, check_but9 = False, False, False
     while True:
         # app = GUI(None)
@@ -691,17 +692,17 @@ if __name__ == '__main__':
         if check_but7 == True:
             but7 = Button(root, text='USB-cam1', width=20, bg='#32CD32',fg='white', command=lambda
                 camID=0,
-                positionx=1530, positiony=0: run(None, None, camID, positionx, positiony))
+                positionx=100, positiony=100: run(None, None, camID, positionx, positiony))
             but7.pack(padx=5, pady=5)
         if check_but8 == True:
             but8 = Button(root, text='USB-cam2', width=20, bg='#32CD32',fg='white', command=lambda
                 camID=1,
-                positionx=0, positiony=0: run(None, None, camID, positionx, positiony))
+                positionx=900, positiony=100: run(None, None, camID, positionx, positiony))
             but8.pack(padx=5, pady=5)
         if check_but9 == True:
             but9 = Button(root, text='USB-cam3', width=20, bg='#32CD32',fg='white', command=lambda
                 camID=2,
-                positionx=3060, positiony=0: run(None, None, camID, positionx, positiony))
+                positionx=-700, positiony=100: run(None, None, camID, positionx, positiony))
             but9.pack(padx=5, pady=5)
 
         repost = Button(root, text="Re-post", width=20, bg='red' ,fg='white', command=repost)
