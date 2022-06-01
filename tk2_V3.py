@@ -649,11 +649,11 @@ if __name__ == '__main__':
         # check_but3 = testDeviceip(ip3)
 
         if check_but7 == False:
-            check_but7 = testDeviceusb(source=0, positionx=100, positiony=0)
+            check_but7 = testDeviceusb(source=0, positionx=900, positiony=100)
         if check_but8 == False:
-            check_but8 = testDeviceusb(source=1, positionx=900, positiony=0)
+            check_but8 = testDeviceusb(source=1, positionx=1700, positiony=100)
         if check_but9 == False:
-            check_but9 = testDeviceusb(source=2, positionx=1700, positiony=0)
+            check_but9 = testDeviceusb(source=2, positionx=100, positiony=100)
 
         # if check_but1 == True:
         #     but1 = Button(root, text='opencam1', width=20, command=lambda

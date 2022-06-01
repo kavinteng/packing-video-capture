@@ -95,7 +95,11 @@ def cutvdo(mydata,vdo,a,no_box_1min):
             start = total - 120
         else:
             start = 0
-        end = total-60
+
+        if total <= 60:
+            end = total
+        else:
+            end = total-60
         ffmpeg_extract_subclip('{}bc{}.mp4'.format(mydata, a), start, end, targetname='{}{}.mp4'.format(mydata, a))
     else:
         if total >= 60:
@@ -399,14 +403,14 @@ def main(cap,order_dummy, ip,port,vdo,logo,camID,positionx,positiony,record, fon
             if record == 2:
                 check_box = box_detect(frame)
                 et_limit = time.time()
-                if et_limit - st_scan > 300:
+                if et_limit - st_scan > 180:
                     out = 2
                 if check_box == 1:
                     st_no_box = time.time()
                 if check_box == 2:
                     et_no_box = time.time()
-                if et_no_box-st_no_box > 60:
-                    out = 3
+                # if et_no_box-st_no_box > 60:
+                #     out = 3
 
             # config time to logout
             # elif orderid == "-":
@@ -489,7 +493,7 @@ def main(cap,order_dummy, ip,port,vdo,logo,camID,positionx,positiony,record, fon
         cv2.imshow("{}".format(camID), frame)
 #         cv2.imshow("vdo", vdoframe)
 
-        # cv2.moveWindow("{}".format(camID), positionx, positiony)
+        cv2.moveWindow("{}".format(camID), positionx, positiony)
 #         cv2.moveWindow("vdo", 0, 0)
         k = cv2.waitKey(1)
         if k == ord('q'):
