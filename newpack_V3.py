@@ -83,20 +83,28 @@ def draw_box(decoded, image):
 
 
 # edit video
-def cutvdo(mydata,vdo,a):
+def cutvdo(mydata,vdo,a,no_box_1min):
     os.chdir(vdo)
     # data = cv2.VideoCapture('{}bc.mp4'.format(mydata))
     data = cv2.VideoCapture('{}bc{}.mp4'.format(mydata,a))
     frames = data.get(cv2.CAP_PROP_FRAME_COUNT)
     fps = int(data.get(cv2.CAP_PROP_FPS))
     total = int(frames / fps)
-    if total >= 60:
-        start = total - 60
+    if no_box_1min == 1:
+        if total >= 120:
+            start = total - 120
+        else:
+            start = 0
+        end = total-60
+        ffmpeg_extract_subclip('{}bc{}.mp4'.format(mydata, a), start, end, targetname='{}{}.mp4'.format(mydata, a))
     else:
-        start = 0
-    end = total-1
-    # ffmpeg_extract_subclip('{}bc.mp4'.format(mydata), start, end, targetname='{}.mp4'.format(mydata))
-    ffmpeg_extract_subclip('{}bc{}.mp4'.format(mydata,a), start, end, targetname='{}{}.mp4'.format(mydata,a))
+        if total >= 60:
+            start = total - 60
+        else:
+            start = 0
+        end = total-1
+        # ffmpeg_extract_subclip('{}bc.mp4'.format(mydata), start, end, targetname='{}.mp4'.format(mydata))
+        ffmpeg_extract_subclip('{}bc{}.mp4'.format(mydata,a), start, end, targetname='{}{}.mp4'.format(mydata,a))
 
 # post by requests to url
 def post_requests(size,forget_end,a, vdo,record,nameid,customid, order, tel, url):
@@ -356,7 +364,7 @@ def main(cap,order_dummy, ip,port,vdo,logo,camID,positionx,positiony,record, fon
 
         if out == 3:
             forget_end = 'no box'
-            box_size = '-'
+            box_size = '--'
             backuppost(box_size, forget_end, date_dir, a, record, nameid, customid, order, tel)
             record = 0
             rec.release()

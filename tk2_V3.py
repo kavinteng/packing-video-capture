@@ -528,7 +528,12 @@ def f(ip,port,camID,positionx,positiony):
             # เพิ่ม a เวลา
             # c = Process(target=cutvdo , args=(order,vdo,a,))
             # c.start()
-            cutvdo(order,vdo,a)
+            if box_size == '--':
+                no_box_1min = 1
+                box_size = '-'
+            else:
+                no_box_1min = 0
+            cutvdo(order,vdo,a,no_box_1min)
             if box_size == '-':
                 continue
             # os.remove('{}bc.mp4'.format(order))
