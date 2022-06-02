@@ -272,7 +272,7 @@ def list_realtime():
         print(f"Error connecting to MariaDB Platform: {e}")
         sys.exit(1)
     cursor = connection.cursor()
-    cursor.execute("select * from backuppost limit 0,10")
+    cursor.execute("select * from backuppost limit 0,20")
     lists = cursor.fetchall()
     i = 1
     for list in lists:
@@ -299,7 +299,7 @@ def choices_id_list():
         print(f"Error connecting to MariaDB Platform: {e}")
         sys.exit(1)
     cursor = connection.cursor()
-    cursor.execute("select * from backuppost limit 0,10")
+    cursor.execute("select * from backuppost limit 0,20")
     lists_nosize = cursor.fetchall()
     choices_id = []
     for list_nosize in lists_nosize:
@@ -419,7 +419,7 @@ def post():
         print(f"Error connecting to MariaDB Platform: {e}")
         sys.exit(1)
     cursor = connection.cursor()
-    cursor.execute("select * from backuppost limit 0,10")
+    cursor.execute("select * from backuppost limit 0,20")
     lists = cursor.fetchall()
     url = "https://globalapi2.advice.co.th/api/upfile_json"
     for list in lists:
@@ -545,8 +545,12 @@ def f(ip,port,camID,positionx,positiony):
             else:
                 no_box_1min = 0
             cutvdo(order,vdo,a,no_box_1min)
-            if box_size == '-':
-                continue
+
+            if box_size == '-' or box_size == '--':
+                check_success = 'fall'
+            else:
+                check_success = 'success'
+
             # os.remove('{}bc.mp4'.format(order))
             # post to url
             url = "https://globalapi2.advice.co.th/api/upfile_json"
@@ -560,7 +564,7 @@ def f(ip,port,camID,positionx,positiony):
                 continue
             elif connect() == True:
                 print('Internet connected')
-                m = Process(target=multipost ,args=(box_size, a, vdo,record,nameid,customid, order, tel, url,))
+                m = Process(target=multipost ,args=(box_size, a, vdo,record,nameid,customid, order, tel, url,check_success,))
                 m.start()
             else:
                 pass_func = Tk()
@@ -578,9 +582,13 @@ def run(ip,port,camID,positionx,positiony):
     t.start()
     log_processing.append(t)
 
-def multipost(box_size, a, vdo,record,nameid,customid, order, tel, url):
+def multipost(box_size, a, vdo,record,nameid,customid, order, tel, url,check_success):
     print('------multipost------')
-    post_requests(box_size, None,a, vdo, record, nameid, customid, order, tel, url)
+    if box_size == '-':
+        forget_end = 'post limit timeout'
+    else:
+        forget_end = None
+    post_requests(box_size, forget_end,a, vdo, record, nameid, customid, order, tel, url,check_success)
     # date_dir = datetime.date.today()
     # if check_post == 2:
     #     backuppost(check_post, date_dir, a, record, nameid, customid, order, tel)

@@ -45,6 +45,12 @@ def backuppost(size,forget_end,date, a, record,nameid,customid,orderid,tel):
     elif forget_end == 'no internet':
         cursor.execute("update backuppost set detail = 'No internet connection' where orderid = ? and time = ?",
                        (orderid, a))
+    elif forget_end == 'post limit timeout':
+        cursor.execute("update backuppost set detail = 'post to store(time limit)' where orderid = ? and time = ?",
+                       (orderid, a))
+    elif forget_end == 'post forget end':
+        cursor.execute("update backuppost set detail = 'post to store(forget end)' where orderid = ? and time = ?",
+                       (orderid, a))
     elif record==0 and forget_end == None:
         cursor.execute("delete from backuppost where orderid = ? and time = ?", (orderid,a))
     else:
@@ -111,7 +117,7 @@ def cutvdo(mydata,vdo,a,no_box_1min):
         ffmpeg_extract_subclip('{}bc{}.mp4'.format(mydata,a), start, end, targetname='{}{}.mp4'.format(mydata,a))
 
 # post by requests to url
-def post_requests(size,forget_end,a, vdo,record,nameid,customid, order, tel, url):
+def post_requests(size,forget_end,a, vdo,record,nameid,customid, order, tel, url,check_success):
     os.chdir(vdo)
     # file_name = "{}.mp4".format(order)
     file_name = "{}{}.mp4".format(order,a)
@@ -121,7 +127,10 @@ def post_requests(size,forget_end,a, vdo,record,nameid,customid, order, tel, url
     try:
         with open(file_name, "rb") as file:
             data = {"data": file}
-            text = {"Username": nameid, "Customer ID": customid, "Order ID": order, "Tel": tel, "Box size": size, "file_type": extension, "token": encoded}
+            text = {"Username": nameid, "Customer ID": customid, "Order ID": order,
+                    "Tel": tel, "Box size": size, "file_type": extension, "token": encoded,
+                    "check_success": check_success}
+            print(text)
             response = requests.post(url, files=data ,data=text)
             print('------posting------')
             if response.ok:
@@ -135,6 +144,7 @@ def post_requests(size,forget_end,a, vdo,record,nameid,customid, order, tel, url
                 # backuppost(check_post, date_dir, a, record, nameid, customid, order, tel)
     except Exception as e:
         e = str(e)
+        print(e)
         detail1, detail2 = e.split(':', 1)
         # check_post = 2
         backuppost(size,detail1, date_dir, a, record, nameid, customid, order, tel)
@@ -325,6 +335,9 @@ def main(cap,order_dummy, ip,port,vdo,logo,camID,positionx,positiony,record, fon
                             record = 0
                             order_old = order
                             a_old = a
+                            tel_old = tel
+                            customid_old = customid
+                            nameid_old = nameid
 
             elif mydata.isnumeric() == True and record == 0:
                 if mydata == "":
@@ -456,7 +469,12 @@ def main(cap,order_dummy, ip,port,vdo,logo,camID,positionx,positiony,record, fon
 
             # ตัดคลิปเก่าของกรณีลืมจบคลิป
             if forget_end == 1:
-                cutvdo(order_old, vdo, a_old)
+                no_box_1min = 0
+                check_success = 'fall'
+                url = "https://globalapi2.advice.co.th/api/upfile_json"
+                cutvdo(order_old, vdo, a_old,no_box_1min)
+                forget_end = 'post forget end'
+                post_requests(box_size, forget_end, a_old, vdo, record, nameid_old, customid_old, order_old, tel_old, url, check_success)
                 forget_end = 0
 
             record = 2
