@@ -202,6 +202,18 @@ class GUI(Tk):
 
         self.destroy()
 
+def create_database():
+    try:
+        connection = mariadb.connect(host="localhost", user="root", passwd="123456")
+    except mariadb.Error as e:
+        print(f"Error connecting to MariaDB Platform: {e}")
+        sys.exit(1)
+    cursor = connection.cursor()
+    try:
+        cursor.execute("CREATE DATABASE advicev3")
+    except:
+        pass
+
 def repost():
     global root2, i, form_edit
     try:
@@ -637,6 +649,7 @@ def confirm_yesno(root,message = 'ข้อความ'):
         sys.exit(1)
 
 if __name__ == '__main__':
+    create_database()
     log_processing = []
     if os.path.exists('d'+'://') == True:
         path = 'D:/vdo_packing'
