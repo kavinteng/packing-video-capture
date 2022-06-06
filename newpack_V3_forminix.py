@@ -168,54 +168,6 @@ def checklogo(frame,logo,order,customid):
     cv2.putText(frame, 'Record Time: {}'.format(datetime.datetime.now().strftime("%d/%m/%Y")), (210, 45), font, 0.4, (0, 0, 0), 1)
     cv2.putText(frame, '{}'.format(datetime.datetime.now().strftime("%T")), (310, 65), font, 0.4,(0, 0, 0), 1)
 
-    # size = 50
-    # img = cv2.resize(img, (size+90, size+10))
-    # imggray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
-    # ret, mask = cv2.threshold(imggray, 1, 255, cv2.THRESH_BINARY)
-    # roilogo = frame[-size - 11:-1, -size - 100:-10]
-    # roilogo = frame[-48:-10, -127:-1]
-    # roilogo[np.where(mask)] = 0
-    # roilogo += img
-
-
-# measure object
-# def measure_object(img_aruco, aruco_dict, parameters, detector, img):
-#     corners, _, _ = cv2.aruco.detectMarkers(img_aruco, aruco_dict, parameters=parameters)
-#     if corners:
-#
-#         # Draw polygon around the marker
-#         # int_corners = np.int0(corners)
-#         # cv2.polylines(img, int_corners, True, (0, 255, 0), 5)
-#
-#         # Aruco Perimeter
-#         aruco_perimeter = cv2.arcLength(corners[0], True)
-#
-#         # Pixel to cm ratio
-#         pixel_cm_ratio = aruco_perimeter / 20
-#
-#         contours = detector.detect_objects(img)
-#
-#         # Draw objects boundaries
-#         for cnt in contours:
-#             # Get rect
-#             rect = cv2.minAreaRect(cnt)
-#             (x, y), (w, h), angle = rect
-#
-#             # Get Width and Height of the Objects by applying the Ratio pixel to cm
-#             object_width = w / pixel_cm_ratio
-#             object_height = h / pixel_cm_ratio
-#
-#             # Display rectangle
-#             box = cv2.boxPoints(rect)
-#             box = np.int0(box)
-#
-#             cv2.circle(img, (int(x), int(y)), 5, (0, 0, 255), -1)
-#             cv2.polylines(img, [box], True, (255, 0, 0), 2)
-#             cv2.putText(img, "Width {} cm".format(round(object_width, 1)), (int(x - 100), int(y - 20)),
-#                         cv2.FONT_HERSHEY_PLAIN, 2, (100, 200, 0), 2)
-#             cv2.putText(img, "Height {} cm".format(round(object_height, 1)), (int(x - 100), int(y + 15)),
-#                         cv2.FONT_HERSHEY_PLAIN, 2, (100, 200, 0), 2)
-
 
 def box_detect(img):
     img = img[50:360,0:640]
@@ -236,21 +188,7 @@ def box_detect(img):
             return 1
     return 2
 
-def main(cap,order_dummy, ip,port,vdo,logo,camID,positionx,positiony,record, font, nameid, login, array):
-    # Load Aruco detector
-    # parameters = cv2.aruco.DetectorParameters_create()
-    # aruco_dict = cv2.aruco.Dictionary_get(cv2.aruco.DICT_5X5_50)
-
-    # Load Object Detector
-    # detector = HomogeneousBgDetector()
-
-    # cap = cv2.VideoCapture(camID)
-    # cap.set(3, 640)
-    # cap.set(4, 480)
-    # frame_w = int(cap.get(4))
-    # frame_h = int(cap.get(3))
-    # print(frame_w,frame_h)
-
+def main(cap,order_dummy,vdo,logo,camID,positionx,positiony,record, font, nameid, login, array):
     QR_dict = {
         "bcDwYT": "000A",
         "bcWPu4": "000B",
@@ -399,9 +337,6 @@ def main(cap,order_dummy, ip,port,vdo,logo,camID,positionx,positiony,record, fon
             rec_color = (0,255,0)
             cv2.putText(frame, f"Order ID : {str(orderid)}", (10, 50), font, 0.5, (0, 0, 255), 2)
             if orderid != "-" and record == 0:
-                # if qrsize == 0:
-                #     cv2.putText(frame, "SCAN BOX SIZE", (10, 120), font, 2, (0, 0, 255), 3)
-                # if qrsize == 1:
                 cv2.putText(frame, "RECORDING", (10, 70), font, 0.5, (0, 0, 255), 2)
                 if st == 0:
                     st = time.time()
@@ -427,16 +362,6 @@ def main(cap,order_dummy, ip,port,vdo,logo,camID,positionx,positiony,record, fon
                     et_no_box = time.time()
                 # if et_no_box-st_no_box > 60:
                 #     out = 3
-
-            # config time to logout
-            # elif orderid == "-":
-            #     # measure_object(frame, aruco_dict, parameters, detector, frame)
-            #     if st == 0:
-            #         st = time.time()
-            #     else:
-            #         et = time.time()
-            #         if et - st > 1800:
-            #             login = False
 
         # create video file
         if record == 1:
@@ -491,16 +416,6 @@ def main(cap,order_dummy, ip,port,vdo,logo,camID,positionx,positiony,record, fon
             elif out == 1:
                 rec_color = (0, 0, 255)
             checklogo(vdoframe,logo,order,customid)
-            # cv2.putText(vdoframe, "Order ID: {}".format(str(order)), (10, 20), cv2.FONT_HERSHEY_SIMPLEX, 0.7,
-            #             (0, 0, 255), 2)
-            # cv2.putText(vdoframe, datetime.datetime.now().strftime("%d/%m/%Y %T"), (10, vdoframe.shape[0] - 10),
-            #             font, 0.4, (0, 0, 255), 1)
-
-            # config over 300 mb
-            # cv2.putText(vdoframe, "Order ID: {}".format(str(order)), (10, 20), cv2.FONT_HERSHEY_SIMPLEX, 0.5,
-            #             (0, 0, 255), 1)
-            # cv2.putText(vdoframe, datetime.datetime.now().strftime("%d/%m/%Y %T"), (10, vdoframe.shape[0] - 10),
-            #             font, 0.4, (255, 0, 0), 1)
             rec.write(vdoframe)
 
         cv2.rectangle(frame, (0, 0), (240, 35), (255, 255, 255), cv2.FILLED)
@@ -517,57 +432,8 @@ def main(cap,order_dummy, ip,port,vdo,logo,camID,positionx,positiony,record, fon
         cv2.moveWindow("{}".format(camID), positionx, positiony)
 #         cv2.moveWindow("vdo", 0, 0)
         k = cv2.waitKey(1)
-        if k == ord('q'):
-            exit()
     try:
         # return record, font, st, nameid, customid, order, tel, login
         return box_size, a, record, font, st, nameid, customid, order, tel, login
     except:
         pass
-
-
-# if __name__ == '__main__':
-    # # create path dir
-    # base_dir = os.path.dirname(os.path.abspath(__file__))
-    # qrcode = os.path.join(base_dir, "qrcode")
-    # vdo = os.path.join(base_dir, "vdo")
-    # logo = os.path.join(base_dir, "image")
-    # try:
-    #     os.mkdir(vdo)
-    #     os.mkdir(qrcode)
-    #     os.mkdir(logo)
-    # except:
-    #     pass
-    #
-    # record = 0
-    # array = []
-    # font = cv2.FONT_HERSHEY_SIMPLEX
-    # st = 0
-    # nameid = "-"
-    # orderid = "-"
-    # login = False
-    # img_aruco = cv2.imread("phone_aruco_marker.jpg")
-    #
-    # while True:
-    #     if connect() == False:
-    #         print('No Internet connection!')
-    #         continue
-    #     else:
-    #         print('Internet connected')
-    #     # wait input to turn on camera
-    #     # if login == False:
-    #     #     wait_input = input("0 for cam, 1 for break: ")
-    #     # if wait_input == "0":
-    #
-    #     # create new and remove old
-    #     try:
-    #         record, font, st, nameid, customid, order, tel, login = main(record, font, nameid, login, array, img_aruco)
-    #         cutvdo(order)
-    #         os.remove('{}bc.mp4'.format(order))
-    #         # post to url
-    #         url = "https://globalapi.advice.co.th/api/upfile_json"
-    #         # post_requests(nameid,customid, order, tel, url)
-    #     except Exception as e:
-    #         print(e)
-    # # elif wait_input == "1":
-    # #     break
