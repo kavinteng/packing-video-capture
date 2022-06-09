@@ -243,7 +243,7 @@ def main(cap,vdo,logo,camID,positionx,positiony,record, font, nameid, login, arr
 
             video_size = (640, 360)
             fourcc = cv2.VideoWriter_fourcc(*'H264')
-            rec = cv2.VideoWriter(file, fourcc, 30, video_size)
+            rec = cv2.VideoWriter(file, fourcc, 15, video_size)
 
             # ตัดคลิปเก่าของกรณีลืมจบคลิป
             if forget_end == 1:
@@ -581,9 +581,9 @@ def post_requests(size,forget_end,a, vdo,record,nameid,customid, order, tel, url
                 check_post = 1
                 print("Upload completed successfully!")
                 backuppost(size,forget_end,date_dir, a, record, nameid, customid, order, tel)
-                os.remove('{}bc{}.mp4'.format(order, a))
-                file.close()
-                os.remove('{}{}.mp4'.format(order, a))
+                # os.remove('{}bc{}.mp4'.format(order, a))
+                # file.close()
+                # os.remove('{}{}.mp4'.format(order, a))
 
             else:
                 response.raise_for_status()
