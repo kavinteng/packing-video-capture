@@ -620,12 +620,16 @@ def admin_control():
         admin_root.title('ADMIN_Controller')
         num_report = Label(admin_root, text='ADMIN-CONTROLLER', fg='red', font=('Arial', 12))
         num_report.pack(padx=5, pady=5)
-        git_c = Button(admin_root, text="git pull", width=20, bg='red', fg='white', command=git_c_bottom)
+        git_c = Button(admin_root, text="git pull", width=20, bg='red', fg='white', command=git_c_botton)
         git_c.pack(padx=5, pady=5)
+        restart = Button(admin_root, text="restart", width=20, bg='red', fg='white', command=restart_botton)
+        restart.pack(padx=5, pady=5)
 
 
         admin_root.mainloop()
 
-def git_c_bottom():
+def git_c_botton():
     os.system('git pull')
-    os.execv(sys.argv[0], sys.argv)
+
+def restart_botton():
+    os.execv(sys.executable, ['python'] + sys.argv)
