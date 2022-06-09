@@ -617,7 +617,7 @@ def admin_control():
     passw = tkinter.simpledialog.askstring("Password", "Enter password:", show='*')
     if passw == 'Advice#128':
         admin_root = Tk()
-        admin_root.geometry('200x100+0+500')
+        admin_root.geometry('200x100+0+400')
         admin_root.title('ADMIN_Controller')
         num_report = Label(admin_root, text='ADMIN-CONTROLLER', fg='red', font=('Arial', 12))
         num_report.pack(padx=5, pady=5)
