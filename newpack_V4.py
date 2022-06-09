@@ -243,7 +243,7 @@ def main(cap,vdo,logo,camID,positionx,positiony,record, font, nameid, login, arr
 
             video_size = (640, 360)
             fourcc = cv2.VideoWriter_fourcc(*'H264')
-            rec = cv2.VideoWriter(file, fourcc, 50, video_size)
+            rec = cv2.VideoWriter(file, fourcc, 30, video_size)
 
             # ตัดคลิปเก่าของกรณีลืมจบคลิป
             if forget_end == 1:
