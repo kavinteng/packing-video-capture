@@ -557,7 +557,7 @@ def cutvdo(mydata,vdo,a,no_box_1min):
             start = total - 60
         else:
             start = 0
-        end = total-1
+        end = total-0.2
         # ffmpeg_extract_subclip('{}bc.mp4'.format(mydata), start, end, targetname='{}.mp4'.format(mydata))
         ffmpeg_extract_subclip('{}bc{}.mp4'.format(mydata,a), start, end, targetname='{}{}.mp4'.format(mydata,a))
 
