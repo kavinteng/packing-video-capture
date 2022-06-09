@@ -205,7 +205,7 @@ def main(cap,vdo,logo,camID,positionx,positiony,record, font, nameid, login, arr
                         record = 1
 
             if record == 2:
-                check_box = box_detect(frame)
+                # check_box = box_detect(frame)
                 et_limit = time.time()
                 if et_limit - st_scan > 180:
                     out = 2
@@ -270,8 +270,8 @@ def main(cap,vdo,logo,camID,positionx,positiony,record, font, nameid, login, arr
 
         cv2.rectangle(frame, (0, 0), (240, 35), (255, 255, 255), cv2.FILLED)
         cv2.putText(frame, f"Log in as : {str(nameid)}", (10, 25), font, 0.7, (0, 0, 0), 2)
-        if check_box == 2:
-            cv2.putText(frame, 'No box', (500, 25), font, 0.7, (0, 0, 255), 2)
+        # if check_box == 2:
+        #     cv2.putText(frame, 'No box', (500, 25), font, 0.7, (0, 0, 255), 2)
 
         if login == True:
             cv2.rectangle(frame, (0, 0), (1080, 650), rec_color, 15)
@@ -557,7 +557,7 @@ def cutvdo(mydata,vdo,a,no_box_1min):
             start = total - 60
         else:
             start = 0
-        end = total-0.2
+        end = total-0.5
         # ffmpeg_extract_subclip('{}bc.mp4'.format(mydata), start, end, targetname='{}.mp4'.format(mydata))
         ffmpeg_extract_subclip('{}bc{}.mp4'.format(mydata,a), start, end, targetname='{}{}.mp4'.format(mydata,a))
 
@@ -581,9 +581,9 @@ def post_requests(size,forget_end,a, vdo,record,nameid,customid, order, tel, url
                 check_post = 1
                 print("Upload completed successfully!")
                 backuppost(size,forget_end,date_dir, a, record, nameid, customid, order, tel)
-                # os.remove('{}bc{}.mp4'.format(order, a))
-                # file.close()
-                # os.remove('{}{}.mp4'.format(order, a))
+                os.remove('{}bc{}.mp4'.format(order, a))
+                file.close()
+                os.remove('{}{}.mp4'.format(order, a))
 
             else:
                 response.raise_for_status()
@@ -631,6 +631,7 @@ def admin_control():
         admin_root.mainloop()
 
 def git_c_botton():
+    os.system('cd C:/app/packing-video-capture')
     out = os.system('git pull')
     if out == 0:
         os.execv(sys.executable, ['python'] + sys.argv)
