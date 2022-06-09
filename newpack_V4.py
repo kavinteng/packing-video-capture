@@ -16,6 +16,7 @@ import jwt
 from getmac import getmac
 from tkinter import messagebox
 import shutil
+import tkinter.simpledialog
 
 date_dir = datetime.date.today()
 base_dir = os.path.dirname(os.path.abspath(__file__))
@@ -608,3 +609,13 @@ def multipost(box_size, a, vdo,record,nameid,customid, order, tel, url,check_suc
     #     root3.withdraw()
     #     messagebox.showerror("Error Alert", "fail post")
 #----- cut & post -----
+
+#----- admin -----
+def admin_control():
+    Tk().withdraw()
+    passw = tkinter.simpledialog.askstring("Password", "Enter password:", show='*')
+    if passw == 'Advice#128':
+        admin_root = Tk()
+        admin_root.title('ADMIN_Controller')
+
+        admin_root.mainloop()

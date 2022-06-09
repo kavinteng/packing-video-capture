@@ -117,21 +117,21 @@ def testDeviceusb(source,positionx,positiony):
     else:
         return False
 
-log_processing = []
-if os.path.exists('d' + '://') == True:
-    path = 'D:/vdo_packing'
-else:
-    path = 'C:/vdo_packing'
-if os.path.isdir(path) == True:
-    delete_store(7)
-check_but7, check_but8, check_but9 = False, False, False
-while True:
+if __name__ == '__main__':
+    log_processing = []
+    if os.path.exists('d' + '://') == True:
+        path = 'D:/vdo_packing'
+    else:
+        path = 'C:/vdo_packing'
+    if os.path.isdir(path) == True:
+        delete_store(7)
+    check_but7, check_but8, check_but9 = False, False, False
     root = Tk()
     root.title('CAMERA LIST')
-    root.geometry('200x240+0+0')
+    root.geometry('200x360+0+100')
 
     if check_but7 == False:
-        check_but7 = testDeviceusb(source=0, positionx=100, positiony=100)
+        check_but7 = testDeviceusb(source=0, positionx=200, positiony=100)
 
     if check_but7 == True:
         but7 = Label(root, text='USB-cam1', width=20, bg='#32CD32', fg='white', font=('Arial', 15))
@@ -144,6 +144,11 @@ while True:
     num_report = Label(root, text='UNPOST = {}'.format(count), fg='red', font=('Arial', 15))
     num_report.pack(padx=5, pady=5)
     count_unpost()
+
+    admin = Button(root, text="ADMIN", width=20, bg='red', fg='white', command=admin_control)
+    admin.pack(padx=5, pady=5, side = "bottom")
+
     root.protocol('WM_DELETE_WINDOW', confirm_yesno)
 
     root.mainloop()
+
