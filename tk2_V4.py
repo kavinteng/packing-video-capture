@@ -86,23 +86,28 @@ def f(camID,positionx,positiony):
                 root4.withdraw()
                 forget_end = 'no internet'
                 backuppost(box_size, forget_end, date_dir, a, record, nameid, customid, order, tel)
-                messagebox.showerror("Network error", "No internet connection")
-                webbrowser.open('http://google.com', new=2)
+                # messagebox.showerror("Network error", "No internet connection")
+                # webbrowser.open('http://google.com', new=2)
                 continue
             elif connect() == True:
                 print('Internet connected')
                 # m = Process(target=multipost ,args=(box_size, a, vdo,record,nameid,customid, order, tel, url,check_success,))
                 # m.start()
                 multipost(box_size, a, vdo,record,nameid,customid, order, tel, url,check_success)
-            else:
-                pass_func = Tk()
-                pass_func.withdraw()
-                messagebox.showerror("Error Skip", 'Failed Skip post process')
+            # else:
+            #     pass_func = Tk()
+            #     pass_func.withdraw()
+            #     messagebox.showerror("Error Skip", 'Failed Skip post process')
         except Exception as e:
             print(e)
-            root3 = Tk()
-            root3.withdraw()
-            messagebox.showerror("Error Process", e)
+            connection = sqlite3.connect(sqlite_dir)
+            cursor = connection.cursor()
+            cursor.execute("insert into backuppost(detail) values (?)",(e,))
+            connection.commit()
+            connection.close()
+            # root3 = Tk()
+            # root3.withdraw()
+            # messagebox.showerror("Error Process", e)
 
 def testDeviceusb(source,positionx,positiony):
     global log_processing
@@ -128,10 +133,10 @@ if __name__ == '__main__':
     check_but7, check_but8, check_but9 = False, False, False
     root = Tk()
     root.title('CAMERA LIST')
-    root.geometry('200x360+0+100')
+    root.geometry('200x360+0+0')
 
     if check_but7 == False:
-        check_but7 = testDeviceusb(source=0, positionx=200, positiony=100)
+        check_but7 = testDeviceusb(source=0, positionx=200, positiony=0)
 
     if check_but7 == True:
         but7 = Label(root, text='USB-cam1', width=20, bg='#32CD32', fg='white', font=('Arial', 15))

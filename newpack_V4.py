@@ -83,7 +83,8 @@ def main(cap,vdo,logo,camID,positionx,positiony,record, font, nameid, login, arr
         if frame is None:
             continue
 
-        frame = cv2.resize(frame, (640, 360))
+        # frame = cv2.resize(frame, (640, 360))
+        frame = cv2.resize(frame,(1080,650))
         vdoframe = frame.copy()
         vdoframe = cv2.resize(vdoframe, (640, 360))
 
@@ -226,7 +227,7 @@ def main(cap,vdo,logo,camID,positionx,positiony,record, font, nameid, login, arr
                 print(e)
                 failqr = Tk()
                 failqr.withdraw()
-                messagebox.showerror("Error QRCODE", 'Wrong QRCODE Format')
+                # messagebox.showerror("Error QRCODE", 'Wrong QRCODE Format')
                 orderid = "-"
                 record = 0
                 in_st = 0
@@ -273,7 +274,7 @@ def main(cap,vdo,logo,camID,positionx,positiony,record, font, nameid, login, arr
             cv2.putText(frame, 'No box', (500, 25), font, 0.7, (0, 0, 255), 2)
 
         if login == True:
-            cv2.rectangle(frame, (0, 0), (640, 360), rec_color, 15)
+            cv2.rectangle(frame, (0, 0), (1080, 650), rec_color, 15)
         cv2.imshow("{}".format(camID), frame)
 
         cv2.moveWindow("{}".format(camID), positionx, positiony)
@@ -630,6 +631,7 @@ def admin_control():
 
 def git_c_botton():
     os.system('git pull')
+    os.execv(sys.executable, ['python'] + sys.argv)
 
 def restart_botton():
     os.execv(sys.executable, ['python'] + sys.argv)
