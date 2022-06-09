@@ -630,7 +630,8 @@ def admin_control():
         admin_root.mainloop()
 
 def git_c_botton():
-    os.system('git pull')
+    out = os.system('git pull')
+    print(out)
     os.execv(sys.executable, ['python'] + sys.argv)
 
 def restart_botton():
