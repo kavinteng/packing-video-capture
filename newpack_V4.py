@@ -630,6 +630,7 @@ def admin_control():
 
 def git_c_botton():
     os.system('git pull')
+    print('test')
 
 def restart_botton():
     os.execv(sys.executable, ['python'] + sys.argv)
