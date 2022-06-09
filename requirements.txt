@@ -1,8 +1,9 @@
 moviepy
 numpy
 requests
-opencv-contrib-python
+opencv-python
 pyzbar
 PYjwt
 getmac
 mariadb
+webbrowser
