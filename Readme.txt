@@ -4,6 +4,3 @@ How to install
 3. pip install -r requirements.txt
 
 if cannot run pyzbar please install vcredist_x64.exe
-
-
-testtest
