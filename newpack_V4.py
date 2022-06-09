@@ -613,11 +613,12 @@ def multipost(box_size, a, vdo,record,nameid,customid, order, tel, url,check_suc
 
 #----- admin -----
 def admin_control():
+    global admin_root
     Tk().withdraw()
     passw = tkinter.simpledialog.askstring("Password", "Enter password:", show='*')
     if passw == 'Advice#128':
         admin_root = Tk()
-        admin_root.geometry('200x100+0+400')
+        admin_root.geometry('200x200+0+400')
         admin_root.title('ADMIN_Controller')
         num_report = Label(admin_root, text='ADMIN-CONTROLLER', fg='red', font=('Arial', 12))
         num_report.pack(padx=5, pady=5)
@@ -631,8 +632,11 @@ def admin_control():
 
 def git_c_botton():
     out = os.system('git pull')
-    print(out)
-    os.execv(sys.executable, ['python'] + sys.argv)
+    if out == 0:
+        os.execv(sys.executable, ['python'] + sys.argv)
+    elif out == 1:
+        git_pull_fall = Label(admin_root, text='git pull fall', fg='red', font=('Arial', 10))
+        git_pull_fall.pack(padx=5, pady=5)
 
 def restart_botton():
     os.execv(sys.executable, ['python'] + sys.argv)
