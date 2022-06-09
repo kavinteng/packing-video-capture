@@ -617,5 +617,11 @@ def admin_control():
     if passw == 'Advice#128':
         admin_root = Tk()
         admin_root.title('ADMIN_Controller')
+        git_c = Button(admin_root, text="git pull", width=20, bg='red', fg='white', command=git_c_bottom)
+        git_c.pack(padx=5, pady=5)
+
 
         admin_root.mainloop()
+
+def git_c_bottom():
+    os.system('git pull')
