@@ -5,5 +5,3 @@ opencv-python
 pyzbar
 PYjwt
 getmac
-mariadb
-webbrowser
