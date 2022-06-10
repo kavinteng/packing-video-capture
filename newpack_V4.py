@@ -274,7 +274,7 @@ def main(cap,vdo,logo,camID,positionx,positiony,record, font, nameid, login, arr
         #     cv2.putText(frame, 'No box', (500, 25), font, 0.7, (0, 0, 255), 2)
 
         if login == True:
-            cv2.rectangle(frame, (0, 0), (1080, 650), rec_color, 15)
+            cv2.rectangle(frame, (0, 0), (1050, 650), rec_color, 15)
         cv2.imshow("{}".format(camID), frame)
 
         cv2.moveWindow("{}".format(camID), positionx, positiony)
@@ -615,20 +615,20 @@ def multipost(box_size, a, vdo,record,nameid,customid, order, tel, url,check_suc
 def admin_control():
     global admin_root
     Tk().withdraw()
-    passw = tkinter.simpledialog.askstring("Password", "Enter password:", show='*')
-    if passw == 'Advice#128':
-        admin_root = Tk()
-        admin_root.geometry('200x200+0+400')
-        admin_root.title('ADMIN_Controller')
-        num_report = Label(admin_root, text='ADMIN-CONTROLLER', fg='red', font=('Arial', 12))
-        num_report.pack(padx=5, pady=5)
-        git_c = Button(admin_root, text="git pull", width=20, bg='red', fg='white', command=git_c_botton)
-        git_c.pack(padx=5, pady=5)
-        restart = Button(admin_root, text="restart", width=20, bg='red', fg='white', command=restart_botton)
-        restart.pack(padx=5, pady=5)
-
-
-        admin_root.mainloop()
+    while True:
+        passw = tkinter.simpledialog.askstring("Password", "Enter password:", show='*')
+        if passw == 'Advice#128':
+            break
+    admin_root = Tk()
+    admin_root.geometry('200x200+0+400')
+    admin_root.title('ADMIN_Controller')
+    num_report = Label(admin_root, text='ADMIN-CONTROLLER', fg='red', font=('Arial', 12))
+    num_report.pack(padx=5, pady=5)
+    git_c = Button(admin_root, text="git pull", width=20, bg='red', fg='white', command=git_c_botton)
+    git_c.pack(padx=5, pady=5)
+    restart = Button(admin_root, text="restart", width=20, bg='red', fg='white', command=restart_botton)
+    restart.pack(padx=5, pady=5)
+    admin_root.mainloop()
 
 def git_c_botton():
     os.system('cd C:/app/packing-video-capture')
