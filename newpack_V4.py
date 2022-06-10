@@ -84,7 +84,7 @@ def main(cap,vdo,logo,camID,positionx,positiony,record, font, nameid, login, arr
             continue
 
         # frame = cv2.resize(frame, (640, 360))
-        frame = cv2.resize(frame,(1080,650))
+        frame = cv2.resize(frame,(1050,650))
         vdoframe = frame.copy()
         vdoframe = cv2.resize(vdoframe, (640, 360))
 
