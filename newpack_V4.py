@@ -617,18 +617,19 @@ def admin_control():
     Tk().withdraw()
     while True:
         passw = tkinter.simpledialog.askstring("Password", "Enter password:", show='*')
-        if passw == 'Advice#128':
+        if passw == 'Advice#128' or passw == None:
             break
-    admin_root = Tk()
-    admin_root.geometry('200x200+0+400')
-    admin_root.title('ADMIN_Controller')
-    num_report = Label(admin_root, text='ADMIN-CONTROLLER', fg='red', font=('Arial', 12))
-    num_report.pack(padx=5, pady=5)
-    git_c = Button(admin_root, text="git pull", width=20, bg='red', fg='white', command=git_c_botton)
-    git_c.pack(padx=5, pady=5)
-    restart = Button(admin_root, text="restart", width=20, bg='red', fg='white', command=restart_botton)
-    restart.pack(padx=5, pady=5)
-    admin_root.mainloop()
+    if passw == 'Advice#128':
+        admin_root = Tk()
+        admin_root.geometry('200x200+0+400')
+        admin_root.title('ADMIN_Controller')
+        num_report = Label(admin_root, text='ADMIN-CONTROLLER', fg='red', font=('Arial', 12))
+        num_report.pack(padx=5, pady=5)
+        git_c = Button(admin_root, text="git pull", width=20, bg='red', fg='white', command=git_c_botton)
+        git_c.pack(padx=5, pady=5)
+        restart = Button(admin_root, text="restart", width=20, bg='red', fg='white', command=restart_botton)
+        restart.pack(padx=5, pady=5)
+        admin_root.mainloop()
 
 def git_c_botton():
     os.system('cd C:/app/packing-video-capture')
