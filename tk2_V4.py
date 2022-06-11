@@ -1,7 +1,6 @@
 from newpack_V4 import *
 import sqlite3
 from tkinter import *
-import webbrowser
 from threading import Thread
 
 def count_unpost():
@@ -154,6 +153,7 @@ if __name__ == '__main__':
     admin.pack(padx=5, pady=5, side = "bottom")
 
     root.protocol('WM_DELETE_WINDOW', confirm_yesno)
+    root.attributes('-topmost', True)
 
     root.mainloop()
 
