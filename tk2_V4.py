@@ -153,7 +153,7 @@ if __name__ == '__main__':
     admin.pack(padx=5, pady=5, side = "bottom")
 
     root.protocol('WM_DELETE_WINDOW', confirm_yesno)
-    # root.attributes('-topmost', True)
+    root.attributes('-topmost', True)
 
     root.mainloop()
 
