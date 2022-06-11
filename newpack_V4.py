@@ -276,7 +276,7 @@ def main(cap,vdo,logo,camID,positionx,positiony,record, font, nameid, login, arr
             cv2.rectangle(frame, (0, 0), (1050, 650), rec_color, 15)
         cv2.imshow("{}".format(camID), frame)
 
-        cv2.setWindowProperty("{}".format(camID), cv2.WND_PROP_TOPMOST, 1)
+        # cv2.setWindowProperty("{}".format(camID), cv2.WND_PROP_TOPMOST, 1)
         cv2.moveWindow("{}".format(camID), positionx, positiony)
         k = cv2.waitKey(1)
     try:
