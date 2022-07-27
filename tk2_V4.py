@@ -128,7 +128,7 @@ if __name__ == '__main__':
     else:
         path = 'C:/vdo_packing'
     if os.path.isdir(path) == True:
-        delete_store(7)
+        delete_store(90)
     check_but7, check_but8, check_but9 = False, False, False
     root = Tk()
     root.title('CAMERA LIST')
